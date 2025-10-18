@@ -89,10 +89,9 @@ struct WelcomePageUser: View {
 }
 
 #Preview {
+    @Previewable @State var dummyPath = NavigationPath()
     // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
-        // Dummy state for preview
-        @State var dummyPath = NavigationPath()
         WelcomePageUser(user: User.mockUsers[1], path: $dummyPath)
     }
 }
