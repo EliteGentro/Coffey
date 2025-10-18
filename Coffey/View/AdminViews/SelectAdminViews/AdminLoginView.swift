@@ -14,6 +14,8 @@ struct AdminLoginView: View {
     @State private var pin: [String]
     @State private var oldValue = ""
     @FocusState private var fieldFocus : Int?
+    @State private var navigateToUserSelect = false
+
     
     init(admin: Admin, numberOfDigits: Int = 6) {
             self.admin = admin
@@ -49,7 +51,7 @@ struct AdminLoginView: View {
                             if pin[index].count > 1{
                                 let currentValue = Array(pin[index])
                                 
-                                if currentValue[0] == Character(oldValue){
+                                if  currentValue[0] == Character(oldValue){
                                     pin[index] =
                                     String(pin[index].suffix(1))
                                 } else{
@@ -74,6 +76,9 @@ struct AdminLoginView: View {
             .padding()
             Button(action: {
                         print("Submitted PIN: \(pin.joined())")
+                if isPinComplete {
+                    navigateToUserSelect = true
+                }
                     }) {
                         Text("Entrar")
                             .fontWeight(.semibold)
@@ -87,11 +92,14 @@ struct AdminLoginView: View {
                     .padding(.horizontal, 40)
                     .padding(.top, 10)
         }
+        .navigationDestination(isPresented: $navigateToUserSelect){
+            SelectAdminModeView()
+        }
     }
 }
 
 
 
 #Preview {
-    AdminLoginView(admin:Admin(name: "humberto", cooperativa_id: "1", password: "1"))
+    AdminLoginView(admin:Admin.mockAdmins[0])
 }

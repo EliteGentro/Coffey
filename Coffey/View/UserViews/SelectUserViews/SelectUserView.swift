@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SelectUserView: View {
+    @State private var isAddedPresented : Bool = false
     var body: some View {
         NavigationStack {
                     ScrollView {
@@ -15,15 +16,7 @@ struct SelectUserView: View {
                             ForEach(User.mockUsers) { user in
                                 NavigationLink(destination: WelcomePageUser(user: user)) {
                                     VStack(spacing: 8) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.blue.opacity(0.8))
-                                                .frame(width: 80, height: 80)
-                                            Text(String(user.name.prefix(1)).uppercased())
-                                                .font(.largeTitle)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                        }
+                                        InitialProfileCircleView(name: user.name)
                                         
                                         // Name below
                                         Text(user.name)
@@ -35,6 +28,17 @@ struct SelectUserView: View {
                             }
                         }
                         .padding()
+                        .toolbar {
+                            ToolbarItem{
+                                Button("Add User", systemImage: "plus"){
+                                    self.isAddedPresented = true
+                                }.buttonStyle(.glass)
+                            }
+                        }
+                        .sheet(isPresented: self.$isAddedPresented) {
+                            AddUserView()
+                                .presentationDetents([.medium])
+                        }
                     }
                     .navigationTitle("Select User")
                     .navigationBarTitleDisplayMode(.inline)

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SelectAdminView: View {
+    @State private var isAddedPresented : Bool = false
     var body: some View {
         NavigationStack {
                     ScrollView {
@@ -15,15 +16,7 @@ struct SelectAdminView: View {
                             ForEach(Admin.mockAdmins) { admin in
                                 NavigationLink(destination: AdminLoginView(admin: admin)) {
                                     VStack(spacing: 8) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.blue.opacity(0.8))
-                                                .frame(width: 80, height: 80)
-                                            Text(String(admin.name.prefix(1)).uppercased())
-                                                .font(.largeTitle)
-                                                .fontWeight(.bold)
-                                                .foregroundColor(.white)
-                                        }
+                                        InitialProfileCircleView(name: admin.name)
                                         
                                         // Name below
                                         Text(admin.name)
@@ -33,8 +26,21 @@ struct SelectAdminView: View {
                                     .padding()
                                 }
                             }
+                            
+                            
                         }
                         .padding()
+                        .toolbar {
+                            ToolbarItem{
+                                Button("Add Admin", systemImage: "plus"){
+                                    self.isAddedPresented = true
+                                }.buttonStyle(.glass)
+                            }
+                        }
+                        .sheet(isPresented: self.$isAddedPresented) {
+                            AddAdminView()
+                                .presentationDetents([.large])
+                        }
                     }
                     .navigationTitle("Select Admin")
                     .navigationBarTitleDisplayMode(.inline)

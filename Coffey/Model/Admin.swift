@@ -7,23 +7,23 @@
 
 
 import Foundation
-import SwiftData
 
 
 struct Admin: Identifiable, Decodable, Hashable  {
-    var id = UUID()
+    var id : Int
     var name: String
+    var correo : String
     var cooperativa_id: String
     var password: String
     
     enum codigKeys: String, CodingKey {
-        case name, cooperativa_id, password
+        case id, name, correo, cooperativa_id, password
     }
     
     static let mockAdmins: [Admin] = [
-            Admin(name: "Humberto", cooperativa_id: "12345", password: "12345"),
-            Admin(name: "Pablo", cooperativa_id: "12345", password: "12345"),
-            Admin(name: "Pedro", cooperativa_id: "12345", password: "12345")
+            Admin(id:1,name: "Humberto", correo:"mail@mail.com", cooperativa_id: "12345", password: "12345"),
+            Admin(id:2,name: "Pablo", correo:"mail@mail.com", cooperativa_id: "12345", password: "12345"),
+            Admin(id:3,name: "Pedro", correo:"mail@mail.com", cooperativa_id: "12345", password: "12345")
         ]
     
 }
