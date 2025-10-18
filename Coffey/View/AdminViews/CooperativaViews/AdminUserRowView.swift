@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct AdminUserRowView: View {
-    let user : User
+    // User data for the row
+    let user: User
+    
     var body: some View {
         HStack(spacing: 16) {
-            
+            // Circular view showing user's initials
             InitialProfileCircleView(name: user.name)
             
-            
+            // User info section (name and completed content count)
             VStack(alignment: .leading, spacing: 8) {
                 Text(user.name)
                     .font(.title3)
@@ -30,7 +32,7 @@ struct AdminUserRowView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            
+            // User score section aligned to the right
             VStack(alignment: .trailing) {
                 Text("Puntaje:")
                     .font(.subheadline)
@@ -44,5 +46,6 @@ struct AdminUserRowView: View {
 }
 
 #Preview {
-    AdminUserRowView(user : User.mockUsers[0])
+    // No NavigationStack needed (no NavigationLinks in this view)
+    AdminUserRowView(user: User.mockUsers[0])
 }

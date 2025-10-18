@@ -12,7 +12,7 @@ import SwiftData
 struct CoffeyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+           ContentView()
         }
     }
 }

@@ -4,30 +4,41 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
-
 import SwiftUI
 
 struct UserDetailProfileView: View {
-    let user : User
+    // The user whose details will be displayed
+    let user: User
+    
     var body: some View {
-        VStack(spacing: 60){
+        VStack(spacing: 60) {
+            // Profile circle showing user's initials
             InitialProfileCircleView(name: user.name)
+            
+            // User's full name displayed prominently
             Text(user.name)
                 .font(Font.largeTitle.bold())
-            VStack(alignment: .leading, spacing: 20){
-                HStack{
+            
+            // Section for user details
+            VStack(alignment: .leading, spacing: 20) {
+                // Cooperative info
+                HStack {
                     Text("Cooperativa:")
                         .font(.title.bold())
                     Text("\(user.cooperativa_id)")
                         .font(.title)
                 }
-                HStack{
+                
+                // Completed content count
+                HStack {
                     Text("Contenidos:")
                         .font(.title.bold())
                     Text("\(user.contenidos_terminados)")
                         .font(.title)
                 }
-                HStack{
+                
+                // Learning score
+                HStack {
                     Text("Puntaje:")
                         .font(.title.bold())
                     Text("\(user.puntaje_aprendizaje)")
@@ -39,5 +50,6 @@ struct UserDetailProfileView: View {
 }
 
 #Preview {
+    // No NavigationStack needed — this view has no NavigationLinks
     UserDetailProfileView(user: User.mockUsers[1])
 }

@@ -25,7 +25,7 @@ struct MenuCellView: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
         .contentShape(Rectangle())
         .accessibilityElement()
-        .accessibilityLabel(title) // original string works for VoiceOver
+        .accessibilityLabel(title)
         .accessibilityAddTraits(.isButton)
     }
 }

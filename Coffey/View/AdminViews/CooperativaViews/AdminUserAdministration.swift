@@ -9,14 +9,14 @@ import SwiftUI
 
 struct AdminUserAdministration: View {
     var body: some View {
-        NavigationStack{
-            List{
-                ForEach(User.mockUsers){ user in
-                    NavigationLink(destination: UserDetailProfileView(user: user)) {
-                        AdminUserRowView(user: user)
-                    }
-
-                    
+        // Displays a scrollable list of users
+        List {
+            // Iterates over mock user data
+            ForEach(User.mockUsers) { user in
+                // Navigates to a detailed profile view when tapped
+                NavigationLink(destination: UserDetailProfileView(user: user)) {
+                    // Custom row view for displaying user info
+                    AdminUserRowView(user: user)
                 }
             }
         }
@@ -24,5 +24,8 @@ struct AdminUserAdministration: View {
 }
 
 #Preview {
-    AdminUserAdministration()
+    // Wrap preview inside a NavigationStack for proper navigation context
+    NavigationStack {
+        AdminUserAdministration()
+    }
 }

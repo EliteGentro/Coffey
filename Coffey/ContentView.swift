@@ -9,11 +9,22 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    
+    @State private var path = NavigationPath()
+    @State private var resetID = UUID() // unique ID to rebuild NavigationStack
+
     var body: some View {
-        SelectAdminView()
+        NavigationStack(path: $path) {
+            SelectAdminView(path: $path, onReset: resetNavigation)
+        }
+        .id(resetID) // key trick — rebuilds NavigationStack when resetID changes
+    }
+
+    private func resetNavigation() {
+        resetID = UUID()       // force NavigationStack to rebuild
+        path = NavigationPath() // reset any residual path state
     }
 }
 #Preview {
-    ContentView()
+        ContentView()
+
 }
