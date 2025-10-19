@@ -19,12 +19,12 @@ class Content: Identifiable, Decodable, Hashable  {
     var resourceType: String
     var transcript : String
     
-    enum codigKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case name, content_id, details, url, resourceType, transcript
     }
     
     required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: codigKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = UUID()
         self.content_id = try container.decode(Int.self, forKey: .content_id)
         self.name = try container.decode(String.self, forKey: .name)
