@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddUserView: View {
     // Environment variable to dismiss the view
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     
     // Form state variables
     @State private var name: String = ""
@@ -36,7 +38,28 @@ struct AddUserView: View {
 
                 // Save button (functionality to be implemented)
                 Button("Guardar") {
-                    // Action goes here
+                    let user = User(
+                        user_id: 0,
+                        name : self.name,
+                        cooperativa_id: 123, //missing logic to ingtegrate cooperativa objects
+                        puntaje_aprendizaje: 0,
+                        contenidos_terminados: 0,
+                    )
+                    let preference = Preference(
+                        preference_id: nil,
+                        user_id: 0,
+                        local_user_reference: user.id,
+                        font_multiplier: 1.0
+                    )
+                    
+                    self.context.insert(user)
+                    self.context.insert(preference)
+                    do{
+                        try self.context.save()
+                    } catch{
+                        print(error)
+                    }
+                    dismiss()
                 }
                 .buttonStyle(.borderedProminent)
             }

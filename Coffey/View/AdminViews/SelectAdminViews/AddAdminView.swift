@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
     
     @State private var name: String = ""
     @State private var correo: String = ""
@@ -79,7 +81,20 @@ struct AddAdminView: View {
             
             Button("Guardar") {
                 if password == confirmPassword {
-                    // Save logic
+                    let admin = Admin(
+                        admin_id: 0,
+                        name : self.name,
+                        correo : self.correo,
+                        cooperativa_id: 123, //missing logic to ingtegrate cooperativa objects
+                        password: self.password,
+                    )
+                    
+                    self.context.insert(admin)
+                    do{
+                        try self.context.save()
+                    } catch{
+                        print(error)
+                    }
                     dismiss()
                 } else {
                     showPasswordMismatchAlert = true

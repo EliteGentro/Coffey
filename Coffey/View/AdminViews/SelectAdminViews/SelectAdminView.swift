@@ -4,27 +4,29 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
+
 import SwiftUI
+import SwiftData
 
 struct SelectAdminView: View {
-    // Binding to manage navigation path
     @Binding private var path: NavigationPath
     var onReset: () -> Void
-    // State to control the presentation of AddAdmin sheet
     @State private var isAddedPresented = false
 
-    // Custom initializer for binding and reset action
+    // Fetch admins from SwiftData
+    @Query private var admins: [Admin]
+
     init(path: Binding<NavigationPath>, onReset: @escaping () -> Void = {}) {
         self._path = path
         self.onReset = onReset
+        // Query all admins sorted by name
+        self._admins = Query(sort: \.name, order: .forward)
     }
 
     var body: some View {
         ScrollView {
-            // Two-column grid for displaying admins
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
-                ForEach(Admin.mockAdmins) { admin in
-                    // Navigate to AdminLoginView when an admin is tapped
+                ForEach(admins) { admin in
                     NavigationLink(
                         destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
                     ) {
@@ -39,7 +41,6 @@ struct SelectAdminView: View {
                 }
             }
             .padding()
-            // Toolbar button to add a new admin
             .toolbar {
                 ToolbarItem {
                     Button("Add Admin", systemImage: "plus") {
@@ -47,7 +48,6 @@ struct SelectAdminView: View {
                     }
                 }
             }
-            // Sheet for adding a new admin
             .sheet(isPresented: self.$isAddedPresented) {
                 AddAdminView()
                     .presentationDetents([.large])
@@ -60,7 +60,6 @@ struct SelectAdminView: View {
 
 #Preview {
     @Previewable @State var dummyPath = NavigationPath()
-    // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
         SelectAdminView(path: $dummyPath)
     }

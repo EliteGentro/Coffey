@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AdminUserAdministration: View {
+    // Fetch all users from SwiftData
+    @Query private var users: [User]
+
+    init() {
+        // Optional: sort users by name
+        self._users = Query(sort: \.name, order: .forward)
+    }
+
     var body: some View {
-        // Displays a scrollable list of users
         List {
-            // Iterates over mock user data
-            ForEach(User.mockUsers) { user in
-                // Navigates to a detailed profile view when tapped
+            ForEach(users) { user in
                 NavigationLink(destination: UserDetailProfileView(user: user)) {
-                    // Custom row view for displaying user info
                     AdminUserRowView(user: user)
                 }
             }
@@ -24,7 +29,6 @@ struct AdminUserAdministration: View {
 }
 
 #Preview {
-    // Wrap preview inside a NavigationStack for proper navigation context
     NavigationStack {
         AdminUserAdministration()
     }
