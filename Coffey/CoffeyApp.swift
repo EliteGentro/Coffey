@@ -17,7 +17,8 @@ struct CoffeyApp: App {
                 User.self,
                 Admin.self,
                 Content.self,
-                Preference.self
+                Preference.self,
+                Finance.self
             ])
             
             let configuration = ModelConfiguration(
