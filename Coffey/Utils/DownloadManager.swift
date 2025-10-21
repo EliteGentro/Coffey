@@ -5,13 +5,14 @@
 //  Created by Humberto Genaro Cisneros Salinas on 20/10/25.
 //
 
-import Foundation
 
 import Foundation
 import AVKit
 import Combine
+import SwiftData
 
 final class DownloadManager: ObservableObject {
+    //May be missing context
     @Published private var downloadingStatus: [Int: Bool] = [:]
     @Published private var downloadedStatus: [Int: Bool] = [:]
     

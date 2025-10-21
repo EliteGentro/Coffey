@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct CoffeyApp: App {
     @State private var fontSettings = FontSettings()
+    var downloadManager = DownloadManager()
 
     var sharedModelContainer: ModelContainer = {
             let schema = Schema([
@@ -38,6 +39,7 @@ struct CoffeyApp: App {
            ContentView()
                 .modelContainer(sharedModelContainer)
                 .environmentObject(fontSettings)
+                .environmentObject(downloadManager)
         }
     }
 }
