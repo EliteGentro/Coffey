@@ -13,6 +13,12 @@ import SwiftData
 
 final class DownloadManager: ObservableObject {
     //May be missing context
+    let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
     @Published private var downloadingStatus: [Int: Bool] = [:]
     @Published private var downloadedStatus: [Int: Bool] = [:]
     
@@ -27,6 +33,7 @@ final class DownloadManager: ObservableObject {
 
     // MARK: - Core logic
     func downloadFile(content: Content) {
+        let context = ModelContext(modelContainer)
         print("downloadFile \(content.url)")
         
         let contentID = content.content_id // capture simple Sendable value
@@ -79,17 +86,20 @@ final class DownloadManager: ObservableObject {
                 do {
                     try data.write(to: destinationUrl, options: .atomic)
                     self.downloadedStatus[contentID] = true
+                    content.isDownloaded = true
+                    try context.save()
                 } catch {
                     print("Error writing file: ", error)
                 }
             }
         }
-
+        
         dataTask.resume()
     }
 
 
     func deleteFile(content: Content) {
+        let context = ModelContext(modelContainer)
         let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationUrl = docsUrl.appendingPathComponent("\(content.content_id).mp4")
 
@@ -97,8 +107,11 @@ final class DownloadManager: ObservableObject {
 
         do {
             try FileManager.default.removeItem(at: destinationUrl)
+            
             print("File deleted successfully")
             downloadedStatus[content.content_id] = false
+            content.isDownloaded = false
+            try context.save()
         } catch {
             print("Error while deleting video file: ", error)
         }

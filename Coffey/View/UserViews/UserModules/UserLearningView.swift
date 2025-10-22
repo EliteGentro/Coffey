@@ -6,14 +6,49 @@
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
 import SwiftUI
+import SwiftData
 
 struct UserLearningView: View {
-    // The user whose learning content is displayed
+    @Environment(\.modelContext) var context
+    
     let user: User
-    // Filters for content status
+    let contents : [Content]
+    @Query var progresses: [Progress]
+
+
+    
+    init(user:User){
+        self.user = user
+        self.contents = Content.mockContents.filter({$0.isDownloaded})
+    }
+    
+    private var filteredContents: [Content] {
+        contents.filter { content in
+            if let contentProgress = progresses.first(where: {
+                $0.user_id == user.user_id && $0.content_id == content.content_id
+            }) {
+                return contentProgress.status == selectedProgressStatus
+            } else {
+                return selectedProgressStatus == .notStarted
+            }
+        }
+    }
+    
     let filters = ["Pendiente", "En Progreso", "Terminados"]
     @State private var selectedFilter: String = "Pendiente"
-
+    
+    
+    
+    private var selectedProgressStatus: ProgressStatus {
+        switch selectedFilter {
+        case "Pendiente": return .notStarted
+        case "En Progreso": return .inProgress
+        case "Terminados": return .completed
+        default: return .notStarted
+        }
+    }
+    
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -28,14 +63,17 @@ struct UserLearningView: View {
                 
                 // Grid of learning content
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
-                    ForEach(Content.mockContents) { content in
+                    ForEach(filteredContents) { content in
                         // Navigate to detailed content view on tap
-                        NavigationLink(destination: DetailContentUserView(content: content)) {
+                        
+                        NavigationLink(destination: DetailContentUserView(content: content, user: user)) {
                             MenuCellView(
                                 systemName: content.resourceType == "video" ? "video.fill" : "book.fill",
                                 title: content.name
                             )
                         }
+                            
+                        
                     }
                 }
             }
@@ -44,7 +82,11 @@ struct UserLearningView: View {
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
     }
+    
+    
 }
+
+
 
 #Preview {
     // Wrap in NavigationStack because view contains NavigationLinks

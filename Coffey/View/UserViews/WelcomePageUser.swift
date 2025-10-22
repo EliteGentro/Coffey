@@ -54,7 +54,7 @@ struct WelcomePageUser: View {
                 NavigationLink(destination: UserLearningView(user: user)) {
                     MenuCellView(systemName: "book.closed.fill", title: "Aprendizaje")
                 }
-                NavigationLink(destination: UserSettingsView(user: user)) {
+                NavigationLink(destination: UserFinancesView(user: user)) {
                     MenuCellView(systemName: "wallet.bifold.fill", title: "Registro de Finanzas")
                 }
                 NavigationLink(destination: UserSettingsView(user: user)) {

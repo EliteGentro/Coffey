@@ -11,32 +11,37 @@ import SwiftData
 @main
 struct CoffeyApp: App {
     @State private var fontSettings = FontSettings()
-    var downloadManager = DownloadManager()
+    let sharedModelContainer: ModelContainer
+    let downloadManager: DownloadManager
 
-    var sharedModelContainer: ModelContainer = {
-            let schema = Schema([
-                User.self,
-                Admin.self,
-                Content.self,
-                Preference.self,
-                Finance.self
-            ])
-            
-            let configuration = ModelConfiguration(
-                "MainStore",
-                schema: schema,
-                isStoredInMemoryOnly: false
-            )
-            
-            do {
-                return try ModelContainer(for: schema, configurations: [configuration])
-            } catch {
-                fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
-            }
-        }()
+    init() {
+        let schema = Schema([
+            User.self,
+            Admin.self,
+            Content.self,
+            Preference.self,
+            Finance.self,
+            Progress.self
+        ])
+        
+        let configuration = ModelConfiguration(
+            "MainStore",
+            schema: schema,
+            isStoredInMemoryOnly: false
+        )
+        
+        do {
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            self.sharedModelContainer = container
+            self.downloadManager = DownloadManager(modelContainer: container)
+        } catch {
+            fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-           ContentView()
+            ContentView()
                 .modelContainer(sharedModelContainer)
                 .environmentObject(fontSettings)
                 .environmentObject(downloadManager)
