@@ -10,6 +10,7 @@ import Foundation
 import AVKit
 import Combine
 import SwiftData
+import PDFKit
 
 final class DownloadManager: ObservableObject {
     //May be missing context
@@ -33,7 +34,6 @@ final class DownloadManager: ObservableObject {
 
     // MARK: - Core logic
     func downloadFile(content: Content) {
-        let context = ModelContext(modelContainer)
         print("downloadFile \(content.url)")
         
         let contentID = content.content_id // capture simple Sendable value
@@ -44,7 +44,9 @@ final class DownloadManager: ObservableObject {
 
         let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         
-        let destinationUrl = docsUrl.appendingPathComponent("\(contentID).mp4")
+        let destinationUrl = content.resourceType == "video" ? docsUrl.appendingPathComponent("\(contentID).mp4") :
+            docsUrl.appendingPathComponent("\(contentID).pdf")
+        
         print(docsUrl)
         print(destinationUrl)
 
@@ -86,32 +88,28 @@ final class DownloadManager: ObservableObject {
                 do {
                     try data.write(to: destinationUrl, options: .atomic)
                     self.downloadedStatus[contentID] = true
-                    content.isDownloaded = true
-                    try context.save()
                 } catch {
                     print("Error writing file: ", error)
                 }
             }
         }
-        
+
         dataTask.resume()
     }
 
 
     func deleteFile(content: Content) {
-        let context = ModelContext(modelContainer)
         let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationUrl = docsUrl.appendingPathComponent("\(content.content_id).mp4")
+        
+        let destinationUrl = content.resourceType == "video" ? docsUrl.appendingPathComponent("\(content.content_id).mp4") :
+            docsUrl.appendingPathComponent("\(content.content_id).pdf")
 
         guard FileManager.default.fileExists(atPath: destinationUrl.path) else { return }
 
         do {
             try FileManager.default.removeItem(at: destinationUrl)
-            
             print("File deleted successfully")
             downloadedStatus[content.content_id] = false
-            content.isDownloaded = false
-            try context.save()
         } catch {
             print("Error while deleting video file: ", error)
         }
@@ -119,7 +117,8 @@ final class DownloadManager: ObservableObject {
 
     func checkFileExists(content: Content) {
         let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationUrl = docsUrl.appendingPathComponent("\(content.content_id).mp4")
+        let destinationUrl = content.resourceType == "video" ? docsUrl.appendingPathComponent("\(content.content_id).mp4") :
+            docsUrl.appendingPathComponent("\(content.content_id).pdf")
 
         downloadedStatus[content.content_id] = FileManager.default.fileExists(atPath: destinationUrl.path)
     }
@@ -134,4 +133,23 @@ final class DownloadManager: ObservableObject {
         let avAsset = AVURLAsset(url: destinationUrl)
         return AVPlayerItem(asset: avAsset)
     }
+    
+    
+
+    func getPDFView(for content: Content) -> PDFView? {
+        let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationUrl = docsUrl.appendingPathComponent("\(content.content_id).pdf")
+        print("PDF File Path: \(destinationUrl)")
+        print("Name: \(content.name)")
+
+        guard FileManager.default.fileExists(atPath: destinationUrl.path) else { return nil }
+
+        let pdfView = PDFView()
+        pdfView.autoScales = true
+        pdfView.displayMode = .singlePageContinuous
+        pdfView.displayDirection = .vertical
+        pdfView.document = PDFDocument(url: destinationUrl)
+        return pdfView
+    }
+
 }
