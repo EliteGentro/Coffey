@@ -127,7 +127,8 @@ struct DetailContentUserView: View {
                 progress_id : 0,
                 user_id : user.user_id,
                 content_id : content.content_id,
-                status: .notStarted
+                status: .notStarted,
+                local_user_reference: user.id
             )
             
             self.context.insert(newProgress)

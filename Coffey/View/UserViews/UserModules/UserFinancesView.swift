@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct UserFinancesView: View {
     let user : User
-    let finances = Finance.mockFinances //Cambiar por query
+    @Query var finances: [Finance]
+
     @State private var selectedFinanceType : String = "Egresos"
     @State private var sortOrder = [KeyPathComparator(\Finance.date, order: .forward)]
     @State private var selectedFinance : Finance.ID? = nil
@@ -18,6 +20,13 @@ struct UserFinancesView: View {
     }
     @State private var showFinanceDetail : Bool = false
     @State private var showAddFinance : Bool = false
+    
+    init(user: User){
+        self.user = user
+        let userID = user.user_id
+        _finances = Query(filter: #Predicate<Finance>{ $0.user_id == userID })
+        
+    }
     
     let filters : [String] = ["Egresos", "Ingresos"]
 

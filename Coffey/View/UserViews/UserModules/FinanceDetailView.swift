@@ -15,6 +15,7 @@ struct FinanceDetailView: View {
     
     let type: String
     let createNew: Bool
+    let user : User?
     let finance: Finance?
     
     @State private var name: String
@@ -23,10 +24,11 @@ struct FinanceDetailView: View {
     private let categoryOptions: [String] = ["Hogar", "Personal", "Trabajo"]
 
     
-    init(type: String, createNew: Bool, finance: Finance? = nil) {
+    init(type: String, createNew: Bool, finance: Finance? = nil, user: User? = nil) {
         self.type = type
         self.createNew = createNew
         self.finance = finance
+        self.user = user
         
         _name = State(initialValue: finance?.name ?? "")
         _amount = State(initialValue: finance?.amount ?? 0.0)
@@ -56,11 +58,13 @@ struct FinanceDetailView: View {
                         if(createNew){
                             let finance = Finance(
                                 finance_id: 0,
+                                user_id: user?.user_id ?? 0,
                                 name: self.name,
                                 date: Date(),
                                 category: self.selectedCategory,
                                 amount: self.amount,
-                                type: self.type
+                                type: self.type,
+                                local_user_reference: user?.id ?? UUID()
                             )
                             
                             self.context.insert(finance)
