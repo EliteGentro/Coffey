@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct ManageContentsView: View {
-    
-    // Filters for content status
-    let filters = ["No Descargados", "Descargados"]
-    @State private var selectedFilter: String = "No Descargados"
-    let contents = Content.mockContents
-    private var filteredContents : [Content] {
-        contents.filter{ content in
-            if(selectedFilter == "No Descargados"){
+    @StateObject private var contentVM: ContentViewModel
+    @State private var selectedFilter: String
+    private let filters = ["No Descargados", "Descargados"]
+
+    init(contents: [Content] = [], selectedFilter: String = "No Descargados") {
+        _contentVM = StateObject(wrappedValue: ContentViewModel())
+        _selectedFilter = State(initialValue: selectedFilter)
+    }
+
+    private var filteredContents: [Content] {
+        contentVM.arrContents.filter { content in
+            if selectedFilter == "No Descargados" {
                 return !content.isDownloaded
-            } else{
+            } else {
                 return content.isDownloaded
             }
         }
@@ -51,7 +55,20 @@ struct ManageContentsView: View {
         }
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await loadContents()
+        }
     }
+    
+    private func loadContents() async {
+        do {
+            try await contentVM.getContents()
+        } catch {
+            print(error)
+        }
+    }
+    
+    
 }
 
 
