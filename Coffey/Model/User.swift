@@ -53,4 +53,8 @@ class User: Identifiable, Hashable, Decodable {
         User(user_id: 2, name: "Javier", cooperativa_id: 5243, puntaje_aprendizaje: 150, contenidos_terminados: 13),
         User(user_id: 3, name: "Jaime", cooperativa_id: 234, puntaje_aprendizaje: 30, contenidos_terminados: 6)
     ]
+
+    static func isValidName(_ name: String ) -> Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 }
