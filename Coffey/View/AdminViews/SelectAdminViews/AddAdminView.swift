@@ -100,7 +100,7 @@ struct AddAdminView: View {
                     showPasswordMismatchAlert = true
                 }
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.borderedProminent).tint(.brown)
             .alert("Error", isPresented: $showPasswordMismatchAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
