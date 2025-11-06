@@ -15,6 +15,8 @@ struct ContentDetailAdminView: View {
     @EnvironmentObject var downloadManager: DownloadManager
     
     @State private var showVideo = false
+    @State private var showPDF = false
+
     
     
     let content : Content
@@ -53,8 +55,13 @@ struct ContentDetailAdminView: View {
                 }
             } else{
                 Button(action:{
+                    
                     //Play Video
-                    showVideo = true
+                    if content.resourceType == "video" {
+                        showVideo = true
+                    } else{
+                        showPDF = true
+                    }
                 }){
                     HStack {
                         Image(systemName: "play.circle.fill")
@@ -88,6 +95,9 @@ struct ContentDetailAdminView: View {
         .padding(40)
         .fullScreenCover(isPresented: $showVideo) {
             VideoView(content: content)
+        }
+        .fullScreenCover(isPresented: $showPDF) {
+            PDFKitView(content: content)
         }
         
     }

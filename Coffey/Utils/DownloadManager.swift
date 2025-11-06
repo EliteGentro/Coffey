@@ -11,14 +11,19 @@ import AVKit
 import Combine
 import SwiftData
 import PDFKit
+import SwiftUI
 
 final class DownloadManager: ObservableObject {
     //May be missing context
     let modelContainer: ModelContainer
+    private let context: ModelContext
 
     init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
+        self.context = modelContainer.mainContext
     }
+
+
 
     @Published private var downloadingStatus: [Int: Bool] = [:]
     @Published private var downloadedStatus: [Int: Bool] = [:]
@@ -88,6 +93,13 @@ final class DownloadManager: ObservableObject {
                 do {
                     try data.write(to: destinationUrl, options: .atomic)
                     self.downloadedStatus[contentID] = true
+                    content.isDownloaded = true
+                    do {
+                        //Save context
+                        try self.context.save()
+                    } catch {
+                        print(error)
+                    }
                 } catch {
                     print("Error writing file: ", error)
                 }

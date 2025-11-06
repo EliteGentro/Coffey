@@ -22,7 +22,7 @@ class Content: Identifiable, Decodable, Hashable  {
     var isDownloaded: Bool
     
     enum CodingKeys: String, CodingKey {
-        case name, content_id, details, url, resourceType, transcript, isDownloaded
+        case name, content_id, details, url, resourceType, transcript
     }
     
     required init(from decoder: Decoder) throws {
@@ -34,7 +34,7 @@ class Content: Identifiable, Decodable, Hashable  {
         self.url = try container.decode(String.self, forKey: .url)
         self.resourceType = try container.decode(String.self, forKey: .resourceType)
         self.transcript = try container.decode(String.self, forKey: .transcript)
-        self.isDownloaded = try container.decode(Bool.self, forKey: .isDownloaded)
+        self.isDownloaded = false
     }
     
     init(
