@@ -91,6 +91,11 @@ class Finance: Identifiable, Decodable, Hashable{
             local_user_reference: User.mockUsers[0].id
         )]
     
-    
+    static func isValidFinance(_name: String, _category: String, _amount: String, _type: String) -> Bool{
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !category.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !(amount < 0) &&
+        !type.trimmingCharacters(in: .whitespaces).isEmpty
+    }
     
 }
