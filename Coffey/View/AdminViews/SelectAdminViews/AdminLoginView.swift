@@ -30,9 +30,16 @@ struct AdminLoginView: View {
 
     var body: some View {
         VStack(spacing: 24) {
+            Image("Coffee-cup")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 100)
+
             Text("Hola, \(admin.name.capitalized)")
                 .font(.title2)
                 .fontWeight(.semibold)
+
+            Text("Introduce tu PIN")
             
             // Reusable PIN input field
             PinInputView(pin: $pin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)

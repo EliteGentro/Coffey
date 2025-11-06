@@ -45,7 +45,7 @@ struct SelectAdminView: View {
                 ToolbarItem {
                     Button("Add Admin", systemImage: "plus") {
                         self.isAddedPresented = true
-                    }
+                    }.buttonStyle(.borderedProminent).tint(.brown)
                 }
             }
             .sheet(isPresented: self.$isAddedPresented) {
