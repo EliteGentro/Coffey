@@ -55,4 +55,11 @@ final class Admin: Identifiable, Hashable, Decodable {
         Admin(admin_id: 2, name: "Pablo", correo: "mail@mail.com", cooperativa_id: 234, password: "12345"),
         Admin(admin_id: 3, name: "Pedro", correo: "mail@mail.com", cooperativa_id: 2342, password: "12345")
     ]
+
+    static func isValidAdmin(_ name: String, _correo: String, _cooperativa_id: Int, _password: String) -> Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !correo.trimmingCharacters(in: .whitespaces).isEmpty &&
+        cooperativa_id > 0 &&
+        !password.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 }
