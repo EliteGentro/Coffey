@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ManageContentsView: View {
+    @Environment(\.modelContext) private var context
     @StateObject private var contentVM: ContentViewModel
     @State private var selectedFilter: String
     private let filters = ["No Descargados", "Descargados"]
@@ -19,13 +21,10 @@ struct ManageContentsView: View {
 
     private var filteredContents: [Content] {
         contentVM.arrContents.filter { content in
-            if selectedFilter == "No Descargados" {
-                return !content.isDownloaded
-            } else {
-                return content.isDownloaded
-            }
+            selectedFilter == "No Descargados" ? !content.isDownloaded : content.isDownloaded
         }
     }
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -56,8 +55,16 @@ struct ManageContentsView: View {
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            await loadContents()
+            // First sync remote -> local, then fetch local to display
+            do {
+                try await contentVM.syncContents(using: context, removeStale: false)
+            } catch {
+                print("Sync failed:", error)
+                // Still attempt to fetch local contents so UI can show cached rows
+                contentVM.loadLocalContents(using: context)
+            }
         }
+
     }
     
     private func loadContents() async {

@@ -12,12 +12,13 @@ struct DetailContentUserView: View {
     @Environment(\.modelContext) var context
     
     @State private var showVideo = false
+    @State private var showPDF = false
     
     @State private var selectedFilter: String = "Pendiente"
     @State private var progress : Progress?
     let content: Content
     let user : User
-    @Query var progresses: [Progress]
+    @State private var progresses: [Progress] = []
     
 
     
@@ -61,7 +62,11 @@ struct DetailContentUserView: View {
             
             Button(action:{
                 //Play Video
-                showVideo = true
+                if content.resourceType == "video" {
+                    showVideo = true
+                } else{
+                    showPDF = true
+                }
             }){
                 HStack {
                     Image(systemName: "play.circle.fill")
@@ -111,6 +116,9 @@ struct DetailContentUserView: View {
         .fullScreenCover(isPresented: $showVideo) {
             VideoView(content: content)
         }
+        .fullScreenCover(isPresented: $showPDF) {
+            PDFKitView(content: content)
+        }
         .onAppear {
             fetchOrCreateProgress()
         }
@@ -118,29 +126,39 @@ struct DetailContentUserView: View {
     }
     
     private func fetchOrCreateProgress() {
-        if let existing = progresses.filter({
-            $0.user_id == user.user_id && $0.content_id == content.content_id
-        }).first {
-            progress = existing
-        } else {
-            let newProgress = Progress(
-                progress_id : 0,
-                user_id : user.user_id,
-                content_id : content.content_id,
-                status: .notStarted,
-                local_user_reference: user.id
-            )
+        do {
+            let userID = user.user_id
+            let contentID = content.content_id
             
-            self.context.insert(newProgress)
-            do{
-                try self.context.save()
+            //  Split into two smaller filters
+            let byUser = #Predicate<Progress> { $0.user_id == userID }
+            let byContent = #Predicate<Progress> { $0.content_id == contentID }
+            
+            // Combine them manually
+            let combinedPredicate = #Predicate<Progress> { progress in
+                byUser.evaluate(progress) && byContent.evaluate(progress)
+            }
+
+            let descriptor = FetchDescriptor<Progress>(predicate: combinedPredicate)
+
+            if let existing = try context.fetch(descriptor).first {
+                progress = existing
+            } else {
+                let newProgress = Progress(
+                    progress_id: 0,
+                    user_id: userID,
+                    content_id: contentID,
+                    status: .notStarted,
+                    local_user_reference: user.id
+                )
+                context.insert(newProgress)
+                try context.save()
                 progress = newProgress
                 print("Saved Progress")
-            } catch{
-                print(error)
             }
+        } catch {
+            print("Error fetching or saving progress:", error)
         }
-        
     }
 }
     #Preview {

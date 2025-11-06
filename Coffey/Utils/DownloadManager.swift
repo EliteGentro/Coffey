@@ -122,6 +122,14 @@ final class DownloadManager: ObservableObject {
             try FileManager.default.removeItem(at: destinationUrl)
             print("File deleted successfully")
             downloadedStatus[content.content_id] = false
+            content.isDownloaded = false
+            do {
+                //Save context
+                try self.context.save()
+            } catch {
+                print(error)
+            }
+
         } catch {
             print("Error while deleting video file: ", error)
         }

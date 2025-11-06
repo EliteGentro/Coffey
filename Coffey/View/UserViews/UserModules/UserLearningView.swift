@@ -12,18 +12,13 @@ struct UserLearningView: View {
     @Environment(\.modelContext) var context
     
     let user: User
-    let contents : [Content]
+    @Query(filter: #Predicate<Content> { $0.isDownloaded == true })
+    private var downloadedContents: [Content]
     @Query var progresses: [Progress]
 
-
-    
-    init(user:User){
-        self.user = user
-        self.contents = Content.mockContents.filter({$0.isDownloaded})
-    }
     
     private var filteredContents: [Content] {
-        contents.filter { content in
+        downloadedContents.filter { content in
             if let contentProgress = progresses.first(where: {
                 $0.user_id == user.user_id && $0.content_id == content.content_id
             }) {
