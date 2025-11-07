@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB9B2C472EBE89C5004CAD28 /* KeychainSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E3F834322EA2019800C65A0A /* Coffey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coffey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Coffey;
 			packageProductDependencies = (
+				FB9B2C472EBE89C5004CAD28 /* KeychainSwift */,
 			);
 			productName = Coffey;
 			productReference = E3F834322EA2019800C65A0A /* Coffey.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = E3F834292EA2019800C65A0A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E3F834332EA2019800C65A0A /* Products */;
 			projectDirPath = "";
@@ -334,6 +343,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FB9B2C472EBE89C5004CAD28 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E3F8342A2EA2019800C65A0A /* Project object */;
 }

@@ -88,17 +88,16 @@ struct AdminLoginView: View {
                     return
                 }
 
-                guard validatePIN(enteredPin) {
-                    navigateToUserSelect = true
-                } else {
+                
+                guard isPinComplete else {
+                    print("El Pin esta incompleto")
+                    return
+                }
+                guard validatePIN(enteredPin) else {
                     print("PIN incorrecto.")
                     return
                 }
-
-                if isPinComplete else {
-                    print("El PIN no está completo.")
-                    return
-                }
+                navigateToUserSelect = true
             }) {
                 Text("Entrar")
                     .fontWeight(.semibold)
