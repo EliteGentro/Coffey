@@ -10,6 +10,10 @@
 //  Coffey
 //
 
+//Este documento fue hecho en un momento de vibecoding, NO CONFIAR, falta correcciones y revisiones por que no funciona bien la escritura en los botones, si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
+
+//Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
+
 import SwiftUI
 import CryptoKit
 import KeychainSwift
@@ -45,12 +49,12 @@ struct ChangePinView: View {
     }
     
     private func storedHashedPin() -> String? {
-        keychain.get("admin_pin_\(admin.id.uuidString ?? "unknown")")
+        keychain.get("admin_pin_\(admin.id.uuidString)")
     }
     
     private func updatePin(_ newPin: String) {
         let hashed = hashPin(newPin)
-        keychain.set(hashed, forKey: "admin_pin_\(admin.id.uuidString ?? "unknown")")
+        keychain.set(hashed, forKey: "admin_pin_\(admin.id.uuidString)")
     }
     
     private func validateCurrentPin(_ pin: String) -> Bool {
