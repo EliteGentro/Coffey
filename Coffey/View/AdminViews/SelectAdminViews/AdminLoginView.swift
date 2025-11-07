@@ -16,6 +16,8 @@ struct AdminLoginView: View {
     @State private var pin: [String]
     @FocusState private var fieldFocus: Int?
     @State private var navigateToUserSelect = false
+    @State private var message: String = ""
+    @State private var success: Bool = false
     var onReset: () -> Void
 
     private let keychain = KeychainSwift() //Verificar aca
@@ -84,17 +86,22 @@ struct AdminLoginView: View {
                 print("Submitted PIN: \(enteredPin)")
 
                 guard isPinNumeric else {
-                    print("El PIN debe ser numérico.")
+                    message = "El PIN debe ser numérico."
+                    success = false
                     return
                 }
 
+                //Este por el es inutil por ahora, posiblemente lo quite.
                 
                 guard isPinComplete else {
-                    print("El Pin esta incompleto")
+                    message = "El Pin esta incompleto"
+                    success = false
                     return
                 }
+                
                 guard validatePIN(enteredPin) else {
-                    print("PIN incorrecto.")
+                    message = "PIN incorrecto."
+                    success = false
                     return
                 }
                 navigateToUserSelect = true
@@ -120,7 +127,12 @@ struct AdminLoginView: View {
                     .foregroundColor(.blue)
                     .padding(.top, 8)
             }
-
+            if !message.isEmpty {
+                Text(message)
+                    .foregroundColor(success ? .green : .red)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
         }
         .navigationDestination(isPresented: $navigateToUserSelect) {
             SelectAdminModeView(path: $path, onReset: onReset)

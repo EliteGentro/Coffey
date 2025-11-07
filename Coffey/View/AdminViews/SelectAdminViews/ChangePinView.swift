@@ -131,31 +131,31 @@ struct ChangePinView: View {
         let confirm = confirmPin.joined()
         
         guard !current.isEmpty, !new.isEmpty, !confirm.isEmpty else {
-            message = "❌ Todos los campos deben completarse."
+            message = "Todos los campos deben completarse."
             success = false
             return
         }
         
         guard validateCurrentPin(current) else {
-            message = "❌ El PIN actual no es correcto."
+            message = "El PIN actual no es correcto."
             success = false
             return
         }
         
         guard new == confirm else {
-            message = "❌ Los nuevos PIN no coinciden."
+            message = "Los nuevos PIN no coinciden."
             success = false
             return
         }
         
         guard new.allSatisfy({ $0.isNumber }) else {
-            message = "❌ El nuevo PIN debe contener solo números."
+            message = "El nuevo PIN debe contener solo números."
             success = false
             return
         }
         
         updatePin(new)
-        message = "✅ PIN actualizado correctamente."
+        message = "PIN actualizado correctamente."
         success = true
         
         // Limpia los campos después de éxito
