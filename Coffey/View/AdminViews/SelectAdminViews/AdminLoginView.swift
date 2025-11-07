@@ -45,12 +45,12 @@ struct AdminLoginView: View {
 
     private func saveHashedPIN(_ pin: String) {
         let hashed = hashPin(pin)
-        keychain.set(hashed, forKey: "admin_\(admin.id)_pin") //Verificar lo del Admin.id
+        keychain.set(hashed, forKey: "admin_\(admin.id.uuidString)_pin") //Verificar lo del Admin.id
     }
 
     private func validatePIN(_ pin: String) -> Bool {
         let hashed = hashPin(pin)
-        if let stored = keychain.get("admin_\(admin.id)_pin") { //Verificar lo del Admin.id
+        if let stored = keychain.get("admin_\(admin.id.uuidString)_pin") { //Verificar lo del Admin.id
             return stored == hashed
         } else {
             saveHashedPIN(pin)

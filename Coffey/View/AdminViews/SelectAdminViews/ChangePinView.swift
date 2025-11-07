@@ -45,12 +45,12 @@ struct ChangePinView: View {
     }
     
     private func storedHashedPin() -> String? {
-        keychain.get("admin_pin_\(admin.objectId ?? "unknown")")
+        keychain.get("admin_pin_\(admin.id.uuidString ?? "unknown")")
     }
     
     private func updatePin(_ newPin: String) {
         let hashed = hashPin(newPin)
-        keychain.set(hashed, forKey: "admin_pin_\(admin.objectId ?? "unknown")")
+        keychain.set(hashed, forKey: "admin_pin_\(admin.id.uuidString ?? "unknown")")
     }
     
     private func validateCurrentPin(_ pin: String) -> Bool {
