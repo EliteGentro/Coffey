@@ -2,9 +2,8 @@
 //  ChangePinView.swift
 //  Coffey
 //
-//  Created by Alumno on 07/11/25.
+//  Created by Augusto Orozco on 07/11/25.
 //
-
 //
 //  ChangePinView.swift
 //  Coffey
@@ -13,6 +12,10 @@
 //Este documento fue hecho en un momento de vibecoding, NO CONFIAR, falta correcciones y revisiones por que no funciona bien la escritura en los botones, si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
 
 //Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
+
+//De acuerdo con lo que investigue, puede ser que con tres focusState funcione correctamente el llenado de los campos, me falta probarlo bien dentro del simulador
+//Ya que tengo la teoria de que dentro del preview no va a guardar los datos y no funcionara aunque lo intente, cuando llegue al swiftlab lo corrigo y actualizo
+//El estado de este archivo en particular, generalmente el login ya funciona bien, solo falta esto para poder hacer pullrequest.
 
 import SwiftUI
 import CryptoKit
@@ -25,7 +28,11 @@ struct ChangePinView: View {
     @State private var currentPin: [String]
     @State private var newPin: [String]
     @State private var confirmPin: [String]
-    @FocusState private var fieldFocus: Int?
+    
+    // 3 focus states independientes
+    @FocusState private var focusCurrent: Int?
+    @FocusState private var focusNew: Int?
+    @FocusState private var focusConfirm: Int?
     
     @State private var message: String = ""
     @State private var success: Bool = false
@@ -41,7 +48,6 @@ struct ChangePinView: View {
     }
     
     // MARK: - Helper Methods
-    
     private func hashPin(_ pin: String) -> String {
         let data = Data(pin.utf8)
         let hashed = SHA256.hash(data: data)
@@ -63,10 +69,8 @@ struct ChangePinView: View {
     }
     
     // MARK: - UI
-    
     var body: some View {
         VStack(spacing: 24) {
-            // Imagen superior coherente con AdminLoginView
             Image("Coffee-cup")
                 .resizable()
                 .scaledToFit()
@@ -82,21 +86,21 @@ struct ChangePinView: View {
                     Text("PIN actual")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $currentPin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $currentPin, fieldFocus: _focusCurrent, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $newPin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $newPin, fieldFocus: _focusNew, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Confirmar nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $confirmPin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $confirmPin, fieldFocus: _focusConfirm, numberOfDigits: numberOfDigits)
                 }
             }
             .padding(.horizontal, 40)
@@ -128,7 +132,6 @@ struct ChangePinView: View {
     }
     
     // MARK: - Logic
-    
     private func handleChangePin() {
         let current = currentPin.joined()
         let new = newPin.joined()
