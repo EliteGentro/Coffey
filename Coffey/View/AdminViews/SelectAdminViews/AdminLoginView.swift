@@ -74,10 +74,10 @@ struct AdminLoginView: View {
 
             Text("Introduce tu PIN")
 
-            //Me acabo de dar cuenta que no valida un pin, solo asume que ya hay uno, hay que corregir eso
+            //Me acabo de dar cuenta que no valida un pin, solo asume que ya hay uno, hay que corregir eso (Corregido)
 
             //Explicar aca como funciona el proceso de guardado y validacion del pin, creo que se guarda al primer inicio, luego se valida cada vez que se ingresa
-            //Si es asi, esta todo bien, y funciona.
+            //Si es asi, esta todo bien, y funciona. (Aprovado: Funciona)
 
             // Reusable PIN input field
             PinInputView(pin: $pin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
@@ -119,7 +119,7 @@ struct AdminLoginView: View {
             .padding(.horizontal, 40)
             .padding(.top, 10)
 
-            // Aca iria el cambio de PIN, falta crear la otra vista del cambio de pin, y validar si funciona, esto podria ser otro test
+            // Aca iria el cambio de PIN, falta crear la otra vista del cambio de pin, y validar si funciona, esto podria ser otro test (Creada y funcionando)
             NavigationLink {
                 ChangePinView(admin: admin)
             } label: {
