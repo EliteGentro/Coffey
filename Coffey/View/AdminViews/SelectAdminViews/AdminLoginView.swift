@@ -74,7 +74,7 @@ struct AdminLoginView: View {
 
             Text("Introduce tu PIN")
 
-            //Me acabo de dar cuenta que no valida un pin, solo asume que ya hay uno, hay que corregir eso (Corregido)
+            //Me acabo de dar cuenta que no valida un pin, solo asume que ya hay uno, hay que corregir eso.
 
             //Explicar aca como funciona el proceso de guardado y validacion del pin, creo que se guarda al primer inicio, luego se valida cada vez que se ingresa
             //Si es asi, esta todo bien, y funciona. (Aprovado: Funciona)

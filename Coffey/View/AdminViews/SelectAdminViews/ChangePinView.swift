@@ -7,9 +7,8 @@
 //
 //  ChangePinView.swift
 //  Coffey
-//
 
-//Este documento fue hecho en un momento de vibecoding, NO CONFIAR, falta correcciones y revisiones por que no funciona bien la escritura en los botones, si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
+//Si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
 
 //Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
 

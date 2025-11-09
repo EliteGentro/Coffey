@@ -52,7 +52,7 @@ struct CoffeyTests {
     // NUEVOS TESTS: VALIDACIÓN DE LOGIN DE ADMIN
     // ----------------------------------------------------------
 
-    //Favor de no confiar en esto todavida, esta en proceso de pruebas, es puro codign a ciegas por ahora.
+    //Esta en proceso de pruebas, es puro coding a ciegas por ahora.
 
     @Test("PIN hashing genera un valor SHA256 correcto")
     func testPinHashing() async throws {
