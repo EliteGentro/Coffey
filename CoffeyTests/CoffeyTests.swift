@@ -7,6 +7,7 @@
 
 import Testing
 @testable import Coffey
+import Foundation
 
 struct CoffeyTests {
 
@@ -26,11 +27,11 @@ struct CoffeyTests {
 
     @Test("Finance fields must not be empty or whitespace or negative")
     func testFinanceValidation() async throws {
-        #expect(Finance.isValidFinance("Compra de ropa", "Personal", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("", "Personal", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", "-200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", "200.00", ""))
+        #expect(Finance.isValidFinance("Compra de ropa", "Personal", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("", "Personal", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", -200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", 200.00, ""))
     }
 
     @Test("Admin fields must not be empty or whitespace or invalid")
@@ -46,5 +47,14 @@ struct CoffeyTests {
         #expect(Admin.isValidAdmin("Pedro", "  mail@mail.com", 123, "12345"))
 
     }
+
+//    @Test("Fecha  válida")
+//    func testFechaPasada() {
+//        let fechaPasada = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+//        #expect(Finance.isValidFecha(fechaPasada))
+//        
+//        let fechaFutura = Calendar.current.date(byAdding: .day, value: 1, to: .now)!
+//        #expect(!Gasto.isValidFecha(fechaFutura))
+//    }
 
 }
