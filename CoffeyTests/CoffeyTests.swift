@@ -47,4 +47,13 @@ struct CoffeyTests {
 
     }
 
+    @Test("Fecha  válida")
+    func testFechaPasada() {
+        let fechaPasada = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+        #expect(Gasto.isValidFecha(fechaPasada))
+        
+        let fechaFutura = Calendar.current.date(byAdding: .day, value: 1, to: .now)!
+        #expect(!Gasto.isValidFecha(fechaFutura))
+    }
+
 }
