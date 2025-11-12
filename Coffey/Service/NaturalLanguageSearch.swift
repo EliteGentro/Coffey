@@ -1,5 +1,5 @@
 import SwiftUI
-import FoundationModel
+import FoundationModels
 
 final class NaturalLanguageSearchService: ObservableObject {
   // Modelo de embeddings (singleton, se carga una sola vez)
