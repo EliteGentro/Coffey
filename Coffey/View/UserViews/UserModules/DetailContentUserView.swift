@@ -128,10 +128,14 @@ struct DetailContentUserView: View {
     private func fetchOrCreateProgress() {
         do {
             let userID = user.user_id
+            let localID = user.id
             let contentID = content.content_id
-            
+            print(userID)
+            print(localID)
             //  Split into two smaller filters
-            let byUser = #Predicate<Progress> { $0.user_id == userID }
+            
+            
+            let byUser = userID == 0 ? #Predicate<Progress> { $0.local_user_reference == localID } : #Predicate<Progress> { $0.user_id == userID }
             let byContent = #Predicate<Progress> { $0.content_id == contentID }
             
             // Combine them manually
