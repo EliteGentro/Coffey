@@ -10,19 +10,27 @@ import SwiftUI
 struct MenuCellView: View {
     let systemName: String
     let title: String
+    let color: Color
+
+    init(systemName: String, title: String, color: Color = .brown) {
+        self.systemName = systemName
+        self.title = title
+        self.color = color
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: systemName)
                 .imageScale(.large)
-                .foregroundStyle(.tint)
+                .foregroundStyle(color)
                 .font(.system(size: 40))
 
             Text(title)
-                .font(.headline)
+                .font(.headline).foregroundColor(color)
         }
         .frame(maxWidth: .infinity, minHeight: 120)
         .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
+        .background(RoundedRectangle(cornerRadius: 12).fill(color.opacity(0.1)))
         .contentShape(Rectangle())
         .accessibilityElement()
         .accessibilityLabel(title)

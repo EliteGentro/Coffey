@@ -22,15 +22,15 @@ struct SelectAdminModeView: View {
         LazyVGrid(columns: [GridItem(.flexible())], spacing: 50) {
             // Navigation to user selection view
             NavigationLink(destination: SelectUserView(path: $path, onReset: onReset)) {
-                MenuCellView(systemName: "person.3.fill", title: "Elegir Usuario a Capacitar")
+                MenuCellView(systemName: "person.3.fill", title: "Elegir Usuario a Capacitar", color: .brown)
             }
             // Navigation to user administration
             NavigationLink(destination: AdminUserAdministration()) {
-                MenuCellView(systemName: "person.2.badge.gearshape.fill", title: "Administrar Prestamos")
+                MenuCellView(systemName: "person.2.badge.gearshape.fill", title: "Administrar Prestamos", color: .green)
             }
             // Navigation to content management
             NavigationLink(destination: ManageContentsView()) {
-                MenuCellView(systemName: "arrow.down.circle.fill", title: "Administrar Contenido")
+                MenuCellView(systemName: "arrow.down.circle.fill", title: "Administrar Contenido", color: .teal)
             }
         }
         .padding(50)
