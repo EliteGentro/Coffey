@@ -11,9 +11,10 @@ import SwiftData
 struct DetailContentUserView: View {
     @Environment(\.modelContext) var context
     
+    @State private var navigateToQuiz = false
     @State private var showVideo = false
     @State private var showPDF = false
-    
+    @StateObject private var quizVM = QuizViewModel()
     @State private var selectedFilter: String = "Pendiente"
     @State private var progress : Progress?
     let content: Content
@@ -54,6 +55,13 @@ struct DetailContentUserView: View {
             Text(content.name)
                 .font(.largeTitle)
                 .fontWeight(.bold)
+            if(quizVM.isQuizComplete){
+                Text("Calificación: \(quizVM.correctCount*20)")
+                    .font(.title2.bold())
+                
+                Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
+                    .font(.title3)
+            }
             Text(content.resourceType.capitalized)
                 .font(.title)
                 .font(.title)
@@ -79,6 +87,25 @@ struct DetailContentUserView: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
+            Button {
+                Task {
+                    try? await quizVM.generateQuiz(content: content)
+                    
+                }
+            } label: {
+                if quizVM.isLoading {
+                    ProgressView()
+                } else {
+                    Text("Realizar Quiz")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.gradient)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                }
+            }
+            .padding(.horizontal)
             Button(action: {
                 guard let progress else { return }
 
@@ -122,6 +149,10 @@ struct DetailContentUserView: View {
         .onAppear {
             fetchOrCreateProgress()
         }
+        .sheet(isPresented: $quizVM.isDone) {
+            QuestionView(vm : quizVM)
+                .presentationDetents([.large])
+        }
         
     }
     
@@ -135,16 +166,19 @@ struct DetailContentUserView: View {
             //  Split into two smaller filters
             
             
-            let byUser = userID == 0 ? #Predicate<Progress> { $0.local_user_reference == localID } : #Predicate<Progress> { $0.user_id == userID }
-            let byContent = #Predicate<Progress> { $0.content_id == contentID }
-            
-            // Combine them manually
-            let combinedPredicate = #Predicate<Progress> { progress in
-                byUser.evaluate(progress) && byContent.evaluate(progress)
+            let byUser : Predicate<Progress>
+            if(userID == 0){
+                byUser = #Predicate<Progress> { $0.local_user_reference == localID }
+            } else{
+                byUser  = #Predicate<Progress> { $0.user_id == userID }
             }
 
+            let byContent = #Predicate<Progress> { $0.content_id == contentID }
+            
+            let combinedPredicate = #Predicate<Progress> { progress in byUser.evaluate(progress) && byContent.evaluate(progress)
+            }
+            
             let descriptor = FetchDescriptor<Progress>(predicate: combinedPredicate)
-
             if let existing = try context.fetch(descriptor).first {
                 progress = existing
             } else {
@@ -152,6 +186,7 @@ struct DetailContentUserView: View {
                     progress_id: 0,
                     user_id: userID,
                     content_id: contentID,
+                    grade: 0,
                     status: .notStarted,
                     local_user_reference: user.id
                 )

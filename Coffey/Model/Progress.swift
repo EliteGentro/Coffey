@@ -15,12 +15,13 @@ class Progress: Identifiable, Hashable, Decodable {
     var progress_id : Int
     var user_id: Int
     var content_id: Int
+    var grade : Int
     var status: ProgressStatus
     var local_user_reference: UUID
 
     
     enum CodingKeys: String, CodingKey {
-        case progress_id, user_id, content_id, status
+        case progress_id, user_id, content_id, grade, status
     }
     
     required init(from decoder: Decoder) throws {
@@ -29,6 +30,7 @@ class Progress: Identifiable, Hashable, Decodable {
         self.progress_id = try container.decode(Int.self, forKey: .progress_id)
         self.user_id = try container.decode(Int.self, forKey: .user_id)
         self.content_id = try container.decode(Int.self, forKey: .content_id)
+        self.grade = try container.decode(Int.self, forKey: .grade)
         self.status = try container.decode(ProgressStatus.self, forKey: .status)
         self.local_user_reference = UUID()
     }
@@ -38,6 +40,7 @@ class Progress: Identifiable, Hashable, Decodable {
         progress_id : Int,
         user_id: Int,
         content_id: Int,
+        grade: Int,
         status: ProgressStatus,
         local_user_reference: UUID
     ) {
@@ -45,15 +48,16 @@ class Progress: Identifiable, Hashable, Decodable {
         self.progress_id = progress_id
         self.user_id = user_id
         self.content_id = content_id
+        self.grade = grade
         self.status = status
         self.local_user_reference = local_user_reference
     }
     
     // Mock data
     static let mockProgresses: [Progress] = [
-        Progress(progress_id:1, user_id: 1, content_id: 1, status: ProgressStatus.notStarted, local_user_reference: User.mockUsers[0].id),
-        Progress(progress_id:2, user_id: 1, content_id: 2, status: ProgressStatus.inProgress, local_user_reference: User.mockUsers[0].id),
-        Progress(progress_id:3, user_id: 1, content_id: 3, status: ProgressStatus.completed, local_user_reference: User.mockUsers[0].id)
+        Progress(progress_id:1, user_id: 1, content_id: 1, grade: 100, status: ProgressStatus.notStarted, local_user_reference: User.mockUsers[0].id),
+        Progress(progress_id:2, user_id: 1, content_id: 2, grade: 80, status: ProgressStatus.inProgress, local_user_reference: User.mockUsers[0].id),
+        Progress(progress_id:3, user_id: 1, content_id: 3, grade: 60, status: ProgressStatus.completed, local_user_reference: User.mockUsers[0].id)
     ]
 }
 
