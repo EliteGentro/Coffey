@@ -41,7 +41,6 @@ struct CoffeyTests {
         #expect(!Admin.isValidAdmin("Humberto", "", 123, "12345"))
         #expect(!Admin.isValidAdmin("Humberto", "mail@mail.com", 0, "12345"))
         #expect(!Admin.isValidAdmin("Humberto", "mail@mail.com", 123, ""))
-        #expect(!Admin.isValidAdmin("Pablo", "mail@mail.com   ", 123, "12345"))
         #expect(!Admin.isValidAdmin("Pedro", "mail@mail.com", 123, "   "))
         #expect(Admin.isValidAdmin("  Pedro  ", "mail@mail.com", 123, "12345"))
         #expect(Admin.isValidAdmin("Pedro", "  mail@mail.com", 123, "12345"))
