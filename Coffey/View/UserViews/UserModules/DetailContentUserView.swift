@@ -144,7 +144,7 @@ struct DetailContentUserView: View {
             VideoView(content: content)
         }
         .fullScreenCover(isPresented: $showPDF) {
-            PDFKitView(content: content)
+            PDFViewerContainer(content: content)
         }
         .onAppear {
             fetchOrCreateProgress()

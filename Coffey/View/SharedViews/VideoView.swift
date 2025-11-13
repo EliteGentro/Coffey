@@ -15,15 +15,31 @@ struct VideoView: View {
     let content : Content
     
     var body: some View {
-        VideoPlayer(player: player)
-            .edgesIgnoringSafeArea(.all)
+            ZStack(alignment: .topTrailing) {
+                VideoPlayer(player: player)
+                    .ignoresSafeArea()
+
+                // Close button overlay
+                Button(action: {
+                    player.pause()
+                    dismiss()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(.white)
+                        .shadow(radius: 4)
+                        .padding()
+                }
+            }
             .onAppear {
                 print("Name \(content.name)")
-                let playerItem = downloadManager.getVideoFileAsset(content: self.content)
-                if let playerItem = playerItem {
+                if let playerItem = downloadManager.getVideoFileAsset(content: content) {
                     player = AVPlayer(playerItem: playerItem)
+                    player.play()
                 }
-                player.play()
             }
-    }
+            .onDisappear {
+                player.pause()
+            }
+        }
 }
