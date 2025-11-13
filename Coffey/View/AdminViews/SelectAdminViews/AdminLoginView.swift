@@ -30,7 +30,7 @@ struct AdminLoginView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Image("Coffee-cup")
+            Image("coffee-cup")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
@@ -54,7 +54,7 @@ struct AdminLoginView: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(isPinComplete ? Color.blue : Color.gray.opacity(0.4))
+                    .background(isPinComplete ? Color.brown : Color.gray.opacity(0.4))
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }

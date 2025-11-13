@@ -34,7 +34,7 @@ struct WelcomePageUser: View {
             }
             .font(.largeTitle.bold())
             .padding(40)
-            .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.brown.opacity(0.1)))
             
             // Display user level and course progress
             HStack {
@@ -52,13 +52,13 @@ struct WelcomePageUser: View {
             // Menu options with navigation
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                 NavigationLink(destination: UserLearningView(user: user)) {
-                    MenuCellView(systemName: "book.closed.fill", title: "Aprendizaje")
+                    MenuCellView(systemName: "book.closed.fill", title: "Aprendizaje", color: .blue.opacity(0.8))
                 }
                 NavigationLink(destination: UserFinancesView(user: user)) {
-                    MenuCellView(systemName: "wallet.bifold.fill", title: "Registro de Finanzas")
+                    MenuCellView(systemName: "wallet.bifold.fill", title: "Registro de Finanzas", color: .green.opacity(0.9))
                 }
                 NavigationLink(destination: UserSettingsView(user: user)) {
-                    MenuCellView(systemName: "gear", title: "Ajustes")
+                    MenuCellView(systemName: "gear", title: "Ajustes", color: .gray)
                 }
             }
         }

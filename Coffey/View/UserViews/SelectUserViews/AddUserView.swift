@@ -62,6 +62,7 @@ struct AddUserView: View {
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(Color.brown)
             }
             .navigationTitle("Agregar Usuario")
             .navigationBarTitleDisplayMode(.inline)
