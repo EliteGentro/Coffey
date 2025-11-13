@@ -54,7 +54,7 @@ struct ChangePinView: View {
     }
     
     private func keyForAdmin() -> String {
-        return "admin_\(admin.id.uuidString)"
+        return "admin_\(admin.id.uuidString)_pin"
     }
     
     private func storedHashedPin() -> String? {
