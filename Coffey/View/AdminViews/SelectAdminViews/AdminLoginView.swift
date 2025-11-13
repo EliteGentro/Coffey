@@ -105,6 +105,8 @@ struct AdminLoginView: View {
                     success = false
                     return
                 }
+                message = ""
+                success = true
                 navigateToUserSelect = true
             }) {
                 Text("Entrar")

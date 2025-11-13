@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftData
+import CryptoKit // Para cifrado
+import KeychainSwift //Para guardar el pin
 
 struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
@@ -27,6 +29,8 @@ struct AddAdminView: View {
         Form {
             TextField("Nombre", text: $name)
             TextField("Correo", text: $correo)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
             
             // Password field
             HStack {
@@ -95,6 +99,10 @@ struct AddAdminView: View {
                     } catch{
                         print(error)
                     }
+                    let keychain = KeychainSwift()
+                    let data = Data(password.utf8)
+                    let hashedPassword = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
+                    keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
                     dismiss()
                 } else {
                     showPasswordMismatchAlert = true

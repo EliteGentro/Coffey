@@ -53,13 +53,17 @@ struct ChangePinView: View {
         return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
     
+    private func keyForAdmin() -> String {
+        return "admin_\(admin.id.uuidString)"
+    }
+    
     private func storedHashedPin() -> String? {
-        keychain.get("admin_pin_\(admin.id.uuidString)")
+        keychain.get(keyForAdmin())
     }
     
     private func updatePin(_ newPin: String) {
         let hashed = hashPin(newPin)
-        keychain.set(hashed, forKey: "admin_pin_\(admin.id.uuidString)")
+        keychain.set(hashed, forKey: keyForAdmin())
     }
     
     private func validateCurrentPin(_ pin: String) -> Bool {
@@ -138,6 +142,12 @@ struct ChangePinView: View {
         
         guard !current.isEmpty, !new.isEmpty, !confirm.isEmpty else {
             message = "Todos los campos deben completarse."
+            success = false
+            return
+        }
+        
+        guard storedHashedPin() != nil else {
+            message = "No se encontro pin para este perfil"
             success = false
             return
         }
