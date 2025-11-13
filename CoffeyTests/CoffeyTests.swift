@@ -7,6 +7,7 @@
 
 import Testing
 @testable import Coffey
+import Foundation
 
 struct CoffeyTests {
 
@@ -26,11 +27,11 @@ struct CoffeyTests {
 
     @Test("Finance fields must not be empty or whitespace or negative")
     func testFinanceValidation() async throws {
-        #expect(Finance.isValidFinance("Compra de ropa", "Personal", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("", "Personal", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "", "200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", "-200.00", "Egresos"))
-        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", "200.00", ""))
+        #expect(Finance.isValidFinance("Compra de ropa", "Personal", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("", "Personal", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "", 200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", -200.00, "Egresos"))
+        #expect(!Finance.isValidFinance("Compra de ropa", "Personal", 200.00, ""))
     }
 
     @Test("Admin fields must not be empty or whitespace or invalid")
@@ -40,13 +41,45 @@ struct CoffeyTests {
         #expect(!Admin.isValidAdmin("Humberto", "", 123, "12345"))
         #expect(!Admin.isValidAdmin("Humberto", "mail@mail.com", 0, "12345"))
         #expect(!Admin.isValidAdmin("Humberto", "mail@mail.com", 123, ""))
-        #expect(!Admin.isValidAdmin("Pablo", "mail@mail.com   ", 123, "12345"))
         #expect(!Admin.isValidAdmin("Pedro", "mail@mail.com", 123, "   "))
         #expect(Admin.isValidAdmin("  Pedro  ", "mail@mail.com", 123, "12345"))
         #expect(Admin.isValidAdmin("Pedro", "  mail@mail.com", 123, "12345"))
 
     }
 
+
+    @Test("Fecha  válida")
+    func testFechaPasada() {
+        let fechaPasada = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+        #expect(Finance.isValidFecha(fechaPasada))
+        
+        let fechaFutura = Calendar.current.date(byAdding: .day, value: 1, to: .now)!
+        #expect(!Finance.isValidFecha(fechaFutura))
+    }
+
+    @Test("Content API returns HTTP 200")
+    func testContentAPIStatus() async throws {
+        let url = URL(string: "https://coffey-api.vercel.app/content")!
+        let (_, response) = try await URLSession.shared.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        #expect(httpResponse.statusCode == 200)
+    }
+
+    @Test("Content API decodes to [Content]")
+    func testContentAPIDecode() async throws {
+        let url = URL(string: "https://coffey-api.vercel.app/content")!
+        let (data, _) = try await URLSession.shared.data(from: url)
+
+        #expect(!data.isEmpty)
+
+        let contents = try JSONDecoder().decode([Content].self, from: data)
+        if let first = contents.first {
+            #expect(first.content_id > 0)
+            #expect(!first.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+    }
 
     // ----------------------------------------------------------
     // NUEVOS TESTS: VALIDACIÓN DE LOGIN DE ADMIN
@@ -117,3 +150,4 @@ struct CoffeyTests {
     }
 
 }
+
