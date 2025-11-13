@@ -97,5 +97,9 @@ class Finance: Identifiable, Decodable, Hashable{
         !(amount < 0) &&
         !type.trimmingCharacters(in: .whitespaces).isEmpty
     }
+
+    static func isValidFecha(_ fecha: Date) -> Bool {
+        fecha.timeIntervalSinceNow <= 0
+    }
     
 }

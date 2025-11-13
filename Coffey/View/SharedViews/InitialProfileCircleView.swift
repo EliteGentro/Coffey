@@ -12,7 +12,7 @@ struct InitialProfileCircleView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color.blue.opacity(0.8))
+                .fill(Color.brown.opacity(0.8))
                 .frame(width: 80, height: 80)
             Text(String(name.prefix(1)).uppercased())
                 .font(.largeTitle)

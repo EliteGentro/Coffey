@@ -21,6 +21,7 @@ struct PDFKitView: UIViewRepresentable {
         pdfView.displayMode = .singlePageContinuous
         pdfView.displayDirection = .vertical
         pdfView.document = PDFDocument(url: destinationUrl)
+        
         return pdfView
     }
 

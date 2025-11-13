@@ -65,7 +65,7 @@ struct UserFinancesView: View {
                         .font(.largeTitle)
                 }
                 .padding()
-                .background(Color.blue)
+                .background(Color.brown)
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }

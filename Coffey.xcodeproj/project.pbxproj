@@ -11,10 +11,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E3CCBAED2EC10E1600B09A37 /* CoffeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoffeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F834322EA2019800C65A0A /* Coffey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coffey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		E3CCBAEE2EC10E1600B09A37 /* CoffeyTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CoffeyTests;
+			sourceTree = "<group>";
+		};
 		E3F834342EA2019800C65A0A /* Coffey */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Coffey;
@@ -23,6 +29,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E3CCBAEA2EC10E1600B09A37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E3F8342F2EA2019800C65A0A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				E3F834342EA2019800C65A0A /* Coffey */,
+				E3CCBAEE2EC10E1600B09A37 /* CoffeyTests */,
 				E3F834332EA2019800C65A0A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				E3F834322EA2019800C65A0A /* Coffey.app */,
+				E3CCBAED2EC10E1600B09A37 /* CoffeyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,6 +68,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E3CCBAEC2EC10E1600B09A37 /* CoffeyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3CCBAF32EC10E1600B09A37 /* Build configuration list for PBXNativeTarget "CoffeyTests" */;
+			buildPhases = (
+				E3CCBAE92EC10E1600B09A37 /* Sources */,
+				E3CCBAEA2EC10E1600B09A37 /* Frameworks */,
+				E3CCBAEB2EC10E1600B09A37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3CCBAF22EC10E1600B09A37 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E3CCBAEE2EC10E1600B09A37 /* CoffeyTests */,
+			);
+			name = CoffeyTests;
+			packageProductDependencies = (
+			);
+			productName = CoffeyTests;
+			productReference = E3CCBAED2EC10E1600B09A37 /* CoffeyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E3F834312EA2019800C65A0A /* Coffey */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E3F8343F2EA2019A00C65A0A /* Build configuration list for PBXNativeTarget "Coffey" */;
@@ -86,6 +124,10 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					E3CCBAEC2EC10E1600B09A37 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = E3F834312EA2019800C65A0A;
+					};
 					E3F834312EA2019800C65A0A = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -109,11 +151,19 @@
 			projectRoot = "";
 			targets = (
 				E3F834312EA2019800C65A0A /* Coffey */,
+				E3CCBAEC2EC10E1600B09A37 /* CoffeyTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E3CCBAEB2EC10E1600B09A37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E3F834302EA2019800C65A0A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,6 +174,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E3CCBAE92EC10E1600B09A37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E3F8342E2EA2019800C65A0A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,7 +190,57 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E3CCBAF22EC10E1600B09A37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3F834312EA2019800C65A0A /* Coffey */;
+			targetProxy = E3CCBAF12EC10E1600B09A37 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E3CCBAF42EC10E1600B09A37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W282597C97;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.humberto.CoffeyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Coffey.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Coffey";
+			};
+			name = Debug;
+		};
+		E3CCBAF52EC10E1600B09A37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W282597C97;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.humberto.CoffeyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Coffey.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Coffey";
+			};
+			name = Release;
+		};
 		E3F8343D2EA2019A00C65A0A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -324,6 +431,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E3CCBAF32EC10E1600B09A37 /* Build configuration list for PBXNativeTarget "CoffeyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3CCBAF42EC10E1600B09A37 /* Debug */,
+				E3CCBAF52EC10E1600B09A37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E3F8342D2EA2019800C65A0A /* Build configuration list for PBXProject "Coffey" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

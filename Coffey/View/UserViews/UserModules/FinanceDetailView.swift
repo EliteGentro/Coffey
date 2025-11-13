@@ -82,6 +82,7 @@ struct FinanceDetailView: View {
                         dismiss()
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(Color.brown)
                     Spacer()
                 }
             }

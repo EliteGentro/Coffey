@@ -20,7 +20,10 @@ struct UserLearningView: View {
     private var filteredContents: [Content] {
         downloadedContents.filter { content in
             if let contentProgress = progresses.first(where: {
-                $0.user_id == user.user_id && $0.content_id == content.content_id
+                (user.user_id == 0 ?
+                    $0.local_user_reference == user.id
+                    : $0.user_id == user.user_id)
+                && $0.content_id == content.content_id
             }) {
                 return contentProgress.status == selectedProgressStatus
             } else {
