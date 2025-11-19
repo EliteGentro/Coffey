@@ -44,12 +44,14 @@ struct AddUserView: View {
                         cooperativa_id: 123, //missing logic to ingtegrate cooperativa objects
                         puntaje_aprendizaje: 0,
                         contenidos_terminados: 0,
+                        updatedAt: Date()
                     )
                     let preference = Preference(
                         preference_id: nil,
                         user_id: 0,
                         local_user_reference: user.id,
-                        font_multiplier: 1.0
+                        font_multiplier: 1.0,
+                        updatedAt: Date()
                     )
                     
                     self.context.insert(user)

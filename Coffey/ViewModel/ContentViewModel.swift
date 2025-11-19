@@ -10,81 +10,170 @@ import Combine
 import FoundationModels
 import SwiftData
 import SwiftUI
-
 @Observable
-class ContentViewModel: ObservableObject{
-        var arrContents = [Content]()
-        private let baseURL = "https://coffey-api.vercel.app/content"
+class ContentViewModel: ObservableObject {
 
-        func getContents() async throws {
-            guard let url = URL(string: baseURL) else { return }
-            let (data, response) = try await URLSession.shared.data(from: url)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
-            }
-            self.arrContents = try JSONDecoder().decode([Content].self, from: data)
+    // MARK: - In-memory caches
+    var localContentsArr = [Content]()
+    var remoteContentsArr = [Content]()
+    var remoteDeletedContentsArr = [Content]()
+
+    // MARK: - API
+    private let baseURL = "https://coffey-api.vercel.app/content"
+    private var apiUtil = APIUtil()
+
+    // MARK: - API Calls
+    func getContents() async throws {
+        self.remoteContentsArr = try await apiUtil.get([Content].self, from: baseURL)
+    }
+
+    func getDeletedContents() async throws {
+        self.remoteDeletedContentsArr = try await apiUtil.get([Content].self, from: "\(baseURL)/deleted")
+    }
+
+    /// POST that returns created remote object (with content_id assigned)
+    func createRemoteReturning(_ local: Content) async throws -> Content {
+        return try await apiUtil.sendAndDecode(Content.self, local, to: baseURL, method: "POST")
+    }
+
+    func updateRemote(_ local: Content) async throws {
+        try await apiUtil.send(local, to: "\(baseURL)/\(local.content_id)", method: "PATCH")
+    }
+
+    func deleteRemote(_ local: Content) async throws {
+        try await apiUtil.send(local, to: "\(baseURL)/\(local.content_id)", method: "DELETE")
+    }
+
+    // MARK: - Conflict Resolution
+    enum UpdateDirection { case updateLocal, updateRemote, none }
+
+    func compareUpdates(local: Content, remote: Content) -> UpdateDirection {
+        let localTS = local.updatedAt ?? .distantPast
+        let remoteTS = remote.updatedAt ?? .distantPast
+
+        if localTS > remoteTS { return .updateRemote }
+        if remoteTS > localTS { return .updateLocal }
+        return .none
+    }
+
+    func mergeRemote(into local: Content, remote: Content) {
+        local.name = remote.name
+        local.details = remote.details
+        local.url = remote.url
+        local.resourceType = remote.resourceType
+        local.transcript = remote.transcript
+        local.updatedAt = remote.updatedAt
+    }
+
+    // MARK: - Local DB Load
+    func loadLocalContents(using context: ModelContext) {
+        do {
+            localContentsArr = try context.fetch(FetchDescriptor<Content>())
+        } catch {
+            print("Failed to fetch local contents: \(error)")
+            localContentsArr = []
+        }
+    }
+
+    // MARK: - SYNC ENTRY POINT
+    func syncContents(using context: ModelContext) async throws {
+
+        //Load data
+        loadLocalContents(using: context)
+        try await getContents()
+        try await getDeletedContents()
+
+        // Make lookup dictionaries
+        let remoteByID = Dictionary(uniqueKeysWithValues: remoteContentsArr.map { ($0.content_id, $0) })
+        var syncedIDs = Set<Int>()
+
+        //Crete local that have no ID
+        for local in localContentsArr where local.content_id == 0 && local.deletedAt == nil {
+
+            let createdRemote = try await createRemoteReturning(local)
+
+            // assign remote ID and updatedAt
+            local.content_id = createdRemote.content_id
+            local.updatedAt = createdRemote.updatedAt
+
+            syncedIDs.insert(createdRemote.content_id)
         }
 
-        ///  Synchronize remote API contents with local SwiftData store
-        func syncContents(using context: ModelContext, removeStale: Bool = false) async throws {
-            // 1️⃣ Fetch remote contents (reusing your existing function)
-            try await getContents()
-            let remoteContents = arrContents
+        // Rebuild lookup now that new IDs exist
+        loadLocalContents(using: context)
+        let localByID = Dictionary(uniqueKeysWithValues: localContentsArr.map { ($0.content_id, $0) })
 
-            // 2️⃣ Fetch local contents
-            let localContents: [Content] = try context.fetch(FetchDescriptor<Content>())
-            let localByID = Dictionary(uniqueKeysWithValues: localContents.map { ($0.content_id, $0) })
-            var remoteIDs = Set<Int>()
-
-            // 3️⃣ Add or update local entries
-            for remote in remoteContents {
-                remoteIDs.insert(remote.content_id)
-
-                if let local = localByID[remote.content_id] {
-                    // Update if any values changed (excluding local-only properties like isDownloaded)
-                    var needsUpdate = false
-                    if local.name != remote.name { local.name = remote.name; needsUpdate = true }
-                    if local.url != remote.url { local.url = remote.url; needsUpdate = true }
-                    if local.resourceType != remote.resourceType { local.resourceType = remote.resourceType; needsUpdate = true }
-
-                    if needsUpdate {
-                        // SwiftData automatically tracks changes; you just need to save later
-                    }
-                } else {
-                    // Insert new content
-                    let new = Content(
-                        content_id: remote.content_id,
-                        name: remote.name,
-                        details:remote.details,
-                        url: remote.url,
-                        resourceType: remote.resourceType,
-                        transcript: remote.transcript,
-                        isDownloaded: false
-                    )
-                    context.insert(new)
-                }
+        //Delete locally everything that has been deleted in the database
+        for remoteDeleted in remoteDeletedContentsArr {
+            if let local = localByID[remoteDeleted.content_id] {
+                context.delete(local)
             }
-
-            // 4️⃣ Optionally delete local entries that no longer exist on the server
-            if removeStale {
-                for local in localContents where !remoteIDs.contains(local.content_id) {
-                    context.delete(local)
-                }
-            }
-
-            // 5️⃣ Save
-            try context.save()
-
-            // 6️⃣ Refresh local array for the view
-            arrContents = try context.fetch(FetchDescriptor<Content>())
         }
 
-        /// Fetch only local contents from SwiftData
-        func loadLocalContents(using context: ModelContext) {
-            do {
-                arrContents = try context.fetch(FetchDescriptor<Content>())
-            } catch {
-                print("Failed to fetch local contents: \(error)")
-                arrContents = []
+        //Process local items that are not new and haven't been deleted
+        for local in localContentsArr {
+
+            // Already processed as new, shouldn't be used
+            if local.content_id == 0 { continue }
+
+            //If deleted locally, delete from database and delete locally
+            if local.deletedAt != nil {
+                if remoteByID[local.content_id] != nil {
+                    try await deleteRemote(local)
+                }
+                context.delete(local)
+                continue
             }
-        }}
+
+            // If a content exist locally, update baesed on which one was updated first
+            if let remote = remoteByID[local.content_id] {
+
+                switch compareUpdates(local: local, remote: remote) {
+                    case .updateRemote:
+                        try await updateRemote(local)
+
+                    case .updateLocal:
+                        mergeRemote(into: local, remote: remote)
+
+                    case .none:
+                        break
+                }
+
+                syncedIDs.insert(local.content_id)
+                continue
+            }
+
+            // Local exists but is missing remotely → recreate remotely
+            //Fallback that shouldn't happen
+            let recreated = try await createRemoteReturning(local)
+            local.content_id = recreated.content_id
+            local.updatedAt = recreated.updatedAt
+            syncedIDs.insert(recreated.content_id)
+        }
+
+        
+        //Pull remote contents only
+        for remote in remoteContentsArr {
+            if !syncedIDs.contains(remote.content_id) {
+
+                let newLocal = Content(
+                    content_id: remote.content_id,
+                    name: remote.name,
+                    details: remote.details,
+                    url: remote.url,
+                    resourceType: remote.resourceType,
+                    transcript: remote.transcript,
+                    isDownloaded: false,
+                    updatedAt: remote.updatedAt ?? Date(),
+                    deletedAt: nil
+                )
+
+                context.insert(newLocal)
+            }
+        }
+
+        //Svae to swift Data
+        try context.save()
+        loadLocalContents(using: context)
+    }
+}

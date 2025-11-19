@@ -55,6 +55,7 @@ struct UserSettingsView: View {
 
                 Button("Apply") {
                     preference.font_multiplier = tempMultiplier
+                    preference.updatedAt = Date()
                     fontSettings.multiplier = CGFloat(tempMultiplier)
                     do {
                         try context.save()

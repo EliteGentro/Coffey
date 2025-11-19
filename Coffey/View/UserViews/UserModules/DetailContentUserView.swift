@@ -118,6 +118,9 @@ struct DetailContentUserView: View {
                 case .completed:
                     progress.status = .notStarted
                 }
+                
+                // Update timestamp
+                progress.updatedAt = Date()
 
                 // Save the change
                 do {
@@ -188,7 +191,8 @@ struct DetailContentUserView: View {
                     content_id: contentID,
                     grade: 0,
                     status: .notStarted,
-                    local_user_reference: user.id
+                    local_user_reference: user.id,
+                    updatedAt: Date()
                 )
                 context.insert(newProgress)
                 try context.save()

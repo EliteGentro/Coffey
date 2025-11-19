@@ -41,6 +41,30 @@ final class APIUtil: ObservableObject {
             throw URLError(.badServerResponse)
         }
     }
+    
+    func sendAndDecode<T: Decodable, U: Encodable>(
+            _ returnType: T.Type,
+            _ object: U,
+            to endpoint: String,
+            method: String
+        ) async throws -> T {
+            guard let url = URL(string: endpoint) else { throw URLError(.badURL) }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = method
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try JSONEncoder().encode(object)
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200..<300).contains(httpResponse.statusCode) else {
+                throw URLError(.badServerResponse)
+            }
+
+            // decode the created server object
+            return try JSONDecoder().decode(T.self, from: data)
+        }
 
 
 }

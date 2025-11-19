@@ -11,16 +11,17 @@ import SwiftData
 struct ManageContentsView: View {
     @Environment(\.modelContext) private var context
     @StateObject private var contentVM: ContentViewModel
+    @Query var contents: [Content]
     @State private var selectedFilter: String
     private let filters = ["No Descargados", "Descargados"]
 
-    init(contents: [Content] = [], selectedFilter: String = "No Descargados") {
+    init(selectedFilter: String = "No Descargados") {
         _contentVM = StateObject(wrappedValue: ContentViewModel())
         _selectedFilter = State(initialValue: selectedFilter)
     }
 
     private var filteredContents: [Content] {
-        contentVM.arrContents.filter { content in
+        contents.filter { content in
             selectedFilter == "No Descargados" ? !content.isDownloaded : content.isDownloaded
         }
     }
@@ -57,7 +58,7 @@ struct ManageContentsView: View {
         .task {
             // First sync remote -> local, then fetch local to display
             do {
-                try await contentVM.syncContents(using: context, removeStale: false)
+                try await contentVM.syncContents(using: context)
             } catch {
                 print("Sync failed:", error)
                 // Still attempt to fetch local contents so UI can show cached rows

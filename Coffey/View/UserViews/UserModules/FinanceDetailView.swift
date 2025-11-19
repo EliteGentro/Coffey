@@ -64,7 +64,8 @@ struct FinanceDetailView: View {
                                 category: self.selectedCategory,
                                 amount: self.amount,
                                 type: self.type,
-                                local_user_reference: user?.id ?? UUID()
+                                local_user_reference: user?.id ?? UUID(),
+                                updatedAt: Date()
                             )
                             
                             self.context.insert(finance)
@@ -72,6 +73,7 @@ struct FinanceDetailView: View {
                             finance.name = self.name
                             finance.amount = self.amount
                             finance.category = self.selectedCategory
+                            finance.updatedAt = Date()
                         }
                         
                         do{
@@ -88,6 +90,7 @@ struct FinanceDetailView: View {
             }
             if(!createNew){
                 Button(action:{
+                    finance!.deletedAt = Date()
                     context.delete(finance!)
                     do{
                         try self.context.save()

@@ -91,6 +91,7 @@ struct AddAdminView: View {
                         correo : self.correo,
                         cooperativa_id: 123, //missing logic to ingtegrate cooperativa objects
                         password: self.password,
+                        updatedAt: Date()
                     )
                     
                     self.context.insert(admin)
