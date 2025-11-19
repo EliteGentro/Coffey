@@ -16,9 +16,11 @@ class Preference: Identifiable, Decodable, Encodable {
     var user_id: Int
     var local_user_reference: UUID
     var font_multiplier: Double
+    var updatedAt: Date?
+    var deletedAt: Date?
     
     enum CodingKeys: String, CodingKey {
-        case preference_id, user_id, font_multiplier
+        case preference_id, user_id, font_multiplier, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws {
@@ -28,6 +30,8 @@ class Preference: Identifiable, Decodable, Encodable {
         self.user_id = try container.decode(Int.self, forKey: .user_id)
         self.local_user_reference = UUID()
         self.font_multiplier = try container.decode(Double.self, forKey: .font_multiplier)
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -35,15 +39,18 @@ class Preference: Identifiable, Decodable, Encodable {
         try container.encode(self.preference_id, forKey: .preference_id)
         try container.encode(self.user_id, forKey: .user_id)
         try container.encode(self.font_multiplier, forKey: .font_multiplier)
-        
+        try container.encodeIfPresent(self.updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(self.deletedAt, forKey: .deletedAt)
     }
     
-    init(id: UUID = UUID(), preference_id: Int? = nil , user_id: Int , local_user_reference: UUID , font_multiplier: Double = 1.0) {
+    init(id: UUID = UUID(), preference_id: Int? = nil , user_id: Int , local_user_reference: UUID , font_multiplier: Double = 1.0, updatedAt: Date? = nil, deletedAt: Date? = nil) {
         self.id = id
         self.preference_id = preference_id
         self.user_id = user_id
         self.local_user_reference = local_user_reference
         self.font_multiplier = font_multiplier
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
     
     static let mockPreference: Preference = Preference(preference_id: 1, user_id: User.mockUsers.first!.user_id, local_user_reference: User.mockUsers.first!.id,font_multiplier: 1.0)

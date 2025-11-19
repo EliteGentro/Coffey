@@ -17,9 +17,11 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
     var correo: String
     var cooperativa_id: Int
     var password: String
+    var updatedAt: Date?
+    var deletedAt: Date?
     
     enum CodingKeys: String, CodingKey {
-        case admin_id, name, correo, cooperativa_id, password
+        case admin_id, name, correo, cooperativa_id, password, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws {
@@ -30,6 +32,8 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
         self.correo = try container.decode(String.self, forKey: .correo)
         self.cooperativa_id = try container.decode(Int.self, forKey: .cooperativa_id)
         self.password = try container.decode(String.self, forKey: .password)
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -39,6 +43,8 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
         try container.encode(correo, forKey: .correo)
         try container.encode(cooperativa_id, forKey: .cooperativa_id)
         try container.encode(password, forKey: .password)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
     init(
@@ -47,7 +53,9 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
         name: String,
         correo: String,
         cooperativa_id: Int,
-        password: String
+        password: String,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.admin_id = admin_id
@@ -55,6 +63,8 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
         self.correo = correo
         self.cooperativa_id = cooperativa_id
         self.password = password
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 
     

@@ -18,10 +18,12 @@ class Progress: Identifiable, Hashable, Decodable, Encodable {
     var grade : Int
     var status: ProgressStatus
     var local_user_reference: UUID
+    var updatedAt: Date?
+    var deletedAt: Date?
 
     
     enum CodingKeys: String, CodingKey {
-        case progress_id, user_id, content_id, grade, status
+        case progress_id, user_id, content_id, grade, status, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws {
@@ -33,6 +35,8 @@ class Progress: Identifiable, Hashable, Decodable, Encodable {
         self.grade = try container.decode(Int.self, forKey: .grade)
         self.status = try container.decode(ProgressStatus.self, forKey: .status)
         self.local_user_reference = UUID()
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -42,6 +46,8 @@ class Progress: Identifiable, Hashable, Decodable, Encodable {
         try container.encode(self.content_id, forKey: .content_id)
         try container.encode(self.grade, forKey: .grade)
         try container.encode(self.status, forKey: .status)
+        try container.encodeIfPresent(self.updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(self.deletedAt, forKey: .deletedAt)
     }
     
     init(
@@ -51,7 +57,9 @@ class Progress: Identifiable, Hashable, Decodable, Encodable {
         content_id: Int,
         grade: Int,
         status: ProgressStatus,
-        local_user_reference: UUID
+        local_user_reference: UUID,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.progress_id = progress_id
@@ -60,6 +68,8 @@ class Progress: Identifiable, Hashable, Decodable, Encodable {
         self.grade = grade
         self.status = status
         self.local_user_reference = local_user_reference
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
     
     // Mock data

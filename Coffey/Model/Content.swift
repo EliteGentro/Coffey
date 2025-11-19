@@ -21,9 +21,11 @@ class Content: Identifiable, Decodable, Hashable, Encodable  {
     var resourceType: String
     var transcript : String
     var isDownloaded: Bool
+    var updatedAt: Date?
+    var deletedAt: Date?
     
     enum CodingKeys: String, CodingKey {
-        case name, content_id, details, url, resourceType, transcript
+        case name, content_id, details, url, resourceType, transcript, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws {
@@ -36,6 +38,8 @@ class Content: Identifiable, Decodable, Hashable, Encodable  {
         self.resourceType = try container.decode(String.self, forKey: .resourceType)
         self.transcript = try container.decode(String.self, forKey: .transcript)
         self.isDownloaded = false
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -46,6 +50,8 @@ class Content: Identifiable, Decodable, Hashable, Encodable  {
         try container.encode(self.url, forKey: .url)
         try container.encode(self.resourceType, forKey: .resourceType)
         try container.encode(self.transcript, forKey: .transcript)
+        try container.encodeIfPresent(self.updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(self.deletedAt, forKey: .deletedAt)
     }
     
     init(
@@ -56,7 +62,9 @@ class Content: Identifiable, Decodable, Hashable, Encodable  {
         url: String,
         resourceType: String,
         transcript: String,
-        isDownloaded :Bool
+        isDownloaded :Bool,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ){
         self.id = id
         self.content_id = content_id
@@ -66,6 +74,8 @@ class Content: Identifiable, Decodable, Hashable, Encodable  {
         self.resourceType = resourceType
         self.transcript = transcript
         self.isDownloaded = isDownloaded
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
     
     static let mockContents: [Content] = [

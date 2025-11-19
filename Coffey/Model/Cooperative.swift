@@ -15,9 +15,11 @@ class Cooperativa: Identifiable, Hashable, Decodable, Encodable {
     @Attribute(.unique) var id: UUID
     var cooperativa_id: Int
     var name: String
+    var updatedAt: Date?
+    var deletedAt: Date?
     
     enum CodingKeys: String, CodingKey {
-        case cooperativa_id, name
+        case cooperativa_id, name, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws {
@@ -25,23 +27,30 @@ class Cooperativa: Identifiable, Hashable, Decodable, Encodable {
         self.id = UUID() 
         self.cooperativa_id = try container.decode(Int.self, forKey: .cooperativa_id)
         self.name = try container.decode(String.self, forKey: .name)
-
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(cooperativa_id, forKey: .cooperativa_id)
         try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
     init(
         id: UUID = UUID(),
         cooperativa_id: Int,
-        name: String
+        name: String,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.cooperativa_id = cooperativa_id
         self.name = name
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 
     

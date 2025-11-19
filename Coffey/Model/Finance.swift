@@ -19,9 +19,11 @@ class Finance: Identifiable, Decodable, Hashable{
     var amount : Double
     var type : String
     var local_user_reference: UUID
+    var updatedAt: Date?
+    var deletedAt: Date?
     
     enum CodingKeys: String, CodingKey {
-        case finance_id, user_id, name, date, category, amount, type
+        case finance_id, user_id, name, date, category, amount, type, updatedAt, deletedAt
     }
     
     required init(from decoder: Decoder) throws{
@@ -35,6 +37,8 @@ class Finance: Identifiable, Decodable, Hashable{
         self.amount = try container.decode(Double.self, forKey: .amount)
         self.type = try container.decode(String.self, forKey: .type)
         self.local_user_reference = UUID()
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -45,6 +49,8 @@ class Finance: Identifiable, Decodable, Hashable{
         try container.encode(category, forKey: .category)
         try container.encode(amount, forKey: .amount)
         try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
     init(
@@ -56,7 +62,9 @@ class Finance: Identifiable, Decodable, Hashable{
         category: String,
         amount: Double,
         type: String,
-        local_user_reference: UUID
+        local_user_reference: UUID,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ){
         self.id = id
         self.finance_id = finance_id
@@ -67,6 +75,8 @@ class Finance: Identifiable, Decodable, Hashable{
         self.amount = amount
         self.type = type
         self.local_user_reference = local_user_reference
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
     
     static let mockFinances: [Finance] = [
