@@ -10,7 +10,7 @@ import SwiftData
 import Foundation
 
 @Model
-class Progress: Identifiable, Hashable, Decodable {
+class Progress: Identifiable, Hashable, Decodable, Encodable {
     @Attribute(.unique) var id: UUID
     var progress_id : Int
     var user_id: Int
@@ -33,6 +33,15 @@ class Progress: Identifiable, Hashable, Decodable {
         self.grade = try container.decode(Int.self, forKey: .grade)
         self.status = try container.decode(ProgressStatus.self, forKey: .status)
         self.local_user_reference = UUID()
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.progress_id, forKey: .progress_id)
+        try container.encode(self.user_id, forKey: .user_id)
+        try container.encode(self.content_id, forKey: .content_id)
+        try container.encode(self.grade, forKey: .grade)
+        try container.encode(self.status, forKey: .status)
     }
     
     init(

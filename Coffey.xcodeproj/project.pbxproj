@@ -10,6 +10,16 @@
 		FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB9B2C472EBE89C5004CAD28 /* KeychainSwift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E328E4E02ECD489C00568213 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E3F8342A2EA2019800C65A0A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3F834312EA2019800C65A0A;
+			remoteInfo = Coffey;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		E3CCBAED2EC10E1600B09A37 /* CoffeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoffeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F834322EA2019800C65A0A /* Coffey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coffey.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,7 +204,7 @@
 		E3CCBAF22EC10E1600B09A37 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E3F834312EA2019800C65A0A /* Coffey */;
-			targetProxy = E3CCBAF12EC10E1600B09A37 /* PBXContainerItemProxy */;
+			targetProxy = E328E4E02ECD489C00568213 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

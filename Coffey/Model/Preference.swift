@@ -10,7 +10,7 @@ import Foundation
 
 
 @Model
-class Preference: Identifiable, Decodable {
+class Preference: Identifiable, Decodable, Encodable {
     @Attribute(.unique) var id: UUID
     var preference_id : Int?
     var user_id: Int
@@ -28,6 +28,14 @@ class Preference: Identifiable, Decodable {
         self.user_id = try container.decode(Int.self, forKey: .user_id)
         self.local_user_reference = UUID()
         self.font_multiplier = try container.decode(Double.self, forKey: .font_multiplier)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.preference_id, forKey: .preference_id)
+        try container.encode(self.user_id, forKey: .user_id)
+        try container.encode(self.font_multiplier, forKey: .font_multiplier)
+        
     }
     
     init(id: UUID = UUID(), preference_id: Int? = nil , user_id: Int , local_user_reference: UUID , font_multiplier: Double = 1.0) {

@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Admin: Identifiable, Hashable, Decodable {
+final class Admin: Identifiable, Hashable, Decodable, Encodable {
     @Attribute(.unique) var id: UUID
     var admin_id: Int
     var name: String
@@ -30,6 +30,15 @@ final class Admin: Identifiable, Hashable, Decodable {
         self.correo = try container.decode(String.self, forKey: .correo)
         self.cooperativa_id = try container.decode(Int.self, forKey: .cooperativa_id)
         self.password = try container.decode(String.self, forKey: .password)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(admin_id, forKey: .admin_id)
+        try container.encode(name, forKey: .name)
+        try container.encode(correo, forKey: .correo)
+        try container.encode(cooperativa_id, forKey: .cooperativa_id)
+        try container.encode(password, forKey: .password)
     }
     
     init(

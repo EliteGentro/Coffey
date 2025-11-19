@@ -37,6 +37,16 @@ class Finance: Identifiable, Decodable, Hashable{
         self.local_user_reference = UUID()
     }
     
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(finance_id, forKey: .finance_id)
+        try container.encode(user_id, forKey: .user_id)
+        try container.encode(name, forKey: .name)
+        try container.encode(category, forKey: .category)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(type, forKey: .type)
+    }
+    
     init(
         id:UUID = UUID(),
         finance_id: Int,

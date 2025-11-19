@@ -9,7 +9,7 @@ import SwiftData
 import Foundation
 
 @Model
-class User: Identifiable, Hashable, Decodable {
+class User: Identifiable, Hashable, Decodable, Encodable {
     @Attribute(.unique) var id: UUID
     var user_id: Int
     var name: String
@@ -29,6 +29,15 @@ class User: Identifiable, Hashable, Decodable {
         self.cooperativa_id = try container.decode(Int.self, forKey: .cooperativa_id)
         self.puntaje_aprendizaje = try container.decode(Int.self, forKey: .puntaje_aprendizaje)
         self.contenidos_terminados = try container.decode(Int.self, forKey: .contenidos_terminados)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(user_id, forKey: .user_id)
+        try container.encode(name, forKey: .name)
+        try container.encode(cooperativa_id, forKey: .cooperativa_id)
+        try container.encode(puntaje_aprendizaje, forKey: .puntaje_aprendizaje)
+        try container.encode(contenidos_terminados, forKey: .contenidos_terminados)
     }
     
     init(

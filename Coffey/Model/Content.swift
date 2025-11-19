@@ -9,9 +9,10 @@
 import Foundation
 import SwiftData
 import System
+import Combine
 
 @Model
-class Content: Identifiable, Decodable, Hashable  {
+class Content: Identifiable, Decodable, Hashable, Encodable  {
     @Attribute(.unique) var id : UUID
     var content_id : Int
     var name: String
@@ -35,6 +36,16 @@ class Content: Identifiable, Decodable, Hashable  {
         self.resourceType = try container.decode(String.self, forKey: .resourceType)
         self.transcript = try container.decode(String.self, forKey: .transcript)
         self.isDownloaded = false
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.content_id, forKey: .content_id)
+        try container.encode(self.name, forKey: .name)
+        try container.encode(self.details, forKey: .details)
+        try container.encode(self.url, forKey: .url)
+        try container.encode(self.resourceType, forKey: .resourceType)
+        try container.encode(self.transcript, forKey: .transcript)
     }
     
     init(
