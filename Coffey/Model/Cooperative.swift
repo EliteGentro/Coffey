@@ -11,7 +11,7 @@ import SwiftData
 import Combine
 
 @Model
-class Cooperativa: Identifiable, Hashable, Decodable, Encodable {
+final class Cooperativa: Identifiable, Hashable, Decodable, Encodable, Sendable  {
     @Attribute(.unique) var id: UUID
     var cooperativa_id: Int
     var name: String

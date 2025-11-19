@@ -10,7 +10,7 @@ import SwiftData
 import Foundation
 
 @Model
-class Progress: Identifiable, Hashable, Decodable, Encodable {
+final class Progress: Identifiable, Hashable, Decodable, Encodable, Sendable  {
     @Attribute(.unique) var id: UUID
     var progress_id : Int
     var user_id: Int

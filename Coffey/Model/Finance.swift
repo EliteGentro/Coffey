@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Finance: Identifiable, Decodable, Hashable{
+final class Finance: Identifiable, Decodable, Hashable, Sendable {
     @Attribute(.unique) var id : UUID
     var finance_id : Int
     var user_id : Int

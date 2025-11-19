@@ -8,7 +8,7 @@
 import SwiftData
 import Foundation
 @Model
-class User: Identifiable, Hashable, Codable {
+final class User: Identifiable, Hashable, Codable, Sendable  {
 
     @Attribute(.unique) var id: UUID
     var user_id: Int

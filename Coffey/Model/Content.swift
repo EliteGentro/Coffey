@@ -12,7 +12,7 @@ import System
 import Combine
 
 @Model
-class Content: Identifiable, Decodable, Hashable, Encodable  {
+final class Content: Identifiable, Decodable, Hashable, Encodable, Sendable  {
     @Attribute(.unique) var id : UUID
     var content_id : Int
     var name: String

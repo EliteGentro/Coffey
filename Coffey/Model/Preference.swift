@@ -10,7 +10,7 @@ import Foundation
 
 
 @Model
-class Preference: Identifiable, Decodable, Encodable {
+final class Preference: Identifiable, Decodable, Encodable, Sendable  {
     @Attribute(.unique) var id: UUID
     var preference_id : Int?
     var user_id: Int
