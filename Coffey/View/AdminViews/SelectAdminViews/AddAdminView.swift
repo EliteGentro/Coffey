@@ -31,16 +31,17 @@ struct AddAdminView: View {
             TextField("Correo", text: $correo)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)
+                .keyboardType(.emailAddress)
             
             // Password field
             HStack {
                 Group {
                     if showPassword {
                         TextField("Contraseña", text: $password)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     } else {
                         SecureField("Contraseña", text: $password)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     }
                 }
                 Button(action: {

@@ -24,7 +24,7 @@ struct PinInputView: View {
                         oldValue = pin[index]
                     }
                 })
-                .keyboardType(.numberPad)
+                .keyboardType(.numbersAndPunctuation)
                 .frame(width: 40, height: 50)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(6)
