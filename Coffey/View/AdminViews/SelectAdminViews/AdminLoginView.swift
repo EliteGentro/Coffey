@@ -80,7 +80,7 @@ struct AdminLoginView: View {
             //Si es asi, esta todo bien, y funciona. (Aprovado: Funciona)
 
             // Reusable PIN input field
-            PinInputView(pin: $pin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
+            PinInputView(pin: $pin, numberOfDigits: numberOfDigits)
             
             Button(action: { //Todo lo de aca es para verificar si el pin es numerico, sean 6 digitos y si el pin es correcto
                 let enteredPin = pin.joined()

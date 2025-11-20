@@ -89,21 +89,21 @@ struct ChangePinView: View {
                     Text("PIN actual")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $currentPin, fieldFocus: _focusCurrent, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $currentPin, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $newPin, fieldFocus: _focusNew, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $newPin, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Confirmar nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $confirmPin, fieldFocus: _focusConfirm, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $confirmPin, numberOfDigits: numberOfDigits)
                 }
             }
             .padding(.horizontal, 40)
