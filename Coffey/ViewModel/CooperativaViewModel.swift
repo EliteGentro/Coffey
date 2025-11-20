@@ -11,7 +11,7 @@ import SwiftData
 import SwiftUI
 
 @Observable
-class CooperativeViewModel: ObservableObject {
+class CooperativaViewModel: ObservableObject {
 
     // MARK: - In-memory caches
     var localCooperativasArr = [Cooperativa]()
