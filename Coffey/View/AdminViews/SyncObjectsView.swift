@@ -9,8 +9,10 @@ import SwiftUI
 
 struct SyncObjectsView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var dbSync = DBSynchronizer()
-    
+    // State for showing leave alert
+    @State private var showLeaveAlert = false
     var body: some View {
         VStack{
             if(dbSync.isSynchronizing){
@@ -37,9 +39,35 @@ struct SyncObjectsView: View {
                     .cornerRadius(10)
                 }
             }
-            Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No salgas de la aplicación hasta que esta finalice.")
+            Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
                 .font(Font.largeTitle.bold())
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    if(!dbSync.isSynchronized){
+                        showLeaveAlert = true
+                    } else{
+                        dismiss()
+                    }
+
+                }) {
+                    Image(systemName: "chevron.left")
+                }
+                .disabled(dbSync.isSynchronizing)
+            }
+        }
+        // Alert confirmation for leaving
+        .alert("¿Seguro que quieres salir?", isPresented: $showLeaveAlert) {
+            Button("Cancelar", role: .cancel) {}
+            Button("Confirmar", role: .destructive) {
+                dismiss()
+            }
+        } message: {
+            Text("No hiciste ninguna sincronización de datos")
+        }
+        .padding(50)
         
     }
 }

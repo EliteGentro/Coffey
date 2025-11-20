@@ -34,7 +34,7 @@ struct SelectAdminModeView: View {
             }
             // Synchronize Content
             NavigationLink(destination: SyncObjectsView()) {
-                MenuCellView(systemName: "arrow.trianglehead.2.clockwise.rotate.90", title: "Sincronizar Contenido", color: .teal)
+                MenuCellView(systemName: "arrow.trianglehead.2.clockwise.rotate.90", title: "Sincronizar Contenido", color: .indigo)
             }
         }
         .padding(50)
