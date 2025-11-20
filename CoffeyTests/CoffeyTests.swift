@@ -8,6 +8,7 @@
 import Testing
 @testable import Coffey
 import Foundation
+import KeychainSwift
 
 struct CoffeyTests {
 
