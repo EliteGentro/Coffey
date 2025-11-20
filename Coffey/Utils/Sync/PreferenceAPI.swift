@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct PreferenceAPI: SyncAPI {
     typealias Model = Preference
 

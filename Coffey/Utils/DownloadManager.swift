@@ -41,7 +41,7 @@ final class DownloadManager: ObservableObject {
     func downloadFile(content: Content) {
         print("downloadFile \(content.url)")
         
-        let contentID = content.content_id // capture simple Sendable value
+        let contentID = content.content_id
         let contentURLString = content.url
 
         downloadingStatus[contentID] = true
@@ -68,7 +68,6 @@ final class DownloadManager: ObservableObject {
             return
         }
 
-        // ✅ only captures Sendable values (Int, String)
         let dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self else { return }
 

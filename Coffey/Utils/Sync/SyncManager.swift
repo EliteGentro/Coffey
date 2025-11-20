@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-@MainActor
+
 final class SyncManager {
     static let shared = SyncManager()
     private init() {}
@@ -28,14 +28,13 @@ final class SyncManager {
         api: API,
         using context: ModelContext
     ) async throws where API.Model == T {
-
         let localArr = try context.fetch(FetchDescriptor<T>())
         let remoteArr = try await api.fetchAll()
         let remoteDeleted = try await api.fetchDeleted()
 
         var synced = Set<T.IDType>()
         let remoteByID = Dictionary(uniqueKeysWithValues: remoteArr.map { ($0.remoteID, $0) })
-
+        
         // Step 1 — Create local-only items
         for local in localArr where local.remoteID as? Int == 0 && local.deletedAt == nil {
             let created = try await api.create(local)
@@ -71,7 +70,7 @@ final class SyncManager {
                 case .updateRemote:
                     try await api.update(local)
                 case .updateLocal:
-                    var mutable = local
+                    let mutable = local
                     mutable.merge(from: remote)
                 case .none:
                     break

@@ -10,12 +10,11 @@ import Combine
 import SwiftData
 
 final class DBSynchronizer: ObservableObject {
-    var syncProgress : Int = 0
-    var isSynchronizing : Bool = false
-    var isSynchronized : Bool = false
+    @Published var syncProgress : Int = 0
+    @Published var isSynchronizing: Bool = false
+    @Published var isSynchronized: Bool = false
     func fullSynchronization(context: ModelContext) async throws {
         self.isSynchronizing = true
-        
         //Declare VM
         let adminVM = AdminViewModel()
         let contentVM = ContentViewModel()
@@ -24,6 +23,7 @@ final class DBSynchronizer: ObservableObject {
         let preferenceVM = PreferenceViewModel()
         let progressVM = ProgressViewModel()
         let userVM = UserViewModel()
+        
         
         //First Sync objects with no references
         
@@ -35,7 +35,6 @@ final class DBSynchronizer: ObservableObject {
         syncProgress += 14
         try await userVM.syncUsers(using: context)
         syncProgress += 14
-        
         //Update Objects that depend on user to be updated first
         try await financeVM.syncFinances(using: context)
         syncProgress += 14

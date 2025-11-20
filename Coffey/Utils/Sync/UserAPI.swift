@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct UserAPI: SyncAPI {
     typealias Model = User
 

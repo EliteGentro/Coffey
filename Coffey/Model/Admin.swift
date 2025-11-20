@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Admin: Identifiable, Hashable, Decodable, Encodable {
+final class Admin: Identifiable, Hashable, Codable {
     @Attribute(.unique) var id: UUID
     var admin_id: Int
     var name: String
@@ -38,13 +38,10 @@ final class Admin: Identifiable, Hashable, Decodable, Encodable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(admin_id, forKey: .admin_id)
         try container.encode(name, forKey: .name)
         try container.encode(correo, forKey: .correo)
         try container.encode(cooperativa_id, forKey: .cooperativa_id)
         try container.encode(password, forKey: .password)
-        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
-        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
     init(

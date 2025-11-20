@@ -11,8 +11,9 @@ import SwiftData
 import System
 import Combine
 
+
 @Model
-final class Content: Identifiable, Decodable, Hashable, Encodable, Sendable  {
+final class Content: Identifiable, Codable, Hashable  {
     @Attribute(.unique) var id : UUID
     var content_id : Int
     var name: String
@@ -44,14 +45,11 @@ final class Content: Identifiable, Decodable, Hashable, Encodable, Sendable  {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.content_id, forKey: .content_id)
         try container.encode(self.name, forKey: .name)
         try container.encode(self.details, forKey: .details)
         try container.encode(self.url, forKey: .url)
         try container.encode(self.resourceType, forKey: .resourceType)
         try container.encode(self.transcript, forKey: .transcript)
-        try container.encodeIfPresent(self.updatedAt, forKey: .updatedAt)
-        try container.encodeIfPresent(self.deletedAt, forKey: .deletedAt)
     }
     
     init(

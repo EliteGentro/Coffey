@@ -32,6 +32,10 @@ struct SelectAdminModeView: View {
             NavigationLink(destination: ManageContentsView()) {
                 MenuCellView(systemName: "arrow.down.circle.fill", title: "Administrar Contenido", color: .teal)
             }
+            // Synchronize Content
+            NavigationLink(destination: SyncObjectsView()) {
+                MenuCellView(systemName: "arrow.trianglehead.2.clockwise.rotate.90", title: "Sincronizar Contenido", color: .teal)
+            }
         }
         .padding(50)
         .navigationTitle("Seleccionar Modo de Administrador")

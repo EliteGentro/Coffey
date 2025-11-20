@@ -22,7 +22,9 @@ final class APIUtil: ObservableObject {
             throw URLError(.badServerResponse)
         }
         
-        return try JSONDecoder().decode(T.self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(T.self, from: data)
     }
     
     func send<T: Encodable>(_ object: T, to endpoint: String, method: String) async throws {
@@ -63,8 +65,11 @@ final class APIUtil: ObservableObject {
             }
 
             // decode the created server object
-            return try JSONDecoder().decode(T.self, from: data)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            return try decoder.decode(T.self, from: data)
         }
 
 
 }
+

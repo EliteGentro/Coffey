@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Finance: Identifiable, Decodable, Hashable, Sendable {
+final class Finance: Identifiable, Codable, Hashable {
     @Attribute(.unique) var id : UUID
     var finance_id : Int
     var user_id : Int
@@ -43,14 +43,11 @@ final class Finance: Identifiable, Decodable, Hashable, Sendable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(finance_id, forKey: .finance_id)
         try container.encode(user_id, forKey: .user_id)
         try container.encode(name, forKey: .name)
         try container.encode(category, forKey: .category)
         try container.encode(amount, forKey: .amount)
         try container.encode(type, forKey: .type)
-        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
-        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
     
     init(

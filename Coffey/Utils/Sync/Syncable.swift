@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 
+
 protocol Syncable: PersistentModel, Identifiable {
     associatedtype IDType: Hashable
 

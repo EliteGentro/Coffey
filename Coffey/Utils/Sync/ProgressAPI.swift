@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct ProgressAPI: SyncAPI {
     typealias Model = Progress
 

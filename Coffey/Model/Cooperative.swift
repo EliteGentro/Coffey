@@ -11,7 +11,7 @@ import SwiftData
 import Combine
 
 @Model
-final class Cooperativa: Identifiable, Hashable, Decodable, Encodable, Sendable  {
+final class Cooperativa: Identifiable, Hashable, Codable  {
     @Attribute(.unique) var id: UUID
     var cooperativa_id: Int
     var name: String
@@ -33,7 +33,6 @@ final class Cooperativa: Identifiable, Hashable, Decodable, Encodable, Sendable 
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(cooperativa_id, forKey: .cooperativa_id)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)

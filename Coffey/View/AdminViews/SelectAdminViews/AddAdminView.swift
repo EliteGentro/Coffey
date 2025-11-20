@@ -89,7 +89,7 @@ struct AddAdminView: View {
                         admin_id: 0,
                         name : self.name,
                         correo : self.correo,
-                        cooperativa_id: 123, //missing logic to ingtegrate cooperativa objects
+                        cooperativa_id: 1, //missing logic to ingtegrate cooperativa objects
                         password: self.password,
                         updatedAt: Date()
                     )

@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct AdminAPI: SyncAPI {
     typealias Model = Admin
 

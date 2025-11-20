@@ -7,8 +7,9 @@
 
 import SwiftData
 import Foundation
+
 @Model
-final class User: Identifiable, Hashable, Codable, Sendable  {
+final class User: Identifiable, Hashable, Codable {
 
     @Attribute(.unique) var id: UUID
     var user_id: Int
@@ -49,13 +50,10 @@ final class User: Identifiable, Hashable, Codable, Sendable  {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(user_id, forKey: .user_id)
         try container.encode(name, forKey: .name)
         try container.encode(cooperativa_id, forKey: .cooperativa_id)
         try container.encode(puntaje_aprendizaje, forKey: .puntaje_aprendizaje)
         try container.encode(contenidos_terminados, forKey: .contenidos_terminados)
-        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
-        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
 
     // MARK: - Main Initializer

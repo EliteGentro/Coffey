@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct ContentAPI: SyncAPI {
     typealias Model = Content
 
