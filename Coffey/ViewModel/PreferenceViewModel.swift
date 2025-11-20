@@ -59,7 +59,7 @@ class PreferenceViewModel: ObservableObject {
         local.font_multiplier = remote.font_multiplier
         local.updatedAt = remote.updatedAt
     }
-
+    
     // MARK: - Local DB Load
     func loadLocalPreferences(using context: ModelContext) {
         do {
@@ -70,6 +70,28 @@ class PreferenceViewModel: ObservableObject {
         }
     }
 
+    // MARK: - UPDATE GLOBAL USER ID
+    func resolveUserReferences(context: ModelContext) {
+        let userVM = UserViewModel()
+        userVM.loadLocalUsers(using: context)
+
+        let map = Dictionary(uniqueKeysWithValues:
+                                userVM.localUsersArr.map { ($0.id, $0.user_id) })
+
+        for preference in localPreferencesArr {
+            if preference.user_id == 0,
+               let resolved = map[preference.local_user_reference] {
+                preference.user_id = resolved
+            }
+        }
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save context in PreferenceVM:", error)
+        }
+    }
+    
     // MARK: - SYNC ENTRY POINT
     func syncPreferences(using context: ModelContext) async throws {
         try await SyncManager.shared.sync(model: Preference.self, api: api, using: context)

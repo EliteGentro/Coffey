@@ -72,8 +72,33 @@ class ProgressViewModel: ObservableObject {
         }
     }
 
+    // MARK: - UPDATE GLOBAL USER ID
+    func resolveUserReferences(context: ModelContext) {
+        let userVM = UserViewModel()
+        userVM.loadLocalUsers(using: context)
+
+        let map = Dictionary(uniqueKeysWithValues:
+                                userVM.localUsersArr.map { ($0.id, $0.user_id) })
+
+        for progress in localProgressesArr {
+            if progress.user_id == 0,
+               let resolved = map[progress.local_user_reference] {
+                progress.user_id = resolved
+            }
+        }
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save context in ProgressVM:", error)
+        }
+    }
+    
     // MARK: - SYNC ENTRY POINT
     func syncProgresses(using context: ModelContext) async throws {
+        
+        loadLocalProgresses(using: context)
+        resolveUserReferences(context: context)
         try await SyncManager.shared.sync(model: Progress.self, api: api, using: context)
         loadLocalProgresses(using: context)
     }
