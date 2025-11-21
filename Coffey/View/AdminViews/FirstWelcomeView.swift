@@ -12,6 +12,8 @@ struct FirstWelcomeView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var dbSync = DBSynchronizer()
     @AppStorage("firstTime") var firstTime: Bool = true
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
     var body: some View {
         VStack(){
             Text("Se detectó que es la primera vez se abre la aplicación. Por favor comience una sincronización con una conexión a internet")
@@ -28,6 +30,8 @@ struct FirstWelcomeView: View {
                         do {
                             try await dbSync.fullSynchronization(context: context)
                         } catch {
+                            showErrorAlert = true
+                            errorMessage = "\(error)"
                             print("Sync error: \(error)")
                         }
                     }
@@ -65,7 +69,12 @@ struct FirstWelcomeView: View {
         .padding(10)
         .navigationTitle("Bienvenido")
         .navigationBarTitleDisplayMode(.inline)
-            }
+        .alert("Error: Revise su Conexión", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
+    }
 }
 
 #Preview {

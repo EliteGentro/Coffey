@@ -13,6 +13,8 @@ struct SyncObjectsView: View {
     @StateObject private var dbSync = DBSynchronizer()
     // State for showing leave alert
     @State private var showLeaveAlert = false
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
     var body: some View {
         VStack{
             if(dbSync.isSynchronizing){
@@ -23,6 +25,8 @@ struct SyncObjectsView: View {
                         do {
                             try await dbSync.fullSynchronization(context: context)
                         } catch {
+                            showErrorAlert = true
+                            errorMessage = "\(error)"
                             print("Sync error: \(error)")
                         }
                     }
@@ -67,7 +71,13 @@ struct SyncObjectsView: View {
         } message: {
             Text("No hiciste ninguna sincronización de datos")
         }
+        .alert("Error: Revise su Conexión", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage)
+        }
         .padding(50)
+        
         
     }
 }

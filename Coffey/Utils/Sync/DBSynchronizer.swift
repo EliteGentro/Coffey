@@ -13,9 +13,23 @@ final class DBSynchronizer: ObservableObject {
     @Published var syncProgress : Int = 0
     @Published var isSynchronizing: Bool = false
     @Published var isSynchronized: Bool = false
+    
     func fullSynchronization(context: ModelContext) async throws {
-        self.isSynchronizing = true
-        //Declare VM
+        // Start sync
+        await MainActor.run {
+            self.isSynchronizing = true
+            self.syncProgress = 0
+            self.isSynchronized = false
+        }
+        
+        // ALWAYS runs — even if an error is thrown before finishing
+        defer {
+            Task { @MainActor in
+                self.isSynchronizing = false
+            }
+        }
+        
+        // Declare VMs
         let adminVM = AdminViewModel()
         let contentVM = ContentViewModel()
         let cooperativaVM = CooperativaViewModel()
@@ -24,27 +38,31 @@ final class DBSynchronizer: ObservableObject {
         let progressVM = ProgressViewModel()
         let userVM = UserViewModel()
         
-        
-        //First Sync objects with no references
-        
+        // First sync (no references)
         try await adminVM.syncAdmins(using: context)
-        syncProgress += 14
-        try await contentVM.syncContents(using: context)
-        syncProgress += 14
-        try await cooperativaVM.syncCooperativas(using: context)
-        syncProgress += 14
-        try await userVM.syncUsers(using: context)
-        syncProgress += 14
-        //Update Objects that depend on user to be updated first
-        try await financeVM.syncFinances(using: context)
-        syncProgress += 14
-        try await preferenceVM.syncPreferences(using: context)
-        syncProgress += 14
-        try await progressVM.syncProgresses(using: context)
-        syncProgress = 100
+        await MainActor.run { syncProgress += 14 }
         
-        self.isSynchronized = true
-        self.isSynchronizing = false
+        try await contentVM.syncContents(using: context)
+        await MainActor.run { syncProgress += 14 }
+        
+        try await cooperativaVM.syncCooperativas(using: context)
+        await MainActor.run { syncProgress += 14 }
+        
+        try await userVM.syncUsers(using: context)
+        await MainActor.run { syncProgress += 14 }
+        
+        // Dependent objects
+        try await financeVM.syncFinances(using: context)
+        await MainActor.run { syncProgress += 14 }
+        
+        try await preferenceVM.syncPreferences(using: context)
+        await MainActor.run { syncProgress += 14 }
+        
+        try await progressVM.syncProgresses(using: context)
+        await MainActor.run { syncProgress = 100 }
+        
+        // If we reach here, sync was successful
+        await MainActor.run { self.isSynchronized = true }
     }
-    
 }
+
