@@ -46,13 +46,16 @@ class ReceiptParser {
             }
         }
 
-        let amountRegex = #"(total|pagar|importe|cantidad)[^\d]*([\d]+\.\d{2})"#
-        if let match = cleaned.firstMatch(of: amountRegex, group: 2) {
+        let totalRegex = #"\b(total|pagar|importe|cantidad)\b[^\d]*([\d]+\.\d{2})"#
+
+        if let match = cleaned.firstMatch(of: totalRegex, group: 2) {
             data.amount = Double(match)
         } else {
-            // fallback: buscar cualquier número grande (suele ser el monto)
-            if let fallback = cleaned.firstMatch(of: #"(\d{2,5}\.\d{2})"#, group: 1) {
-                data.amount = Double(fallback)
+            let allNumbers = cleaned.allMatches(of: #"(\d+\.\d{2})"#, group: 1)
+                .compactMap { Double($0) }
+
+            if let maxNumber = allNumbers.max() {
+                data.amount = maxNumber
             }
         }
 
@@ -75,5 +78,25 @@ extension String {
         }
         return nil
     }
+
+    func allMatches(of pattern: String, group: Int) -> [String] {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+            let nsString = self as NSString
+            let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
+
+            return results.compactMap { match in
+                let r = match.range(at: group)
+                if r.location != NSNotFound {
+                    return nsString.substring(with: r)
+                }
+                return nil
+            }
+        } catch {
+            print("Regex error:", error)
+        }
+        return []
+    }
 }
+
 

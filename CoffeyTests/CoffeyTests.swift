@@ -149,6 +149,58 @@ struct CoffeyTests {
         let validPin = ["1", "2", "3", "4", "5", "6"]
         #expect(validPin.allSatisfy { $0.allSatisfy(\.isNumber) })
     }
+    
+    @Test("Test para verificar que se identifica correctamente el servicio según el recibo")
+    func testDetectService() async throws {
+        var text = "Pago a CFE por consumo de energía eléctrica"
+        var result = await ReceiptParser.parse(from: text)
+        #expect(result.serviceType == "Luz")
+        
+        text = "Recibo TotalPlay con fecha 2025"
+        result = await ReceiptParser.parse(from: text)
+        #expect(result.serviceType == "Internet")
+        
+    }
+    
+    @Test("Test para verificar que se extrae el monto correctamente del recibo")
+    func testMonto() async throws {
+        var text = "TOTAL A PAGAR: $345.67"
+        var result = await ReceiptParser.parse(from: text)
+        #expect(result.amount == 345.67)
+        
+        text = "Consumo general 129.50 MXN"
+        result = await ReceiptParser.parse(from: text)
+        #expect(result.amount == 129.50)
+        
+        text = """
+            Consumo: 123 kWh
+            Subtotal 250.11
+            IVA 40.02
+            Folio 203948234
+            TOTAL A PAGAR: 290.13
+            """
+        result = await ReceiptParser.parse(from: text)
+        #expect(result.amount == 290.13)
+        
+        text = "No hay monto aquí"
+        result = await ReceiptParser.parse(from: text)
+        #expect(result.amount == nil)
+        
+        result = await ReceiptParser.parse(from: "")
+        #expect(result.amount == nil && result.serviceType == nil)
+    }
+    
+    @Test("Test para verificar que con regex se retorna el monto correcto")
+    func testRegex() async throws {
+        var text = "El total es 123.45 pesos"
+        var result = text.firstMatch(of: #"(\d+\.\d{2})"#, group: 1)
+        #expect(result == "123.45")
+        
+        text = "Sin números"
+        result = text.firstMatch(of: #"(\d+\.\d{2})"#, group: 1)
+        #expect(result == nil)
+
+    }
 
 }
 
