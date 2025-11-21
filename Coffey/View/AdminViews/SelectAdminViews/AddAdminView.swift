@@ -24,15 +24,30 @@ struct AddAdminView: View {
     @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
     
     @State private var showPasswordMismatchAlert: Bool = false
+
+    @State private var emailError: Bool = false
+
+    func isValidEmail(_ email: String) -> Bool {
+        let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let range = NSRange(email.startIndex..<email.endIndex, in: email)
+        let matches = detector?.matches(in: email, options: [], range: range)
+        
+        return matches?.first?.url?.scheme == "mailto" && matches?.first?.range == range
+    }
     
+
     var body: some View {
         Form {
             TextField("Nombre", text: $name)
-            TextField("Correo", text: $correo)
+            TextField(emailError ? "Ingresa un correo válido" : "Correo",
+                      text: $correo)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)
-                .keyboardType(.emailAddress)
-            
+                .foregroundColor(emailError ? .red : .primary)
+                .onChange(of: correo) { 
+                    if emailError { emailError = false }
+                }
+
             // Password field
             HStack {
                 Group {
@@ -85,6 +100,13 @@ struct AddAdminView: View {
             }
             
             Button("Guardar") {
+                
+                if !isValidEmail(correo) {
+                    emailError = true
+                    correo = ""
+                    return
+                }
+
                 if password == confirmPassword {
                     let admin = Admin(
                         admin_id: 0,
