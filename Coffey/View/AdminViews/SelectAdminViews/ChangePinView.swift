@@ -17,6 +17,7 @@
 import SwiftUI
 import CryptoKit
 import KeychainSwift
+import CommonCrypto
 
 struct ChangePinView: View {
     let admin: Admin
@@ -54,7 +55,7 @@ struct ChangePinView: View {
     private func keyForAdmin() -> String {
         return "admin_\(admin.id.uuidString)_pin"
     }
-    
+
     private func storedPIN() -> String? {
     keychain.get(keyForAdmin())
     }

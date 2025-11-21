@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import CryptoKit // Para cifrado
 import KeychainSwift //Para guardar el pin
+import CommonCrypto
 
 struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
