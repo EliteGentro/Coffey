@@ -48,6 +48,7 @@ final class Finance: Identifiable, Codable, Hashable {
         try container.encode(category, forKey: .category)
         try container.encode(amount, forKey: .amount)
         try container.encode(type, forKey: .type)
+        try container.encode(date, forKey: .date)
     }
     
     init(
