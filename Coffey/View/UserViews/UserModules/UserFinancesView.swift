@@ -20,6 +20,12 @@ struct UserFinancesView: View {
     }
     @State private var showFinanceDetail : Bool = false
     @State private var showAddFinance : Bool = false
+    @State private var showReceiptScanner : Bool = false
+    @State private var importedFinance: Finance? = nil
+    @State private var createNewFinance : Bool = false
+
+
+    
     
     init(user: User){
         self.user = user
@@ -52,7 +58,9 @@ struct UserFinancesView: View {
             }
             .onChange(of: selectedFinance){ oldValue, newValue in
                 if(newValue != nil){
-                    showFinanceDetail = true;
+                    createNewFinance = false
+                    importedFinance = nil
+                    showFinanceDetail = true
                 }
             }
             Button(action:{
@@ -69,13 +77,52 @@ struct UserFinancesView: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
+            if (selectedFinanceType == "Egresos"){
+                Button(action:{
+                    showReceiptScanner = true
+                }){
+                    HStack {
+                        Image(systemName: "plus.app.fill")
+                            .font(.title)
+                        Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso") Por recibo")
+                            .font(.largeTitle)
+                    }
+                    .padding()
+                    .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+            }
         }
-        .sheet(isPresented: $showFinanceDetail){
-            FinanceDetailView(type: selectedFinanceType, createNew: false, finance: selectedFinanceObject)
+        .sheet(isPresented: $showFinanceDetail) {
+            FinanceDetailView(
+                type: importedFinance?.type ?? selectedFinanceType,
+                createNew: createNewFinance,
+                finance: importedFinance ?? selectedFinanceObject,
+                user: self.user
+            )
+                .onDisappear {
+                    importedFinance = nil
+                }
         }
+
         .sheet(isPresented: $showAddFinance){
-            FinanceDetailView(type: selectedFinanceType, createNew: true, finance: nil)
+            FinanceDetailView(type: selectedFinanceType, createNew: true, finance: nil, user: self.user)
         }
+        .sheet(isPresented: $showReceiptScanner) {
+            ReceiptScannerView(user: user) { finance in
+                
+                self.importedFinance = finance
+                
+                self.showReceiptScanner = false
+                self.createNewFinance = true
+                
+                DispatchQueue.main.async {
+                    self.showFinanceDetail = true
+                }
+            }
+        }
+
         .navigationTitle(Text("Finanzas"))
     }
 }
