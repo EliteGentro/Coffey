@@ -107,12 +107,14 @@ struct AddAdminView: View {
                     return
                 }
                 
-                if isValidNumericPin(password) { 
+                // Validar PIN de 6 dígitos
+                guard isValidNumericPin(password) else {
                     password = ""
                     confirmPassword = ""
                     showPasswordMismatchAlert = true
                     return
                 }
+
 
                 if password == confirmPassword {
                     let admin = Admin(
