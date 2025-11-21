@@ -3,6 +3,7 @@
 //  Coffey
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
+//  Edited by Augusto Orozco on 21/11/25
 //
 
 import SwiftUI
@@ -25,7 +26,9 @@ struct AddAdminView: View {
     @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
     
     @State private var showPasswordMismatchAlert: Bool = false
-
+        
+    @State private var showPinErrorAlert: Bool = false
+    
     @State private var emailError: Bool = false
 
     func isValidEmail(_ email: String) -> Bool {
@@ -52,10 +55,10 @@ struct AddAdminView: View {
             HStack {
                 Group {
                     if showPassword {
-                        TextField("Contraseña", text: $password)
+                        TextField(showPinErrorAlert ? "Ingresa un pin numerico de 6 cifras" :"Contraseña", text: $password)
                             .keyboardType(.numbersAndPunctuation)
                     } else {
-                        SecureField("Contraseña", text: $password)
+                        SecureField(showPinErrorAlert ? "Ingresa un pin numerico de 6 cifras" :"Contraseña", text: $password)
                             .keyboardType(.numbersAndPunctuation)
                     }
                 }
@@ -111,7 +114,7 @@ struct AddAdminView: View {
                 guard isValidNumericPin(password) else {
                     password = ""
                     confirmPassword = ""
-                    showPasswordMismatchAlert = true
+                    showPinErrorAlert = true
                     return
                 }
 

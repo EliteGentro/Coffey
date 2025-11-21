@@ -10,10 +10,6 @@
 
 //Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
 
-//De acuerdo con lo que investigue, puede ser que con tres focusState funcione correctamente el llenado de los campos, me falta probarlo bien dentro del simulador
-//Ya que tengo la teoria de que dentro del preview no va a guardar los datos y no funcionara aunque lo intente, cuando llegue al swiftlab lo corrigo y actualizo
-//El estado de este archivo en particular, generalmente el login ya funciona bien, solo falta esto para poder hacer pullrequest.
-
 import SwiftUI
 import CryptoKit
 import KeychainSwift

@@ -3,7 +3,9 @@
 //  Coffey
 //
 //  Created by Humberto Genaro Cisneros Salinas on 18/10/25.
+//  Edited by Augusto Orozco on 21/11/25
 //
+
 import SwiftUI
 
 // MARK: - UITextField con detección de deleteBackward
