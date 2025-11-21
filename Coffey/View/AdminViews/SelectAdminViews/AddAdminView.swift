@@ -36,6 +36,9 @@ struct AddAdminView: View {
         return matches?.first?.url?.scheme == "mailto" && matches?.first?.range == range
     }
     
+    func isValidNumericPin(_ pin: String) -> Bool {
+        return pin.count == 6 && pin.allSatisfy { $0.isNumber }
+    }
 
     var body: some View {
         Form {
@@ -101,6 +104,13 @@ struct AddAdminView: View {
                 if !isValidEmail(correo) {
                     emailError = true
                     correo = ""
+                    return
+                }
+                
+                if isValidNumericPin(password) { 
+                    password = ""
+                    confirmPassword = ""
+                    showPasswordMismatchAlert = true
                     return
                 }
 
