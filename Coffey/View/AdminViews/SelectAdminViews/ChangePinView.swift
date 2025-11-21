@@ -5,8 +5,6 @@
 //  Created by Augusto Orozco on 07/11/25.
 //
 //
-//  ChangePinView.swift
-//  Coffey
 
 //Si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
 
@@ -57,19 +55,34 @@ struct ChangePinView: View {
         return "admin_\(admin.id.uuidString)_pin"
     }
     
-    private func storedHashedPin() -> String? {
-        keychain.get(keyForAdmin())
+    private func storedPIN() -> String? {
+    keychain.get(keyForAdmin())
     }
-    
-    private func updatePin(_ newPin: String) {
-        let hashed = hashPin(newPin)
-        keychain.set(hashed, forKey: keyForAdmin())
-    }
-    
+
     private func validateCurrentPin(_ pin: String) -> Bool {
-        guard let stored = storedHashedPin() else { return false }
-        return stored == hashPin(pin)
+
+        guard let stored = storedPIN() else { return false }
+
+        let parts = stored.split(separator: "|")
+        guard parts.count == 2,
+            let salt = CryptoHelper.decode(String(parts[0])),
+            let storedKey = CryptoHelper.decode(String(parts[1])),
+            let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
+        else {
+            return false
+        }
+
+        return derived == storedKey
     }
+
+    private func updatePin(_ newPin: String) {
+        let salt = CryptoHelper.randomSalt()
+        if let derived = CryptoHelper.pbkdf2Hash(password: newPin, salt: salt) {
+            let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+            keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
+        }
+    }
+
     
     // MARK: - UI
     var body: some View {

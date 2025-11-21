@@ -124,9 +124,12 @@ struct AddAdminView: View {
                         print(error)
                     }
                     let keychain = KeychainSwift()
-                    let data = Data(password.utf8)
-                    let hashedPassword = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
-                    keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
+                    let salt = CryptoHelper.randomSalt()
+                    if let derived = CryptoHelper.pbkdf2Hash(password: password, salt: salt) {
+
+                        let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+                        keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
+                    }
                     dismiss()
                 } else {
                     showPasswordMismatchAlert = true
