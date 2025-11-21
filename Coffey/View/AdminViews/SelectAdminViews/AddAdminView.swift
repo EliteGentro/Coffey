@@ -43,12 +43,8 @@ struct AddAdminView: View {
             TextField(emailError ? "Ingresa un correo válido" : "Correo",
                       text: $correo)
                 .textInputAutocapitalization(.never)
+                .keyboardType(.emailAddress)
                 .autocorrectionDisabled(true)
-                .foregroundColor(emailError ? .red : .primary)
-                .onChange(of: correo) { 
-                    if emailError { emailError = false }
-                }
-
             // Password field
             HStack {
                 Group {
@@ -73,10 +69,10 @@ struct AddAdminView: View {
                 Group {
                     if showConfirmPassword {
                         TextField("Confirmar contraseña", text: $confirmPassword)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     } else {
                         SecureField("Confirmar contraseña", text: $confirmPassword)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     }
                 }
                 Button(action: {
@@ -89,7 +85,7 @@ struct AddAdminView: View {
             
             // Validation text
             if !confirmPassword.isEmpty && password != confirmPassword {
-                Text("⚠️ Las contraseñas no coinciden")
+                Text("Las contraseñas no coinciden")
                     .foregroundColor(.red)
                     .font(.footnote)
             }

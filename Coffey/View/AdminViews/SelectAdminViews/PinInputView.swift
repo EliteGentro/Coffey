@@ -25,7 +25,7 @@ struct PinDigitField: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PinTextField {
         let view = PinTextField()
-        view.keyboardType = .numberPad
+        view.keyboardType = .numbersAndPunctuation
         view.textAlignment = .center
         view.onDelete = {
             if view.text?.isEmpty == true {

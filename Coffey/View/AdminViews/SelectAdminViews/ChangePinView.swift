@@ -160,7 +160,7 @@ struct ChangePinView: View {
             return
         }
         
-        guard storedHashedPin() != nil else {
+        guard storedPIN() != nil else {
             message = "No se encontro pin para este perfil"
             success = false
             return

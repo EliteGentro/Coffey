@@ -107,7 +107,7 @@ struct AdminLoginView: View {
                     return
                 }
                 
-                guard validatePIN(enteredPin) else {
+                guard validateCurrentPin(enteredPin) else {
                     message = "PIN incorrecto."
                     success = false
                     return
