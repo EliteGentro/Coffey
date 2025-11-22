@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E339BE7B2ED14E910016AC1D /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = E339BE7A2ED14E910016AC1D /* MLXEmbedders */; };
+		E339BE7D2ED14E910016AC1D /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = E339BE7C2ED14E910016AC1D /* MLXLLM */; };
+		E339BE7F2ED14E910016AC1D /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E339BE7E2ED14E910016AC1D /* MLXLMCommon */; };
+		E39DCF022ED1367E00A83AE4 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = E39DCF012ED1367E00A83AE4 /* MLX */; };
 		FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB9B2C472EBE89C5004CAD28 /* KeychainSwift */; };
 /* End PBXBuildFile section */
 
@@ -50,7 +54,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E339BE7F2ED14E910016AC1D /* MLXLMCommon in Frameworks */,
+				E339BE7D2ED14E910016AC1D /* MLXLLM in Frameworks */,
+				E39DCF022ED1367E00A83AE4 /* MLX in Frameworks */,
 				FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */,
+				E339BE7B2ED14E910016AC1D /* MLXEmbedders in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +127,10 @@
 			name = Coffey;
 			packageProductDependencies = (
 				FB9B2C472EBE89C5004CAD28 /* KeychainSwift */,
+				E39DCF012ED1367E00A83AE4 /* MLX */,
+				E339BE7A2ED14E910016AC1D /* MLXEmbedders */,
+				E339BE7C2ED14E910016AC1D /* MLXLLM */,
+				E339BE7E2ED14E910016AC1D /* MLXLMCommon */,
 			);
 			productName = Coffey;
 			productReference = E3F834322EA2019800C65A0A /* Coffey.app */;
@@ -132,7 +144,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					E3CCBAEC2EC10E1600B09A37 = {
 						CreatedOnToolsVersion = 26.0.1;
@@ -154,6 +166,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				E39DCF002ED1367E00A83AE4 /* XCRemoteSwiftPackageReference "mlx-swift" */,
+				E339BE792ED14E910016AC1D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E3F834332EA2019800C65A0A /* Products */;
@@ -310,6 +324,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -367,6 +382,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -379,7 +395,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G567867BQZ;
+				DEVELOPMENT_TEAM = W282597C97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Coffey;
@@ -393,7 +409,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Innovaction.CoffeyTry;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Innovaction.Coffee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -412,7 +428,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G567867BQZ;
+				DEVELOPMENT_TEAM = W282597C97;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Coffey;
@@ -426,7 +442,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Innovaction.CoffeyTry;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Innovaction.Coffee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -471,6 +487,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E339BE792ED14E910016AC1D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.29.1;
+			};
+		};
+		E39DCF002ED1367E00A83AE4 /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.29.1;
+			};
+		};
 		FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
@@ -482,6 +514,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E339BE7A2ED14E910016AC1D /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E339BE792ED14E910016AC1D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXEmbedders;
+		};
+		E339BE7C2ED14E910016AC1D /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E339BE792ED14E910016AC1D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		E339BE7E2ED14E910016AC1D /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E339BE792ED14E910016AC1D /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		E39DCF012ED1367E00A83AE4 /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E39DCF002ED1367E00A83AE4 /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
 		FB9B2C472EBE89C5004CAD28 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FB9B2C462EBE89C5004CAD28 /* XCRemoteSwiftPackageReference "keychain-swift" */;
