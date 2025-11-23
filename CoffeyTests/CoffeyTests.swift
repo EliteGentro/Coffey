@@ -120,7 +120,6 @@ struct CoffeyTests {
         let keychain = KeychainSwift()
         keychain.delete(key)
 
-        // — Simulamos el proceso real de guardar PIN —
         let salt = CryptoHelper.randomSalt()
         let derived = CryptoHelper.pbkdf2Hash(password: "123456", salt: salt)!
         let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
@@ -145,7 +144,6 @@ struct CoffeyTests {
 
         keychain.delete(key)
 
-        // Generamos el PIN correcto
         let correctPin = "654321"
         let salt = CryptoHelper.randomSalt()
         let derived = CryptoHelper.pbkdf2Hash(password: correctPin, salt: salt)!
