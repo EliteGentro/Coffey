@@ -17,15 +17,16 @@ class QuizViewModel: ObservableObject {
     var topic: String = ""
     var isLoading = false
     var isDone = false
-
+    
     private var mlxVM = MLXModelViewModel()
     private var session: LanguageModelSession = LanguageModelSession()
-
+    
     /// Generates the quiz using MLX for prompt refinement, then Foundation model for typed Quiz
-    func generateQuiz(content: Content) async {
+    func generateQuiz(content: Content) async throws{
+        quiz = nil
         isLoading = true
         defer { isLoading = false }
-
+        
         // Ask MLX model to create/refine the quiz prompt
         let initialPrompt =
         """
@@ -33,26 +34,27 @@ class QuizViewModel: ObservableObject {
         Genera un cuestionario de 5 preguntas de 4 posibiles opciones múltiples sobre un curso con el título: "\(content.name)" y el siguiente texto o transcripción: "\(content.transcript)".
         
         **Formato requerido:**  
-
+        
         Pregunta 1: [Texto de la pregunta]  
         0. [Opción 0]  
         1. [Opción 1]  
         2. [Opción 2]  
         3. [Opción 3]  
         Respuesta correcta: [Número de la opción correcta]
-
+        
         """
-        await mlxVM.sendPrompt(initialPrompt)
-
-        // Use the MLX response as the final prompt for the Foundation model
-        let refinedPrompt = mlxVM.responseText.isEmpty ? initialPrompt : mlxVM.responseText
-
         do {
+            await mlxVM.sendPrompt(initialPrompt)
+            
+            // Use the MLX response as the final prompt for the Foundation model
+            let refinedPrompt = mlxVM.responseText.isEmpty ? initialPrompt : mlxVM.responseText
+            
+            
             // Generate the Quiz object directly
             let response = try await session.respond(generating: Quiz.self) {
                 Prompt(removeThinkBlocks(from:refinedPrompt))
             }
-
+            
             quiz = response.content
             currentQuestionIndex = 0
             correctCount = 0
@@ -61,7 +63,7 @@ class QuizViewModel: ObservableObject {
             print("Failed to generate quiz: \(error)")
         }
     }
-
+    
     func answerSelected(_ index: Int) {
         guard let quiz = quiz else { return }
         let current = quiz.questions[currentQuestionIndex]
@@ -70,7 +72,7 @@ class QuizViewModel: ObservableObject {
         }
         currentQuestionIndex += 1
     }
-
+    
     var isQuizComplete: Bool {
         guard let quiz else { return false }
         return currentQuestionIndex >= quiz.questions.count

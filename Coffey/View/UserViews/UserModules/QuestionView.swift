@@ -7,10 +7,13 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 
 struct QuestionView: View {
     @Bindable var vm: QuizViewModel
+    @Bindable var progress: Progress
+    @Environment(\.modelContext) var context
     @Environment(\.dismiss) private var dismiss
     @State private var selectedIndex: Int? = nil
     @State private var isAnswering = false
@@ -69,6 +72,13 @@ struct QuestionView: View {
             }
             
             if vm.isQuizComplete {
+                progress.grade = self.vm.correctCount * 20
+                progress.updatedAt = Date()
+                do {
+                    try context.save()
+                } catch {
+                    print("Error saving progress: \(error)")
+                }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     dismiss()
                 }
@@ -92,5 +102,5 @@ struct QuestionView: View {
 
 
 #Preview {
-    QuestionView(vm:QuizViewModel())
+    QuestionView(vm:QuizViewModel(), progress: Progress.mockProgresses[0])
 }
