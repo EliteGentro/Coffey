@@ -16,6 +16,8 @@ struct UserSettingsView: View {
 
     @Query private var preferences: [Preference]
     @State private var tempMultiplier: Double = 1.0
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
 
     
@@ -62,7 +64,8 @@ struct UserSettingsView: View {
                     do {
                         try context.save()
                     } catch {
-                        print("Failed to save preference: \(error)")
+                        errorMessage = "Error al guardar: \(error.localizedDescription)"
+                        showErrorAlert = true
                     }
                 }
                 .buttonStyle(.borderedProminent)
@@ -78,6 +81,11 @@ struct UserSettingsView: View {
             }
         }
         .padding(40)
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
         
         }
     }

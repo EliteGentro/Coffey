@@ -14,6 +14,8 @@ struct ManageContentsView: View {
     @Query var contents: [Content]
     @State private var selectedFilter: String
     private let filters = ["No Descargados", "Descargados"]
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     init(selectedFilter: String = "No Descargados") {
         _contentVM = StateObject(wrappedValue: ContentViewModel())
@@ -62,10 +64,16 @@ struct ManageContentsView: View {
             do {
                 try await contentVM.syncContents(using: context)
             } catch {
-                print("Sync failed:", error)
+                errorMessage = "Error al sincronizar: \(error.localizedDescription)"
+                showErrorAlert = true
                 // Still attempt to fetch local contents so UI can show cached rows
                 contentVM.loadLocalContents(using: context)
             }
+        }
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
         }
         }
 

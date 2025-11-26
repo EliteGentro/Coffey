@@ -17,6 +17,8 @@ struct QuestionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedIndex: Int? = nil
     @State private var isAnswering = false
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
     
     var body: some View {
         ZStack{
@@ -53,6 +55,11 @@ struct QuestionView: View {
                 .animation(.easeInOut, value: selectedIndex)
             }
         }
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
         }
     }
     
@@ -79,11 +86,12 @@ struct QuestionView: View {
                 progress.updatedAt = Date()
                 do {
                     try context.save()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        dismiss()
+                    }
                 } catch {
-                    print("Error saving progress: \(error)")
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                    dismiss()
+                    errorMessage = "Error al guardar progreso: \(error.localizedDescription)"
+                    showErrorAlert = true
                 }
             }
         }

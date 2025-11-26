@@ -21,6 +21,8 @@ struct DetailContentUserView: View {
     let content: Content
     let user : User
     @State private var progresses: [Progress] = []
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
     
     
     
@@ -113,9 +115,14 @@ struct DetailContentUserView: View {
                         
                         Button {
                             Task {
-                                try await quizVM.generateQuiz(content: content)
+                                do {
+                                    try await quizVM.generateQuiz(content: content)
+                                } catch {
+                                    errorMessage = "Error al generar quiz: \(error.localizedDescription)"
+                                    showErrorAlert = true
+                                }
                             }
-                        } label: {
+                        } label {
                             HStack {
                                 Image(systemName: "arrow.clockwise.circle.fill")
                                 
@@ -165,7 +172,8 @@ struct DetailContentUserView: View {
                     do {
                         try context.save()
                     } catch {
-                        print("Error saving progress: \(error)")
+                        errorMessage = "Error al guardar progreso: \(error.localizedDescription)"
+                        showErrorAlert = true
                     }
                 }) {
                     HStack {
@@ -199,6 +207,11 @@ struct DetailContentUserView: View {
             //Progress is expected to not be nil
             QuestionView(vm : quizVM, progress: progress!)
                 .presentationDetents([.large])
+        }
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
         }
         }
     }
@@ -247,7 +260,8 @@ struct DetailContentUserView: View {
                 print("Saved Progress")
             }
         } catch {
-            print("Error fetching or saving progress:", error)
+            errorMessage = "Error al cargar progreso: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 }

@@ -24,6 +24,8 @@ struct AddAdminView: View {
     @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
     
     @State private var showPasswordMismatchAlert: Bool = false
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
     
     var body: some View {
         ZStack{
@@ -100,14 +102,14 @@ struct AddAdminView: View {
                     self.context.insert(admin)
                     do{
                         try self.context.save()
-                    } catch{
-                        print(error)
+                        let keychain = KeychainSwift()tf8)
+                        let hashedPassword = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
+                        keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
+                        dismiss()
+                    } catch {
+                        errorMessage = "Error al guardar: \(error.localizedDescription)"
+                        showErrorAlert = true
                     }
-                    let keychain = KeychainSwift()
-                    let data = Data(password.utf8)
-                    let hashedPassword = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
-                    keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
-                    dismiss()
                 } else {
                     showPasswordMismatchAlert = true
                 }
@@ -117,6 +119,11 @@ struct AddAdminView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("Las contraseñas no coinciden. Inténtalo de nuevo.")
+            }
+            .alert("Error", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(errorMessage)
             }
         }
         .navigationTitle("Agregar Administrador")
