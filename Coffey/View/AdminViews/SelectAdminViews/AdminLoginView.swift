@@ -62,6 +62,8 @@ struct AdminLoginView: View {
     }
 
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 24) {
             Image("coffee-cup")
                 .resizable()
@@ -139,6 +141,7 @@ struct AdminLoginView: View {
         }
         .navigationDestination(isPresented: $navigateToUserSelect) {
             SelectAdminModeView(path: $path, onReset: onReset)
+        }
         }
     }
 }

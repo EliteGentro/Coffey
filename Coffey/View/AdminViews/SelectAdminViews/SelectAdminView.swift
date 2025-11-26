@@ -24,37 +24,43 @@ struct SelectAdminView: View {
     }
 
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
-                ForEach(admins) { admin in
-                    NavigationLink(
-                        destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
-                    ) {
-                        VStack(spacing: 8) {
-                            InitialProfileCircleView(name: admin.name)
-                            Text(admin.name)
-                                .font(.headline)
-                                .foregroundColor(.primary)
+            
+                
+                
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
+                    ForEach(admins) { admin in
+                        NavigationLink(
+                            destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
+                        ) {
+                            VStack(spacing: 8) {
+                                InitialProfileCircleView(name: admin.name)
+                                Text(admin.name)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
-            }
-            .padding()
-            .toolbar {
-                ToolbarItem {
-                    Button("Add Admin", systemImage: "plus") {
-                        self.isAddedPresented = true
-                    }.buttonStyle(.borderedProminent).tint(.brown)
+                .padding()
+                .toolbar {
+                    ToolbarItem {
+                        Button("Add Admin", systemImage: "plus") {
+                            self.isAddedPresented = true
+                        }.buttonStyle(.borderedProminent).tint(.brown)
+                    }
+                }
+                .sheet(isPresented: self.$isAddedPresented) {
+                    AddAdminView()
+                        .presentationDetents([.large])
                 }
             }
-            .sheet(isPresented: self.$isAddedPresented) {
-                AddAdminView()
-                    .presentationDetents([.large])
-            }
+            .navigationTitle("Select Admin")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("Select Admin")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -25,6 +25,8 @@ struct ReceiptScannerView: View {
     
     var body: some View {
         NavigationStack {
+            ZStack{
+                Color.beige.ignoresSafeArea()
             VStack(spacing: 20) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 15)
@@ -84,6 +86,7 @@ struct ReceiptScannerView: View {
             }
             .sheet(isPresented: $showCamera) {
                 CameraView(image: $selectedImage)
+            }
             }
         }
     }

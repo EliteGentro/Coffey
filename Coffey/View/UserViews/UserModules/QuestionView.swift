@@ -19,6 +19,8 @@ struct QuestionView: View {
     @State private var isAnswering = false
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack {
             if let quiz = vm.quiz, vm.currentQuestionIndex < quiz.questions.count {
                 let current = quiz.questions[vm.currentQuestionIndex]
@@ -50,6 +52,7 @@ struct QuestionView: View {
                 .padding()
                 .animation(.easeInOut, value: selectedIndex)
             }
+        }
         }
     }
     

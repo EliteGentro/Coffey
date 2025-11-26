@@ -36,6 +36,8 @@ struct FinanceDetailView: View {
     }
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack{
             Form {
                 // Text field for user name
@@ -124,6 +126,7 @@ struct FinanceDetailView: View {
                     Image(systemName: "xmark")
                 }
             }
+        }
         }
     }
         

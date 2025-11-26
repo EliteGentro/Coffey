@@ -41,6 +41,8 @@ struct UserSettingsView: View {
     
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 24) {
             if let preference = preferences.first {
                 Slider(
@@ -77,7 +79,7 @@ struct UserSettingsView: View {
         }
         .padding(40)
         
-        
+        }
     }
     
 }

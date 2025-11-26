@@ -27,6 +27,8 @@ struct ManageContentsView: View {
     }
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView {
             VStack {
                 // Segmented picker to filter content
@@ -64,6 +66,7 @@ struct ManageContentsView: View {
                 // Still attempt to fetch local contents so UI can show cached rows
                 contentVM.loadLocalContents(using: context)
             }
+        }
         }
 
     }

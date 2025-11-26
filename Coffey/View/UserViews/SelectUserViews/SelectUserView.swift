@@ -23,6 +23,8 @@ struct SelectUserView: View {
     }
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
                 ForEach(users) { user in
@@ -52,6 +54,7 @@ struct SelectUserView: View {
         }
         .navigationTitle("Select User")
         .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 

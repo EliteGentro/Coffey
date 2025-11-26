@@ -15,66 +15,94 @@ struct FirstWelcomeView: View {
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     var body: some View {
-        VStack(){
-            Text("Se detectó que es la primera vez se abre la aplicación. Por favor comience una sincronización con una conexión a internet")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-            
-            if(dbSync.isSynchronizing){
-                ProgressView()
-                Text("\(dbSync.syncProgress) %")
-            } else{
-                Button{
-                    Task {
-                        do {
-                            try await dbSync.fullSynchronization(context: context)
-                        } catch {
-                            showErrorAlert = true
-                            errorMessage = "\(error)"
-                            print("Sync error: \(error)")
+        ZStack{
+            Color.beige.ignoresSafeArea()
+            VStack(spacing: 28) {
+                
+                // MARK: - Title + Instructions
+                VStack(spacing: 16) {
+                    Text("Bienvenido")
+                        .font(.largeTitle.bold())
+                    
+                    Text("Es la primera vez que se abre la aplicación. Para comenzar, sincronice los datos con una conexión a Internet.")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                
+                
+                // MARK: - Sync Status
+                if dbSync.isSynchronizing {
+                    VStack(spacing: 12) {
+                        ProgressView(value: Double(dbSync.syncProgress), total: 100)
+                            .padding(.horizontal)
+                        
+                        Text("Sincronizando... \(dbSync.syncProgress)%")
+                            .font(.headline)
+                    }
+                    
+                } else {
+                    // MARK: - Sync Button
+                    Button {
+                        Task {
+                            do {
+                                try await dbSync.fullSynchronization(context: context)
+                            } catch {
+                                errorMessage = "\(error)"
+                                showErrorAlert = true
+                            }
                         }
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                                .font(.title2)
+                            
+                            Text("Sincronizar")
+                                .font(.title2.bold())
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
                     }
-                } label: {
-                    HStack {
-                        Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                            .font(.title)
-                        Text("Sincronizar")
-                            .font(.largeTitle)
-                    }
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .disabled(dbSync.isSynchronizing)
+                    .opacity(dbSync.isSynchronizing ? 0.6 : 1)
                 }
+                
+                
+                // MARK: - Continue Button
+                if dbSync.isSynchronized {
+                    Button {
+                        firstTime = false
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Image(systemName: "play.fill")
+                                .font(.title2)
+                            
+                            Text("Ir a Inicio")
+                                .font(.title2.bold())
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                    }
+                }
+                
             }
-            if(dbSync.isSynchronized){
-                Button{
-                    firstTime = false
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "play.fill")
-                            .font(.title)
-                        Text("Ir a Inicio")
-                            .font(.largeTitle)
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                }
+            .padding(20)
+            .navigationTitle("Bienvenido")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Error: Revise su Conexión", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage)
             }
         }
-        .padding(10)
-        .navigationTitle("Bienvenido")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert("Error: Revise su Conexión", isPresented: $showErrorAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(errorMessage)
         }
-    }
 }
 
 #Preview {

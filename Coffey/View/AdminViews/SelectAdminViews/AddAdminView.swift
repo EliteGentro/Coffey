@@ -26,6 +26,8 @@ struct AddAdminView: View {
     @State private var showPasswordMismatchAlert: Bool = false
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         Form {
             TextField("Nombre", text: $name)
             TextField("Correo", text: $correo)
@@ -127,6 +129,7 @@ struct AddAdminView: View {
                     Image(systemName: "xmark")
                 }
             }
+        }
         }
         
     }

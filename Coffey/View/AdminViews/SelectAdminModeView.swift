@@ -18,6 +18,8 @@ struct SelectAdminModeView: View {
     }
 
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView{
             // Single-column grid for admin mode options
             LazyVGrid(columns: [GridItem(.flexible())], spacing: 50) {
@@ -44,6 +46,7 @@ struct SelectAdminModeView: View {
             .padding(50)
             .navigationTitle("Seleccionar Modo de Administrador")
             .navigationBarTitleDisplayMode(.inline)
+        }
         }
     }
 }

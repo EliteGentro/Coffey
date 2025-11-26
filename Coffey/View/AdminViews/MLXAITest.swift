@@ -18,6 +18,8 @@ struct MLXAITest: View {
     @State private var prompt = "What is the capital of France?"
 
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 20) {
             TextField("Enter prompt", text: $prompt)
                 .textFieldStyle(.roundedBorder)
@@ -42,6 +44,7 @@ struct MLXAITest: View {
             }
         }
         .padding()
+        }
     }
 }
 

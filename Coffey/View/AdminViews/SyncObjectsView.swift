@@ -16,6 +16,8 @@ struct SyncObjectsView: View {
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack{
             if(dbSync.isSynchronizing){
                 ProgressView()
@@ -78,7 +80,7 @@ struct SyncObjectsView: View {
         }
         .padding(50)
         
-        
+        }
     }
 }
 

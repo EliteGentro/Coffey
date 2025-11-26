@@ -48,6 +48,8 @@ struct UserLearningView: View {
     
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView {
             VStack {
                 // Segmented picker to filter content
@@ -79,6 +81,7 @@ struct UserLearningView: View {
         }
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
+        }
     }
     
     

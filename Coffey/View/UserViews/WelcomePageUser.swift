@@ -26,6 +26,8 @@ struct WelcomePageUser: View {
     }
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 30) {
             // Display user score
             VStack {
@@ -84,6 +86,7 @@ struct WelcomePageUser: View {
             }
         } message: {
             Text("Llama a un administrador para volver a entrar.")
+        }
         }
     }
 }

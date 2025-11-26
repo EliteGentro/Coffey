@@ -45,6 +45,7 @@ struct CoffeyApp: App {
                 .modelContainer(sharedModelContainer)
                 .environmentObject(fontSettings)
                 .environmentObject(downloadManager)
+                .preferredColorScheme(ColorScheme.light)
         }
     }
 }

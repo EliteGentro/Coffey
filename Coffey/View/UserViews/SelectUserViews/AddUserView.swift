@@ -25,6 +25,8 @@ struct AddUserView: View {
     var body: some View {
         // NavigationStack provides navigation context for this form
         NavigationStack {
+            ZStack{
+                Color.beige.ignoresSafeArea()
             Form {
                 // Text field for user name
                 TextField("Nombre", text: $name)
@@ -77,6 +79,7 @@ struct AddUserView: View {
                         Image(systemName: "xmark")
                     }
                 }
+            }
             }
         }
     }

@@ -37,7 +37,8 @@ struct UserFinancesView: View {
     let filters : [String] = ["Egresos", "Ingresos"]
 
     var body: some View {
-        
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack {
             Picker("Egresos/Ingresos", selection: $selectedFinanceType) {
                 ForEach(filters, id: \.self) { filter in
@@ -124,6 +125,7 @@ struct UserFinancesView: View {
         }
 
         .navigationTitle(Text("Finanzas"))
+        }
     }
 }
 
