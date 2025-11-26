@@ -122,7 +122,7 @@ struct DetailContentUserView: View {
                                     showErrorAlert = true
                                 }
                             }
-                        } label {
+                        } label: {
                             HStack {
                                 Image(systemName: "arrow.clockwise.circle.fill")
                                 

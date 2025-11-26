@@ -5,6 +5,7 @@
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
 import SwiftUI
+import SwiftData
 
 struct WelcomePageUser: View {
     // The user whose info is displayed
@@ -15,6 +16,18 @@ struct WelcomePageUser: View {
     @Binding private var path: NavigationPath
     // State for showing leave alert
     @State private var showLeaveAlert = false
+    @Query private var progresses: [Progress]
+    var filteredProgresses: [Progress] {
+        progresses.filter { $0.user_id == user.user_id }
+    }
+    private var gradeSum: Int {
+        filteredProgresses.reduce(0) { $0 + $1.grade }
+    }
+    private var completedProgresses: Int {
+        filteredProgresses.filter({$0.status.rawValue == "completed"}).count
+    }
+    
+
     // Optional closure to reset navigation when leaving
     var onReset: (() -> Void)? = nil
     
@@ -32,7 +45,7 @@ struct WelcomePageUser: View {
             // Display user score
             VStack {
                 Text("Puntaje")
-                Text("\(user.puntaje_aprendizaje)")
+                Text("\(self.gradeSum)")
             }
             .font(.largeTitle.bold())
             .padding(40)
@@ -40,12 +53,12 @@ struct WelcomePageUser: View {
             
             // Display user level and course progress
             HStack {
-                Text("Nivel: 4")
-                ProgressView(value: 0.5, total: 1)
+                Text("Nivel: \(completedProgresses/5 + 1)")
+                ProgressView(value: Double(completedProgresses % 5) / 5.0)
                     .frame(width: 200)
-                    .accentColor(Color(.systemGreen))
+                    .tint(.green)
                 VStack {
-                    Text("4/5")
+                    Text("\(completedProgresses % 5)/5")
                     Text("Cursos")
                 }
             }

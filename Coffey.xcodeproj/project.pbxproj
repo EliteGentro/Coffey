@@ -11,6 +11,7 @@
 		E339BE7D2ED14E910016AC1D /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = E339BE7C2ED14E910016AC1D /* MLXLLM */; };
 		E339BE7F2ED14E910016AC1D /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = E339BE7E2ED14E910016AC1D /* MLXLMCommon */; };
 		E39DCF022ED1367E00A83AE4 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = E39DCF012ED1367E00A83AE4 /* MLX */; };
+		E3E4BFB62ED79FB400DE0612 /* .swiftlint.yaml in Resources */ = {isa = PBXBuildFile; fileRef = E3E4BFB52ED79FB400DE0612 /* .swiftlint.yaml */; };
 		FB9B2C482EBE89C5004CAD28 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB9B2C472EBE89C5004CAD28 /* KeychainSwift */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		E3CCBAED2EC10E1600B09A37 /* CoffeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoffeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3E4BFB52ED79FB400DE0612 /* .swiftlint.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yaml; sourceTree = "<group>"; };
 		E3F834322EA2019800C65A0A /* Coffey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coffey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -68,6 +70,7 @@
 		E3F834292EA2019800C65A0A = {
 			isa = PBXGroup;
 			children = (
+				E3E4BFB52ED79FB400DE0612 /* .swiftlint.yaml */,
 				E3F834342EA2019800C65A0A /* Coffey */,
 				E3CCBAEE2EC10E1600B09A37 /* CoffeyTests */,
 				E3F834332EA2019800C65A0A /* Products */,
@@ -192,6 +195,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E4BFB62ED79FB400DE0612 /* .swiftlint.yaml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
