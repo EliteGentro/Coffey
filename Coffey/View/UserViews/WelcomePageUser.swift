@@ -83,11 +83,25 @@ struct WelcomePageUser: View {
         .navigationBarBackButtonHidden(true)
         // Custom back button with alert
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     showLeaveAlert = true
                 }) {
                     Image(systemName: "chevron.left")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack{
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: "play")
+                    }
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: "pause")
+                    }
                 }
             }
         }
