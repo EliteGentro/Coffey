@@ -9,6 +9,7 @@
 import SwiftUI
 import CryptoKit // Para cifrado
 import KeychainSwift //Para guardar el pin
+import CommonCrypto
 
 struct AdminLoginView: View {
     let admin: Admin
@@ -39,25 +40,31 @@ struct AdminLoginView: View {
         pin.joined().allSatisfy { $0.isNumber }
     }
 
-    //Posiblemente cifrar el pin usando SHA256
-    private func hashPin(_ pin: String) -> String {
-        let data = Data(pin.utf8)
-        let hashed = SHA256.hash(data: data)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+    private func storedPIN() -> String? {
+    keychain.get("admin_\(admin.id.uuidString)_pin")
     }
 
-    private func saveHashedPIN(_ pin: String) {
-        let hashed = hashPin(pin)
-        keychain.set(hashed, forKey: "admin_\(admin.id.uuidString)_pin") //Verificar lo del Admin.id
+    private func validateCurrentPin(_ pin: String) -> Bool {
+
+        guard let stored = storedPIN() else { return false }
+
+        let parts = stored.split(separator: "|")
+        guard parts.count == 2,
+            let salt = CryptoHelper.decode(String(parts[0])),
+            let storedKey = CryptoHelper.decode(String(parts[1])),
+            let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
+        else {
+            return false
+        }
+
+        return derived == storedKey
     }
 
-    private func validatePIN(_ pin: String) -> Bool {
-        let hashed = hashPin(pin)
-        if let stored = keychain.get("admin_\(admin.id.uuidString)_pin") { //Verificar lo del Admin.id
-            return stored == hashed
-        } else {
-            saveHashedPIN(pin)
-            return true // Primer inicio, se guarda el PIN
+    private func updatePin(_ newPin: String) {
+        let salt = CryptoHelper.randomSalt()
+        if let derived = CryptoHelper.pbkdf2Hash(password: newPin, salt: salt) {
+            let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+            keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
         }
     }
 
@@ -82,7 +89,7 @@ struct AdminLoginView: View {
             //Si es asi, esta todo bien, y funciona. (Aprovado: Funciona)
 
             // Reusable PIN input field
-            PinInputView(pin: $pin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
+            PinInputView(pin: $pin, numberOfDigits: numberOfDigits)
             
             Button(action: { //Todo lo de aca es para verificar si el pin es numerico, sean 6 digitos y si el pin es correcto
                 let enteredPin = pin.joined()
@@ -102,7 +109,7 @@ struct AdminLoginView: View {
                     return
                 }
                 
-                guard validatePIN(enteredPin) else {
+                guard validateCurrentPin(enteredPin) else {
                     message = "PIN incorrecto."
                     success = false
                     return

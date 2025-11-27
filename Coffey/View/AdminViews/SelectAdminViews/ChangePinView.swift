@@ -5,20 +5,15 @@
 //  Created by Augusto Orozco on 07/11/25.
 //
 //
-//  ChangePinView.swift
-//  Coffey
 
 //Si revisaste esto y leiste todo este texto, saludame con otro comentario cuando hagas commit.
 
 //Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
 
-//De acuerdo con lo que investigue, puede ser que con tres focusState funcione correctamente el llenado de los campos, me falta probarlo bien dentro del simulador
-//Ya que tengo la teoria de que dentro del preview no va a guardar los datos y no funcionara aunque lo intente, cuando llegue al swiftlab lo corrigo y actualizo
-//El estado de este archivo en particular, generalmente el login ya funciona bien, solo falta esto para poder hacer pullrequest.
-
 import SwiftUI
 import CryptoKit
 import KeychainSwift
+import CommonCrypto
 
 struct ChangePinView: View {
     let admin: Admin
@@ -56,20 +51,35 @@ struct ChangePinView: View {
     private func keyForAdmin() -> String {
         return "admin_\(admin.id.uuidString)_pin"
     }
-    
-    private func storedHashedPin() -> String? {
-        keychain.get(keyForAdmin())
+
+    private func storedPIN() -> String? {
+    keychain.get(keyForAdmin())
     }
-    
-    private func updatePin(_ newPin: String) {
-        let hashed = hashPin(newPin)
-        keychain.set(hashed, forKey: keyForAdmin())
-    }
-    
+
     private func validateCurrentPin(_ pin: String) -> Bool {
-        guard let stored = storedHashedPin() else { return false }
-        return stored == hashPin(pin)
+
+        guard let stored = storedPIN() else { return false }
+
+        let parts = stored.split(separator: "|")
+        guard parts.count == 2,
+            let salt = CryptoHelper.decode(String(parts[0])),
+            let storedKey = CryptoHelper.decode(String(parts[1])),
+            let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
+        else {
+            return false
+        }
+
+        return derived == storedKey
     }
+
+    private func updatePin(_ newPin: String) {
+        let salt = CryptoHelper.randomSalt()
+        if let derived = CryptoHelper.pbkdf2Hash(password: newPin, salt: salt) {
+            let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+            keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
+        }
+    }
+
     
     // MARK: - UI
     var body: some View {
@@ -91,21 +101,21 @@ struct ChangePinView: View {
                     Text("PIN actual")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $currentPin, fieldFocus: _focusCurrent, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $currentPin, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $newPin, fieldFocus: _focusNew, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $newPin, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Confirmar nuevo PIN")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                    PinInputView(pin: $confirmPin, fieldFocus: _focusConfirm, numberOfDigits: numberOfDigits)
+                    PinInputView(pin: $confirmPin, numberOfDigits: numberOfDigits)
                 }
             }
             .padding(.horizontal, 40)
@@ -149,7 +159,7 @@ struct ChangePinView: View {
             return
         }
         
-        guard storedHashedPin() != nil else {
+        guard storedPIN() != nil else {
             message = "No se encontro pin para este perfil"
             success = false
             return

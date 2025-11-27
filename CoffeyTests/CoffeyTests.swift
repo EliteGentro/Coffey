@@ -83,71 +83,44 @@ struct CoffeyTests {
     }
 
     // ----------------------------------------------------------
-    // NUEVOS TESTS: VALIDACIÓN DE LOGIN DE ADMIN
+    // NUEVOS TESTS PARA LOGIN (PBKDF2 + SALT)
     // ----------------------------------------------------------
 
-    //Esta en proceso de pruebas, es puro coding a ciegas por ahora.
+    @Test("PBKDF2 hashing debe generar una clave derivada válida y reproducible")
+    func testPBKDF2Hashing() async throws {
+        let password = "123456"
+        let salt = await CryptoHelper.randomSalt()
 
-    @Test("PIN hashing genera un valor SHA256 correcto")
-    func testPinHashing() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let pin = "123456"
+        let derived1 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt)
+        let derived2 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt)
 
-        let data = Data(pin.utf8)
-        let expectedHash = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
-
-        #expect(view.hashPin(pin) == expectedHash)
+        // Deben coincidir porque misma password + mismo salt = mismo hash
+        #expect(derived1 == derived2)
     }
 
-    @Test("Debe guardar y validar correctamente el PIN en Keychain")
-    func testSaveAndValidatePin() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let keychain = KeychainSwift()
-        let pin = "654321"
-        
-        // Limpia antes de probar
-        keychain.delete("admin_\(admin.id.uuidString)_pin")
-        
-        // Guarda y valida
-        view.saveHashedPIN(pin)
-        #expect(view.validatePIN(pin))
+    @Test("PBKDF2 debe generar diferentes hashes usando salts distintos")
+    func testPBKDF2DifferentSalts() async throws {
+        let password = "123456"
+
+        let salt1 = await CryptoHelper.randomSalt()
+        let salt2 = await CryptoHelper.randomSalt()
+
+        let hash1 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt1)
+        let hash2 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt2)
+
+        // No deben coincidir
+        #expect(hash1 != hash2)
     }
 
-    @Test("Debe rechazar un PIN incorrecto")
-    func testInvalidPin() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let keychain = KeychainSwift()
+    @Test("PIN debe ser numérico y de longitud 6")
+    func testPinFormatRules() async throws {
+        let valid = ["1","2","3","4","5","6"]
+        let invalidChars = ["1","2","3","A","5","6"]
+        let tooShort = ["1","2","3"]
 
-        let correctPin = "111111"
-        let wrongPin = "222222"
-        
-        // Guarda el correcto
-        view.saveHashedPIN(correctPin)
-        
-        // Verifica que el incorrecto falle
-        #expect(!view.validatePIN(wrongPin))
-    }
-
-    @Test("Botón Entrar solo se habilita si el PIN está completo y numérico")
-    func testPinCompletionAndNumeric() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-
-        // Caso 1: PIN incompleto
-        var partialPin = Array(repeating: "", count: 6)
-        partialPin[0] = "1"
-        #expect(!partialPin.allSatisfy { !$0.isEmpty })
-
-        // Caso 2: PIN completo pero no numérico
-        let invalidPin = ["1", "2", "3", "A", "5", "6"]
-        #expect(!invalidPin.joined().allSatisfy { $0.isNumber })
-
-        // Caso 3: PIN válido
-        let validPin = ["1", "2", "3", "4", "5", "6"]
-        #expect(validPin.allSatisfy { $0.allSatisfy(\.isNumber) })
+        #expect(valid.joined().allSatisfy { $0.isNumber })
+        #expect(!invalidChars.joined().allSatisfy { $0.isNumber })
+        #expect(tooShort.joined().count != 6)
     }
     
     @Test("Test para verificar que se identifica correctamente el servicio según el recibo")
