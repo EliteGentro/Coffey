@@ -9,77 +9,201 @@ import SwiftUI
 import SwiftData
 
 struct UserFinancesView: View {
-    let user : User
+    let user: User
     @Query var finances: [Finance]
 
-    @State private var selectedFinanceType : String = "Egresos"
+    @State private var selectedFinanceType: String = "Egresos"
     @State private var sortOrder = [KeyPathComparator(\Finance.date, order: .forward)]
-    @State private var selectedFinance : Finance.ID? = nil
+    @State private var selectedFinance: Finance.ID? = nil
     var selectedFinanceObject: Finance? {
         finances.first(where: { $0.id == selectedFinance })
     }
-    @State private var showFinanceDetail : Bool = false
-    @State private var showAddFinance : Bool = false
-    
-    init(user: User){
+
+    @State private var showFinanceDetail = false
+    @State private var showAddFinance = false
+    @State private var showReceiptScanner = false
+    @State private var importedFinance: Finance? = nil
+    @State private var createNewFinance = false
+
+    private let filters = ["Egresos", "Ingresos"]
+
+    init(user: User) {
         self.user = user
         let userID = user.user_id
-        _finances = Query(filter: #Predicate<Finance>{ $0.user_id == userID })
-        
+        _finances = Query(filter: #Predicate<Finance> { $0.user_id == userID })
     }
-    
-    let filters : [String] = ["Egresos", "Ingresos"]
+
+    private let columns: [GridItem] = [
+        .init(.flexible(minimum: 80)),
+        .init(.flexible(minimum: 80)),
+        .init(.flexible(minimum: 60)),
+        .init(.flexible(minimum: 80))
+    ]
 
     var body: some View {
-        
-        VStack {
-            Picker("Egresos/Ingresos", selection: $selectedFinanceType) {
-                ForEach(filters, id: \.self) { filter in
-                    Text(filter)
+        ZStack {
+            Color.beige.ignoresSafeArea()
+
+            VStack {
+
+                // MARK: Picker
+                Picker("Egresos/Ingresos", selection: $selectedFinanceType) {
+                    ForEach(filters, id: \.self) { filter in
+                        Text(filter)
+                    }
                 }
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding()
-            Table(finances.filter {$0.type == selectedFinanceType}, selection: $selectedFinance, sortOrder: $sortOrder){
-                TableColumn("Nombre", value: \.name)
-                TableColumn("Categoría", value: \.category)
-                TableColumn("Monto"){ finance in
-                    Text("$\(String(format:"%.2f", finance.amount))")
-                }
-                TableColumn("Fecha"){finance in
-                    Text(finance.date, style: .date)
-                }
-            }
-            .onChange(of: selectedFinance){ oldValue, newValue in
-                if(newValue != nil){
-                    showFinanceDetail = true;
-                }
-            }
-            Button(action:{
-                showAddFinance = true
-            }){
-                HStack {
-                    Image(systemName: "plus.app.fill") 
-                        .font(.title)
-                    Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
-                        .font(.largeTitle)
-                }
+                .pickerStyle(.segmented)
                 .padding()
-                .background(Color.brown)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+
+                // MARK: Header
+                LazyVGrid(columns: columns, spacing: 12) {
+                    Text("Nombre").bold()
+                    Text("Categoría").bold()
+                    Text("Monto").bold()
+                    Text("Fecha").bold()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+
+                // MARK: Scrollable Grid with Max Height
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(Array(filteredFinances.enumerated()), id: \.element.id) { index, finance in
+
+                            let rowBackground = index.isMultiple(of: 2)
+                            ? Color.white.opacity(0.05)
+                            : Color.clear
+
+                            // Cell 1
+                            Text(finance.name)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 10)
+                                .background(rowBackground)
+                                .contentShape(Rectangle())
+                                .onTapGesture { rowTapped(finance) }
+
+                            // Cell 2
+                            Text(finance.category)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 10)
+                                .background(rowBackground)
+                                .contentShape(Rectangle())
+                                .onTapGesture { rowTapped(finance) }
+
+                            // Cell 3
+                            Text("$\(finance.amount, specifier: "%.2f")")
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.vertical, 10)
+                                .background(rowBackground)
+                                .contentShape(Rectangle())
+                                .onTapGesture { rowTapped(finance) }
+
+                            // Cell 4
+                            Text(finance.date, style: .date)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.vertical, 10)
+                                .background(rowBackground)
+                                .contentShape(Rectangle())
+                                .onTapGesture { rowTapped(finance) }
+                        }
+                    }
+                    .padding(.horizontal, 8)
+                }
+                .frame(maxHeight: 350) // max height -> scrollable
+
+                Spacer().frame(height: 12)
+
+                // MARK: Buttons
+                Button {
+                    showAddFinance = true
+                } label: {
+                    HStack {
+                        Image(systemName: "plus.app.fill").font(.title)
+                        Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
+                            .font(.title2).bold()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                }
+
+                if selectedFinanceType == "Egresos" {
+                    Button {
+                        showReceiptScanner = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "plus.app.fill").font(.title)
+                            Text("Agregar Egreso por recibo")
+                                .font(.title2).bold()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.brown)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
+                }
             }
+
+            // MARK: Sheet Logic (Unchanged)
+            .onChange(of: selectedFinance) { oldValue, newValue in
+                if newValue != nil {
+                    createNewFinance = false
+                    importedFinance = nil
+                    showFinanceDetail = true
+                }
+            }
+            .sheet(isPresented: $showFinanceDetail) {
+                FinanceDetailView(
+                    type: importedFinance?.type ?? selectedFinanceType,
+                    createNew: createNewFinance,
+                    finance: importedFinance ?? selectedFinanceObject,
+                    user: user
+                )
+                .onDisappear { importedFinance = nil }
+            }
+            .sheet(isPresented: $showAddFinance) {
+                FinanceDetailView(
+                    type: selectedFinanceType,
+                    createNew: true,
+                    finance: nil,
+                    user: user
+                )
+            }
+            .sheet(isPresented: $showReceiptScanner) {
+                ReceiptScannerView(user: user) { finance in
+                    importedFinance = finance
+                    showReceiptScanner = false
+                    createNewFinance = true
+
+                    DispatchQueue.main.async {
+                        showFinanceDetail = true
+                    }
+                }
+            }
+            .navigationTitle("Finanzas")
         }
-        .sheet(isPresented: $showFinanceDetail){
-            FinanceDetailView(type: selectedFinanceType, createNew: false, finance: selectedFinanceObject)
-        }
-        .sheet(isPresented: $showAddFinance){
-            FinanceDetailView(type: selectedFinanceType, createNew: true, finance: nil)
-        }
-        .navigationTitle(Text("Finanzas"))
+    }
+
+    // MARK: Helpers
+
+    private var filteredFinances: [Finance] {
+        finances.filter { $0.type == selectedFinanceType }
+    }
+
+    private func rowTapped(_ finance: Finance) {
+        createNewFinance = false
+        importedFinance = nil
+        selectedFinance = finance.id
+        showFinanceDetail = true
     }
 }
 
 #Preview {
-    UserFinancesView(user : User.mockUsers[0])
+    UserFinancesView(user: User.mockUsers[0])
 }

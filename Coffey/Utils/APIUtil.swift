@@ -4,7 +4,6 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 18/11/25.
 //
-
 import Foundation
 import Combine
 
@@ -28,13 +27,15 @@ final class APIUtil: ObservableObject {
     }
     
     func send<T: Encodable>(_ object: T, to endpoint: String, method: String) async throws {
-        
         guard let url = URL(string: endpoint) else { throw URLError(.badURL) }
 
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(object)
+
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        request.httpBody = try encoder.encode(object)
 
         let (_, response) = try await URLSession.shared.data(for: request)
 
@@ -45,31 +46,30 @@ final class APIUtil: ObservableObject {
     }
     
     func sendAndDecode<T: Decodable, U: Encodable>(
-            _ returnType: T.Type,
-            _ object: U,
-            to endpoint: String,
-            method: String
-        ) async throws -> T {
-            guard let url = URL(string: endpoint) else { throw URLError(.badURL) }
+        _ returnType: T.Type,
+        _ object: U,
+        to endpoint: String,
+        method: String
+    ) async throws -> T {
+        guard let url = URL(string: endpoint) else { throw URLError(.badURL) }
 
-            var request = URLRequest(url: url)
-            request.httpMethod = method
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try JSONEncoder().encode(object)
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-            let (data, response) = try await URLSession.shared.data(for: request)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        request.httpBody = try encoder.encode(object)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200..<300).contains(httpResponse.statusCode) else {
-                throw URLError(.badServerResponse)
-            }
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-            // decode the created server object
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            return try decoder.decode(T.self, from: data)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
         }
 
-
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(T.self, from: data)
+    }
 }
-

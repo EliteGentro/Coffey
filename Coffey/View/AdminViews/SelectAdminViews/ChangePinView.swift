@@ -83,6 +83,8 @@ struct ChangePinView: View {
     
     // MARK: - UI
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 24) {
             Image("Coffee-cup")
                 .resizable()
@@ -142,6 +144,7 @@ struct ChangePinView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Seguridad")
+        }
     }
     
     // MARK: - Logic

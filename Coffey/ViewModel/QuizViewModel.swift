@@ -18,38 +18,58 @@ class QuizViewModel: ObservableObject {
     var isLoading = false
     var isDone = false
     
+    private var mlxVM = MLXModelViewModel()
     private var session: LanguageModelSession = LanguageModelSession()
     
-    func generateQuiz( content : Content) async throws {
+    /// Generates the quiz using MLX for prompt refinement, then Foundation model for typed Quiz
+    func generateQuiz(content: Content) async throws{
+        quiz = nil
         isLoading = true
         defer { isLoading = false }
         
-        let response = try await session.respond(generating: Quiz.self) {
-            """
-            Eres una inteligencia artificial encargada de crear contenido educativo para un curso.  
-            Genera un cuestionario de 5 preguntas de opción múltiple sobre un curso con el título: "\(content.name)"  
-            y el siguiente texto o transcripción: "\(content.transcript)".  
-
-            Cada pregunta debe tener 4 opciones de respuesta y solo una debe ser correcta.  
-            Usa un lenguaje claro y sencillo.  
-            Asegúrate de que las preguntas estén basadas directamente en la información del texto o transcripción, sin agregar datos que no aparezcan allí.  
-            Las preguntas deben ser apropiadas para todo público.
-            """
-        }
+        // Ask MLX model to create/refine the quiz prompt
+        let initialPrompt =
+        """
+        Eres una inteligencia artificial encargada de crear contenido educativo para un curso.  
+        Genera un cuestionario de 5 preguntas de 4 posibiles opciones múltiples sobre un curso con el título: "\(content.name)" y el siguiente texto o transcripción: "\(content.transcript)".
         
-        quiz = response.content
-        currentQuestionIndex = 0
-        correctCount = 0
-        isDone = true
+        **Formato requerido:**  
+        
+        Pregunta 1: [Texto de la pregunta]  
+        0. [Opción 0]  
+        1. [Opción 1]  
+        2. [Opción 2]  
+        3. [Opción 3]  
+        Respuesta correcta: [Número de la opción correcta]
+        
+        """
+        do {
+            await mlxVM.sendPrompt(initialPrompt)
+            
+            // Use the MLX response as the final prompt for the Foundation model
+            let refinedPrompt = mlxVM.responseText.isEmpty ? initialPrompt : mlxVM.responseText
+            
+            
+            // Generate the Quiz object directly
+            let response = try await session.respond(generating: Quiz.self) {
+                Prompt(removeThinkBlocks(from:refinedPrompt))
+            }
+            
+            quiz = response.content
+            currentQuestionIndex = 0
+            correctCount = 0
+            isDone = true
+        } catch {
+            print("Failed to generate quiz: \(error)")
+        }
     }
     
     func answerSelected(_ index: Int) {
         guard let quiz = quiz else { return }
         let current = quiz.questions[currentQuestionIndex]
-        if index == current.correctIndex {
+        if index == current.correctIndex-1 {
             correctCount += 1
         }
-        print(correctCount)
         currentQuestionIndex += 1
     }
     
@@ -57,5 +77,11 @@ class QuizViewModel: ObservableObject {
         guard let quiz else { return false }
         return currentQuestionIndex >= quiz.questions.count
     }
+    
+    func removeThinkBlocks(from text: String) -> String {
+        let pattern = "<think>[\\s\\S]*?</think>"
+        return text.replacingOccurrences(of: pattern,
+                                         with: "",
+                                         options: .regularExpression)
+    }
 }
-

@@ -26,6 +26,8 @@ struct SelectAdminView: View {
     }
 
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())],
                       spacing: 32) {
@@ -57,7 +59,7 @@ struct SelectAdminView: View {
         .navigationTitle("Select Admin")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            
+
             ToolbarItem(placement: .topBarLeading) {
                 Button(isEditing ? "OK" : "Edit") {
                     withAnimation {

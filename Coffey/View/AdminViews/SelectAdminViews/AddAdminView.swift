@@ -15,7 +15,7 @@ import CommonCrypto
 struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
-    
+
     @State private var name: String = ""
     @State private var correo: String = ""
     @State private var password: String = ""
@@ -24,21 +24,21 @@ struct AddAdminView: View {
     @State private var showConfirmPassword: Bool = false
     @State private var selectedCooperativa = "Cooperativa1"
     @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
-    
+
     @State private var showPasswordMismatchAlert: Bool = false
-        
+
     @State private var showPinErrorAlert: Bool = false
-    
+
     @State private var emailError: Bool = false
 
     func isValidEmail(_ email: String) -> Bool {
         let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         let range = NSRange(email.startIndex..<email.endIndex, in: email)
         let matches = detector?.matches(in: email, options: [], range: range)
-        
+
         return matches?.first?.url?.scheme == "mailto" && matches?.first?.range == range
     }
-    
+
     func isValidNumericPin(_ pin: String) -> Bool {
         return pin.count == 6 && pin.allSatisfy { $0.isNumber }
     }
@@ -69,7 +69,7 @@ struct AddAdminView: View {
                         .foregroundColor(.gray)
                 }
             }
-            
+
             // Confirm password field
             HStack {
                 Group {
@@ -88,28 +88,28 @@ struct AddAdminView: View {
                         .foregroundColor(.gray)
                 }
             }
-            
+
             // Validation text
             if !confirmPassword.isEmpty && password != confirmPassword {
                 Text("Las contraseñas no coinciden")
                     .foregroundColor(.red)
                     .font(.footnote)
             }
-            
+
             Picker("Cooperativa", selection: $selectedCooperativa) {
                 ForEach(cooperativa_options, id: \.self) { option in
                     Text(option)
                 }
             }
-            
+
             Button("Guardar") {
-                
+
                 if !isValidEmail(correo) {
                     emailError = true
                     correo = ""
                     return
                 }
-                
+
                 // Validar PIN de 6 dígitos
                 guard isValidNumericPin(password) else {
                     password = ""
@@ -128,7 +128,7 @@ struct AddAdminView: View {
                         password: self.password,
                         updatedAt: Date()
                     )
-                    
+
                     self.context.insert(admin)
                     do{
                         try self.context.save()
@@ -165,7 +165,7 @@ struct AddAdminView: View {
                 }
             }
         }
-        
+
     }
 }
 

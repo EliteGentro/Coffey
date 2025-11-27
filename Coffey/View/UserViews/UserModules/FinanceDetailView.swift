@@ -22,6 +22,8 @@ struct FinanceDetailView: View {
     @State private var amount: Double
     @State private var selectedCategory: String
     private let categoryOptions: [String] = ["Hogar", "Personal", "Trabajo"]
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     
     init(type: String, createNew: Bool, finance: Finance? = nil, user: User? = nil) {
@@ -36,6 +38,8 @@ struct FinanceDetailView: View {
     }
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack{
             Form {
                 // Text field for user name
@@ -78,10 +82,11 @@ struct FinanceDetailView: View {
                         
                         do{
                             try self.context.save()
+                            dismiss()
                         } catch{
-                            print(error)
+                            errorMessage = "Error al guardar: \(error.localizedDescription)"
+                            showErrorAlert = true
                         }
-                        dismiss()
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(Color.brown)
@@ -94,10 +99,11 @@ struct FinanceDetailView: View {
                     context.delete(finance!)
                     do{
                         try self.context.save()
+                        dismiss()
                     } catch{
-                        print(error)
+                        errorMessage = "Error al borrar: \(error.localizedDescription)"
+                        showErrorAlert = true
                     }
-                    dismiss()
                 }){
                     HStack {
                         Image(systemName: "trash.fill")
@@ -115,6 +121,11 @@ struct FinanceDetailView: View {
         .padding(40)
         .navigationTitle(createNew ? "Agregar \(type.prefix(type.count - 1))" : "Editar \(type.prefix(type.count - 1))")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
         // Toolbar with dismiss button
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -124,6 +135,7 @@ struct FinanceDetailView: View {
                     Image(systemName: "xmark")
                 }
             }
+        }
         }
     }
         

@@ -1,0 +1,46 @@
+//
+//  .swiftlint.yaml
+//  Coffey
+//
+//  Created by Humberto Genaro Cisneros Salinas on 26/11/25.
+//
+
+# Disable rules that don’t apply to your project
+disabled_rules:
+  - line_length           # optional: ignore long lines in SwiftUI views
+  - type_body_length      # SwiftUI Views can be long
+  - file_length           # ignore large SwiftUI View files
+  - force_cast
+  - force_try
+  - trailing_newline      # autocorrect fixes this anyway
+
+# Opt-in rules to improve SwiftUI code readability
+opt_in_rules:
+  - empty_count
+  - missing_docs
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace
+
+# Exclude folders (no need to lint assets or Pods)
+excluded:
+  - Pods
+  - Carthage
+  - fastlane
+  - Scripts
+  - Assets.xcassets
+
+# Include only specific folders if desired
+included:
+  - View
+  - ViewModel
+  - Model
+  - Utils
+  - ContentView.swift
+  - CoffeyApp.swift
+
+# Report style for Xcode
+reporter: "xcode"
+
+# Line length limit (optional, for SwiftUI Views you may increase)
+line_length: 120
+

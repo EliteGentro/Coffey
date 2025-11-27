@@ -18,12 +18,18 @@ struct AdminUserAdministration: View {
     }
 
     var body: some View {
-        List {
-            ForEach(users) { user in
-                NavigationLink(destination: UserDetailProfileView(user: user)) {
-                    AdminUserRowView(user: user)
+        ZStack {
+            Color.beige.ignoresSafeArea()
+
+            List {
+                ForEach(users) { user in
+                    NavigationLink(destination: UserDetailProfileView(user: user)) {
+                        AdminUserRowView(user: user)
+                    }
                 }
             }
+            .scrollContentBackground(.hidden)     
+            .listRowBackground(Color.clear)
         }
     }
 }

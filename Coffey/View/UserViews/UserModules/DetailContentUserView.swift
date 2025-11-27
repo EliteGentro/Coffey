@@ -14,14 +14,17 @@ struct DetailContentUserView: View {
     @State private var navigateToQuiz = false
     @State private var showVideo = false
     @State private var showPDF = false
+    @State private var showQuiz = false
     @StateObject private var quizVM = QuizViewModel()
     @State private var selectedFilter: String = "Pendiente"
     @State private var progress : Progress?
     let content: Content
     let user : User
     @State private var progresses: [Progress] = []
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
     
-
+    
     
     private var progressStatus: String {
         switch progress?.status ?? .notStarted {
@@ -30,7 +33,7 @@ struct DetailContentUserView: View {
         case .completed: return "Terminado"
         }
     }
-
+    
     private var progressStatusIcon: String {
         switch progress?.status ?? .notStarted {
         case .notStarted: return "clock.fill"
@@ -38,7 +41,7 @@ struct DetailContentUserView: View {
         case .completed: return "checkmark.seal.fill"
         }
     }
-
+    
     private var progressStatusColor: Color {
         switch progress?.status ?? .notStarted {
         case .notStarted: return .red
@@ -46,101 +49,149 @@ struct DetailContentUserView: View {
         case .completed: return .green
         }
     }
-
-
-    
     
     var body: some View {
-        VStack(spacing:20){
-            Text(content.name)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            if(quizVM.isQuizComplete){
-                Text("Calificación: \(quizVM.correctCount*20)")
-                    .font(.title2.bold())
+        ZStack{
+            Color.beige.ignoresSafeArea()
+        ScrollView {
+            VStack(alignment: .center, spacing: 24) {
                 
-                Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
-                    .font(.title3)
-            }
-            Text(content.resourceType.capitalized)
-                .font(.title)
-                .font(.title)
-            Text(content.details)
-                .font(.body)
-            
-            Button(action:{
-                //Play Video
-                if content.resourceType == "video" {
-                    showVideo = true
-                } else{
-                    showPDF = true
+                // MARK: Title
+                Text(content.name)
+                    .font(.largeTitle.bold())
+                
+                // MARK: Quiz Results
+                if quizVM.isQuizComplete {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Calificación: \(quizVM.correctCount * 20)")
+                            .font(.title2.bold())
+                        
+                        Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
+                            .font(.body)
+                    }
                 }
-            }){
-                HStack {
-                    Image(systemName: "play.circle.fill")
-                        .font(.title)
-                    Text("Ver")
-                        .font(.largeTitle)
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-            }
-            Button {
-                Task {
-                    try? await quizVM.generateQuiz(content: content)
-                    
-                }
-            } label: {
-                if quizVM.isLoading {
-                    ProgressView()
-                } else {
-                    Text("Realizar Quiz")
+                
+                // MARK: Resource Details
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(content.resourceType.capitalized)
                         .font(.headline)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue.gradient)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-            }
-            .padding(.horizontal)
-            Button(action: {
-                guard let progress else { return }
-
-                // Toggle the status
-                switch progress.status {
-                case .notStarted:
-                    progress.status = .inProgress
-                case .inProgress:
-                    progress.status = .completed
-                case .completed:
-                    progress.status = .notStarted
-                }
-                
-                // Update timestamp
-                progress.updatedAt = Date()
-
-                // Save the change
-                do {
-                    try context.save()
-                } catch {
-                    print("Error saving progress: \(error)")
-                }
-            }) {
-                HStack {
-                    Image(systemName: progressStatusIcon)
-                        .font(.title)
-                    Text(progressStatus)
-                        .font(.largeTitle)
+                    
+                    Text(content.details)
+                        .font(.body)
                 }
                 .padding()
-                .background(progressStatusColor)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(12)
+                
+                
+                // MARK: View Resource Button
+                Button(action: {
+                    if content.resourceType == "video" {
+                        showVideo = true
+                    } else {
+                        showPDF = true
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "play.circle.fill")
+                            .font(.title2)
+                        Text("Ver")
+                            .font(.title3.bold())
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green.gradient)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                
+                
+                // MARK: Quiz Actions
+                VStack(spacing: 12) {
+                    if quizVM.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        
+                        Button {
+                            Task {
+                                do {
+                                    try await quizVM.generateQuiz(content: content)
+                                } catch {
+                                    errorMessage = "Error al generar quiz: \(error.localizedDescription)"
+                                    showErrorAlert = true
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.clockwise.circle.fill")
+                                
+                                Text(quizVM.isDone ? "Regenerar Quiz" : "Generar Quiz")
+                                    .fontWeight(.bold)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue.gradient)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                        }
+                        
+                        if quizVM.isDone {
+                            Button {
+                                showQuiz = true
+                            } label: {
+                                HStack {
+                                    Image(systemName: "questionmark.app.fill")
+                                    Text("Realizar Quiz")
+                                        .fontWeight(.bold)
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue.gradient)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                            }
+                        }
+                    }
+                }
+                
+                // MARK: Progress Button
+                Button(action: {
+                    guard let progress else { return }
+                    
+                    switch progress.status {
+                    case .notStarted:
+                        progress.status = .inProgress
+                    case .inProgress:
+                        progress.status = .completed
+                    case .completed:
+                        progress.status = .notStarted
+                    }
+                    
+                    progress.updatedAt = Date()
+                    do {
+                        try context.save()
+                    } catch {
+                        errorMessage = "Error al guardar progreso: \(error.localizedDescription)"
+                        showErrorAlert = true
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: progressStatusIcon)
+                            .font(.title2)
+                        
+                        Text(progressStatus)
+                            .font(.title3.bold())
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(progressStatusColor.gradient)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                
             }
-
+            .padding()
         }
         .padding(40)
         .fullScreenCover(isPresented: $showVideo) {
@@ -152,12 +203,21 @@ struct DetailContentUserView: View {
         .onAppear {
             fetchOrCreateProgress()
         }
-        .sheet(isPresented: $quizVM.isDone) {
-            QuestionView(vm : quizVM)
+        .sheet(isPresented: $showQuiz) {
+            //Progress is expected to not be nil
+            QuestionView(vm : quizVM, progress: progress!)
                 .presentationDetents([.large])
         }
-        
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
+        }
     }
+    
+    
+    
     
     private func fetchOrCreateProgress() {
         do {
@@ -175,7 +235,7 @@ struct DetailContentUserView: View {
             } else{
                 byUser  = #Predicate<Progress> { $0.user_id == userID }
             }
-
+            
             let byContent = #Predicate<Progress> { $0.content_id == contentID }
             
             let combinedPredicate = #Predicate<Progress> { progress in byUser.evaluate(progress) && byContent.evaluate(progress)
@@ -200,10 +260,11 @@ struct DetailContentUserView: View {
                 print("Saved Progress")
             }
         } catch {
-            print("Error fetching or saving progress:", error)
+            errorMessage = "Error al cargar progreso: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 }
-    #Preview {
-        DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
-    }
+#Preview {
+    DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
+}

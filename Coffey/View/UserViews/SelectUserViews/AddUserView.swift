@@ -21,10 +21,14 @@ struct AddUserView: View {
     
     // State to show alert for password mismatch (not implemented yet)
     @State private var showPasswordMismatchAlert: Bool = false
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
 
     var body: some View {
         // NavigationStack provides navigation context for this form
         NavigationStack {
+            ZStack{
+                Color.beige.ignoresSafeArea()
             Form {
                 // Text field for user name
                 TextField("Nombre", text: $name)
@@ -58,16 +62,22 @@ struct AddUserView: View {
                     self.context.insert(preference)
                     do{
                         try self.context.save()
+                        dismiss()
                     } catch{
-                        print(error)
+                        errorMessage = "Error al guardar: \(error.localizedDescription)"
+                        showErrorAlert = true
                     }
-                    dismiss()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(Color.brown)
             }
             .navigationTitle("Agregar Usuario")
             .navigationBarTitleDisplayMode(.inline)
+            .alert("Error", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(errorMessage)
+            }
             // Toolbar with dismiss button
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -77,6 +87,7 @@ struct AddUserView: View {
                         Image(systemName: "xmark")
                     }
                 }
+            }
             }
         }
     }

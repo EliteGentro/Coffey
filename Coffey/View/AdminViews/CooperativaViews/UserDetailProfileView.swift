@@ -11,6 +11,8 @@ struct UserDetailProfileView: View {
     let user: User
     
     var body: some View {
+        ZStack{
+            Color.beige.ignoresSafeArea()
         VStack(spacing: 60) {
             // Profile circle showing user's initials
             InitialProfileCircleView(name: user.name)
@@ -45,6 +47,7 @@ struct UserDetailProfileView: View {
                         .font(.title)
                 }
             }
+        }
         }
     }
 }
