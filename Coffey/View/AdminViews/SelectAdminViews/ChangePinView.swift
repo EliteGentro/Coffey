@@ -11,11 +11,12 @@
 //Anota particularmente que cambiaste, para no perdernos y romper todo este codigo sacado de lo mas profundo de la BD de la IA. Tysm por leer esto :D
 
 import SwiftUI
-import CryptoKit
-import KeychainSwift
 import CommonCrypto
+import SwiftData
 
 struct ChangePinView: View {
+    @Environment(\.modelContext) private var context
+    
     let admin: Admin
     let numberOfDigits: Int
     
@@ -23,15 +24,8 @@ struct ChangePinView: View {
     @State private var newPin: [String]
     @State private var confirmPin: [String]
     
-    // 3 focus states independientes
-    @FocusState private var focusCurrent: Int?
-    @FocusState private var focusNew: Int?
-    @FocusState private var focusConfirm: Int?
-    
     @State private var message: String = ""
     @State private var success: Bool = false
-    
-    private let keychain = KeychainSwift()
     
     init(admin: Admin, numberOfDigits: Int = 6) {
         self.admin = admin
@@ -41,113 +35,104 @@ struct ChangePinView: View {
         _confirmPin = State(initialValue: Array(repeating: "", count: numberOfDigits))
     }
     
-    // MARK: - Helper Methods
-    private func hashPin(_ pin: String) -> String {
-        let data = Data(pin.utf8)
-        let hashed = SHA256.hash(data: data)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
-    }
-    
-    private func keyForAdmin() -> String {
-        return "admin_\(admin.id.uuidString)_pin"
-    }
-
-    private func storedPIN() -> String? {
-    keychain.get(keyForAdmin())
-    }
-
+    // MARK: - VALIDAR PIN CONTRA BD
     private func validateCurrentPin(_ pin: String) -> Bool {
-
-        guard let stored = storedPIN() else { return false }
+        let stored = admin.password  // ❗ ahora el PIN está en la BD, no en Keychain
 
         let parts = stored.split(separator: "|")
         guard parts.count == 2,
-            let salt = CryptoHelper.decode(String(parts[0])),
-            let storedKey = CryptoHelper.decode(String(parts[1])),
-            let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
+              let salt = CryptoHelper.decode(String(parts[0])),
+              let storedKey = CryptoHelper.decode(String(parts[1])),
+              let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
         else {
             return false
         }
-
+        
         return derived == storedKey
     }
-
+    
+    // MARK: - ACTUALIZAR PIN EN BD
     private func updatePin(_ newPin: String) {
         let salt = CryptoHelper.randomSalt()
+        
         if let derived = CryptoHelper.pbkdf2Hash(password: newPin, salt: salt) {
             let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
-            keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
+            admin.password = combined   // ✔ se actualiza directamente en la BD
+            
+            do { try context.save() }
+            catch { print("Error al guardar nuevo PIN: \(error)") }
         }
     }
 
-    
     // MARK: - UI
     var body: some View {
-        ZStack{
+        ZStack {
             Color.beige.ignoresSafeArea()
-        VStack(spacing: 24) {
-            Image("Coffee-cup")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .padding(.top, 40)
             
-            Text("Cambiar PIN")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading) {
-                    Text("PIN actual")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    PinInputView(pin: $currentPin, numberOfDigits: numberOfDigits)
-                }
+            VStack(spacing: 24) {
                 
-                VStack(alignment: .leading) {
-                    Text("Nuevo PIN")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    PinInputView(pin: $newPin, numberOfDigits: numberOfDigits)
-                }
+                Image("Coffee-cup")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .padding(.top, 40)
                 
-                VStack(alignment: .leading) {
-                    Text("Confirmar nuevo PIN")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    PinInputView(pin: $confirmPin, numberOfDigits: numberOfDigits)
-                }
-            }
-            .padding(.horizontal, 40)
-            .padding(.top, 10)
-            
-            Button(action: handleChangePin) {
-                Text("Guardar cambios")
+                Text("Cambiar PIN")
+                    .font(.title2)
                     .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading) {
+                        Text("PIN actual")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        PinInputView(pin: $currentPin, numberOfDigits: numberOfDigits)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Nuevo PIN")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        PinInputView(pin: $newPin, numberOfDigits: numberOfDigits)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Confirmar nuevo PIN")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        PinInputView(pin: $confirmPin, numberOfDigits: numberOfDigits)
+                    }
+                }
+                .padding(.horizontal, 40)
+                .padding(.top, 10)
+                
+                Button(action: handleChangePin) {
+                    Text("Guardar cambios")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal, 40)
+                .padding(.top, 20)
+                
+                if !message.isEmpty {
+                    Text(message)
+                        .foregroundColor(success ? .green : .red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                }
+                
+                Spacer()
             }
-            .padding(.horizontal, 40)
-            .padding(.top, 20)
-            
-            if !message.isEmpty {
-                Text(message)
-                    .foregroundColor(success ? .green : .red)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
-            
-            Spacer()
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("Seguridad")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Seguridad")
         }
     }
     
-    // MARK: - Logic
+    // MARK: - LOGIC
     private func handleChangePin() {
         let current = currentPin.joined()
         let new = newPin.joined()
@@ -155,12 +140,6 @@ struct ChangePinView: View {
         
         guard !current.isEmpty, !new.isEmpty, !confirm.isEmpty else {
             message = "Todos los campos deben completarse."
-            success = false
-            return
-        }
-        
-        guard storedPIN() != nil else {
-            message = "No se encontro pin para este perfil"
             success = false
             return
         }
@@ -183,11 +162,17 @@ struct ChangePinView: View {
             return
         }
         
+        guard new.count == 6 else {
+            message = "El PIN debe tener 6 dígitos."
+            success = false
+            return
+        }
+        
         updatePin(new)
+        
         message = "PIN actualizado correctamente."
         success = true
         
-        // Limpia los campos después de éxito
         currentPin = Array(repeating: "", count: numberOfDigits)
         newPin = Array(repeating: "", count: numberOfDigits)
         confirmPin = Array(repeating: "", count: numberOfDigits)

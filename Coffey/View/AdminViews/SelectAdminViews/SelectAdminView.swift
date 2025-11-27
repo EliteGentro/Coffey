@@ -13,7 +13,7 @@ struct SelectAdminView: View {
     var onReset: () -> Void
     @State private var isAddedPresented = false
     @State private var isEditing = false
-    @State private var adminToDelete: Admin?
+    @State private var adminToDelete: Admin?      // Para alert
     @State private var showDeleteAlert = false
 
     @Query private var admins: [Admin]
@@ -26,76 +26,74 @@ struct SelectAdminView: View {
     }
 
     var body: some View {
-        ZStack{
+        ZStack {
             Color.beige.ignoresSafeArea()
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())],
-                      spacing: 32) {
-
-                ForEach(admins) { admin in
-                    ZStack(alignment: .topTrailing) {
-
-                        if !isEditing {
-                            NavigationLink(
-                                destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
-                            ) {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())],
+                          spacing: 32) {
+                    
+                    ForEach(admins) { admin in
+                        ZStack(alignment: .topTrailing) {
+                            
+                            if !isEditing {
+                                NavigationLink(
+                                    destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
+                                ) {
+                                    adminCard(admin)
+                                }
+                            } else {
+                                // 👉 En modo edición, ya NO navega
                                 adminCard(admin)
+                                    .overlay(deleteButton(for: admin))
+                                    .rotationEffect(.degrees(1.5))
+                                    .animation(.easeInOut.repeatForever(autoreverses: true),
+                                               value: isEditing)
                             }
-                        } else {
-                            adminCard(admin)
-                                .overlay(
-                                    deleteButton(for: admin)
-                                        .padding(4)
-                                        .offset(x: -38, y: -34)
-                                )
-                                .animation(.easeInOut.repeatForever(autoreverses: true),
-                                           value: isEditing)
                         }
                     }
                 }
+                          .padding()
             }
-            .padding()
-        }
-        .navigationTitle("Select Admin")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-
-            ToolbarItem(placement: .topBarLeading) {
-                Button(isEditing ? "OK" : "Edit") {
-                    withAnimation {
-                        isEditing.toggle()
+            .navigationTitle("Select Admin")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(isEditing ? "OK" : "Edit") {
+                        withAnimation {
+                            isEditing.toggle()
+                        }
                     }
                 }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Add Admin", systemImage: "plus") {
-                    self.isAddedPresented = true
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.brown)
-            }
-        }
-
-        .sheet(isPresented: self.$isAddedPresented) {
-            AddAdminView()
-                .presentationDetents([.large])
-        }
-
-        // ALERT de confirmación
-        .alert("¿Eliminar administrador?",
-               isPresented: $showDeleteAlert) {
-            Button("Eliminar", role: .destructive) {
-                if let admin = adminToDelete {
-                    deleteAdmin(admin)
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add Admin", systemImage: "plus") {
+                        self.isAddedPresented = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.brown)
                 }
             }
-            Button("Cancelar", role: .cancel) {}
-        } message: {
-            Text("Esta acción no se puede deshacer.")
+            
+            .sheet(isPresented: self.$isAddedPresented) {
+                AddAdminView()
+                    .presentationDetents([.large])
+            }
+            
+            // ALERT de confirmación
+            .alert("¿Eliminar administrador?",
+                   isPresented: $showDeleteAlert) {
+                Button("Eliminar", role: .destructive) {
+                    if let admin = adminToDelete {
+                        deleteAdmin(admin)
+                    }
+                }
+                Button("Cancelar", role: .cancel) {}
+            } message: {
+                Text("Esta acción no se puede deshacer.")
+            }
         }
     }
-
     // MARK: - COMPONENTES
 
     private func adminCard(_ admin: Admin) -> some View {
@@ -118,7 +116,7 @@ struct SelectAdminView: View {
                 .font(.title2)
                 .padding(6)
         }
-        .offset(x: 12, y: -12)
+        .offset(x: -46, y: -46)
     }
 
     // MARK: - DELETE LOGIC
@@ -128,14 +126,6 @@ struct SelectAdminView: View {
         try? context.save()
     }
 }
-
-#Preview {
-    @Previewable @State var dummyPath = NavigationPath()
-    NavigationStack {
-        SelectAdminView(path: $dummyPath)
-    }
-}
-
 
 //Este es el select anterior, lo guardo por si acaso
 //

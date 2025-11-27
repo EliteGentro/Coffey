@@ -8,8 +8,6 @@
 
 import SwiftUI
 import SwiftData
-import CryptoKit // Para cifrado
-import KeychainSwift //Para guardar el pin
 import CommonCrypto
 
 struct AddAdminView: View {
@@ -26,16 +24,13 @@ struct AddAdminView: View {
     @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
 
     @State private var showPasswordMismatchAlert: Bool = false
-
     @State private var showPinErrorAlert: Bool = false
-
     @State private var emailError: Bool = false
 
     func isValidEmail(_ email: String) -> Bool {
         let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         let range = NSRange(email.startIndex..<email.endIndex, in: email)
         let matches = detector?.matches(in: email, options: [], range: range)
-
         return matches?.first?.url?.scheme == "mailto" && matches?.first?.range == range
     }
 
@@ -46,25 +41,27 @@ struct AddAdminView: View {
     var body: some View {
         Form {
             TextField("Nombre", text: $name)
+
             TextField(emailError ? "Ingresa un correo válido" : "Correo",
                       text: $correo)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled(true)
-            // Password field
+
+            // Password field (PIN)
             HStack {
                 Group {
                     if showPassword {
-                        TextField(showPinErrorAlert ? "Ingresa un pin numerico de 6 cifras" :"Contraseña", text: $password)
-                            .keyboardType(.numbersAndPunctuation)
+                        TextField(showPinErrorAlert ? "Ingresa un PIN numérico de 6 cifras" : "PIN",
+                                  text: $password)
+                            .keyboardType(.numberPad)
                     } else {
-                        SecureField(showPinErrorAlert ? "Ingresa un pin numerico de 6 cifras" :"Contraseña", text: $password)
-                            .keyboardType(.numbersAndPunctuation)
+                        SecureField(showPinErrorAlert ? "Ingresa un PIN numérico de 6 cifras" : "PIN",
+                                    text: $password)
+                            .keyboardType(.numberPad)
                     }
                 }
-                Button(action: {
-                    showPassword.toggle()
-                }) {
+                Button { showPassword.toggle() } label: {
                     Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
                         .foregroundColor(.gray)
                 }
@@ -74,43 +71,39 @@ struct AddAdminView: View {
             HStack {
                 Group {
                     if showConfirmPassword {
-                        TextField("Confirmar contraseña", text: $confirmPassword)
-                            .keyboardType(.numbersAndPunctuation)
+                        TextField("Confirmar PIN", text: $confirmPassword)
+                            .keyboardType(.numberPad)
                     } else {
-                        SecureField("Confirmar contraseña", text: $confirmPassword)
-                            .keyboardType(.numbersAndPunctuation)
+                        SecureField("Confirmar PIN", text: $confirmPassword)
+                            .keyboardType(.numberPad)
                     }
                 }
-                Button(action: {
-                    showConfirmPassword.toggle()
-                }) {
+                Button { showConfirmPassword.toggle() } label: {
                     Image(systemName: showConfirmPassword ? "eye.slash.fill" : "eye.fill")
                         .foregroundColor(.gray)
                 }
             }
 
-            // Validation text
             if !confirmPassword.isEmpty && password != confirmPassword {
-                Text("Las contraseñas no coinciden")
+                Text("Los PIN no coinciden")
                     .foregroundColor(.red)
                     .font(.footnote)
             }
 
             Picker("Cooperativa", selection: $selectedCooperativa) {
-                ForEach(cooperativa_options, id: \.self) { option in
-                    Text(option)
-                }
+                ForEach(cooperativa_options, id: \.self) { Text($0) }
             }
 
             Button("Guardar") {
 
-                if !isValidEmail(correo) {
+                // Validación email
+                guard isValidEmail(correo) else {
                     emailError = true
                     correo = ""
                     return
                 }
 
-                // Validar PIN de 6 dígitos
+                // Validación PIN numérico
                 guard isValidNumericPin(password) else {
                     password = ""
                     confirmPassword = ""
@@ -118,58 +111,46 @@ struct AddAdminView: View {
                     return
                 }
 
-
-                if password == confirmPassword {
-                    let admin = Admin(
-                        admin_id: 0,
-                        name : self.name,
-                        correo : self.correo,
-                        cooperativa_id: 1, //missing logic to ingtegrate cooperativa objects
-                        password: self.password,
-                        updatedAt: Date()
-                    )
-
-                    self.context.insert(admin)
-                    do{
-                        try self.context.save()
-                    } catch{
-                        print(error)
-                    }
-                    let keychain = KeychainSwift()
-                    let salt = CryptoHelper.randomSalt()
-                    if let derived = CryptoHelper.pbkdf2Hash(password: password, salt: salt) {
-
-                        let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
-                        keychain.set(combined, forKey: "admin_\(admin.id.uuidString)_pin")
-                    }
-                    dismiss()
-                } else {
+                // Validación confirmación
+                guard password == confirmPassword else {
                     showPasswordMismatchAlert = true
+                    return
                 }
+
+                // 🔐 CIFRAR PIN
+                let salt = CryptoHelper.randomSalt()
+                guard let derived = CryptoHelper.pbkdf2Hash(password: password, salt: salt) else {
+                    print("Error hashing PIN")
+                    return
+                }
+
+                let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+
+                // Crear admin con PIN cifrado
+                let admin = Admin(
+                    admin_id: 0,
+                    name: name,
+                    correo: correo,
+                    cooperativa_id: 1,
+                    password: combined,
+                    updatedAt: Date()
+                )
+
+                context.insert(admin)
+                try? context.save()
+                dismiss()
             }
-            .buttonStyle(.borderedProminent).tint(.brown)
-            .alert("Error", isPresented: $showPasswordMismatchAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("Las contraseñas no coinciden. Inténtalo de nuevo.")
-            }
+            .buttonStyle(.borderedProminent)
+            .tint(.brown)
         }
         .navigationTitle("Agregar Administrador")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    dismiss()
-                } label: {
+                Button { dismiss() } label: {
                     Image(systemName: "xmark")
                 }
             }
         }
-
     }
-}
-
-
-#Preview {
-    AddAdminView()
 }
