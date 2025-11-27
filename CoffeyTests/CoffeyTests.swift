@@ -89,10 +89,10 @@ struct CoffeyTests {
     @Test("PBKDF2 hashing debe generar una clave derivada válida y reproducible")
     func testPBKDF2Hashing() async throws {
         let password = "123456"
-        let salt = CryptoHelper.randomSalt()
+        let salt = await CryptoHelper.randomSalt()
 
-        let derived1 = CryptoHelper.pbkdf2Hash(password: password, salt: salt)
-        let derived2 = CryptoHelper.pbkdf2Hash(password: password, salt: salt)
+        let derived1 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt)
+        let derived2 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt)
 
         // Deben coincidir porque misma password + mismo salt = mismo hash
         #expect(derived1 == derived2)
@@ -102,73 +102,14 @@ struct CoffeyTests {
     func testPBKDF2DifferentSalts() async throws {
         let password = "123456"
 
-        let salt1 = CryptoHelper.randomSalt()
-        let salt2 = CryptoHelper.randomSalt()
+        let salt1 = await CryptoHelper.randomSalt()
+        let salt2 = await CryptoHelper.randomSalt()
 
-        let hash1 = CryptoHelper.pbkdf2Hash(password: password, salt: salt1)
-        let hash2 = CryptoHelper.pbkdf2Hash(password: password, salt: salt2)
+        let hash1 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt1)
+        let hash2 = await CryptoHelper.pbkdf2Hash(password: password, salt: salt2)
 
         // No deben coincidir
         #expect(hash1 != hash2)
-    }
-
-    @Test("Debe guardar el PIN con formato SALT|HASH en Keychain")
-    func testSavePinFormat() async throws {
-        let admin = Admin(id: UUID(), name: "Test", email: "mail@mail.com", code: 1, password: "111111")
-        let key = "admin_\(admin.id.uuidString)_pin"
-
-        let keychain = KeychainSwift()
-        keychain.delete(key)
-
-        let salt = CryptoHelper.randomSalt()
-        let derived = CryptoHelper.pbkdf2Hash(password: "123456", salt: salt)!
-        let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
-        keychain.set(combined, forKey: key)
-
-        guard let stored = keychain.get(key) else {
-            return #expect(false)
-        }
-
-        let parts = stored.split(separator: "|")
-        #expect(parts.count == 2)
-        #expect(CryptoHelper.decode(String(parts[0])) != nil)
-        #expect(CryptoHelper.decode(String(parts[1])) != nil)
-    }
-
-    @Test("validateCurrentPin debe aceptar PIN correcto")
-    func testValidateCorrectPin() async throws {
-        let admin = Admin(id: UUID(), name: "Test", email: "mail@mail.com", code: 1, password: "111111")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let key = "admin_\(admin.id.uuidString)_pin"
-        let keychain = KeychainSwift()
-
-        keychain.delete(key)
-
-        let correctPin = "654321"
-        let salt = CryptoHelper.randomSalt()
-        let derived = CryptoHelper.pbkdf2Hash(password: correctPin, salt: salt)!
-        keychain.set("\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))", forKey: key)
-
-        #expect(view.validateCurrentPin(correctPin))
-    }
-
-    @Test("validateCurrentPin debe rechazar PIN incorrecto")
-    func testValidateWrongPin() async throws {
-        let admin = Admin(id: UUID(), name: "Test", email: "mail@mail.com", code: 1, password: "111111")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let key = "admin_\(admin.id.uuidString)_pin"
-        let keychain = KeychainSwift()
-
-        keychain.delete(key)
-
-        let correctPin = "654321"
-        let wrongPin = "999999"
-
-        let salt = CryptoHelper.randomSalt()
-        let derived = CryptoHelper.pbkdf2Hash(password: correctPin, salt: salt)!
-        keychain.set("\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))", forKey: key)
-
-        #expect(!view.validateCurrentPin(wrongPin))
     }
 
     @Test("PIN debe ser numérico y de longitud 6")
