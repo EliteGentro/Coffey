@@ -268,6 +268,6 @@ struct DetailContentUserView: View {
     let mockFontSettings = FontSettings()
     mockFontSettings.multiplier = 1.0
     
-    DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
+    return DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
     .environmentObject(mockFontSettings)
 }
