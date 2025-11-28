@@ -39,7 +39,7 @@ struct AdminLoginView: View {
 
     // MARK: - Validation against BD
     private func validateCurrentPin(_ pin: String) -> Bool {
-        let stored = admin.password   // <= viene directamente de SwiftData
+        let stored = admin.password
         
         let parts = stored.split(separator: "|")
         guard parts.count == 2,

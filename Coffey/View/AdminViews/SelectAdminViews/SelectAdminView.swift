@@ -54,7 +54,7 @@ struct SelectAdminView: View {
                 }
                           .padding()
             }
-            .navigationTitle("Select Admin")
+            .navigationTitle("Selecciona un perfil de administrador")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 
