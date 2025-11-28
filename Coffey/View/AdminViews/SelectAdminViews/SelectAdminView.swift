@@ -16,33 +16,43 @@ struct SelectAdminView: View {
     @State private var adminToDelete: Admin?      // Para alert
     @State private var showDeleteAlert = false
 
-    @Query private var admins: [Admin]
+    // 🔥 Filtro directo: Solo admins NO eliminados
+    @Query(filter: #Predicate<Admin> { !$0.isDeleted },
+           sort: \.name,
+           order: .forward)
+    private var admins: [Admin]
+
     @Environment(\.modelContext) private var context
 
     init(path: Binding<NavigationPath>, onReset: @escaping () -> Void = {}) {
         self._path = path
         self.onReset = onReset
-        self._admins = Query(sort: \.name, order: .forward)
+        // El filtro ya está arriba, no lo repetimos aquí
     }
 
     var body: some View {
         ZStack {
             Color.beige.ignoresSafeArea()
+
             ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())],
-                          spacing: 32) {
-                    
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 32) {
+
                     ForEach(admins) { admin in
                         ZStack(alignment: .topTrailing) {
-                            
+
                             if !isEditing {
                                 NavigationLink(
-                                    destination: AdminLoginView(admin: admin, path: $path, onReset: onReset)
+                                    destination: AdminLoginView(
+                                        admin: admin,
+                                        path: $path,
+                                        onReset: onReset)
                                 ) {
                                     adminCard(admin)
                                 }
                             } else {
-                                // 👉 En modo edición, ya NO navega
                                 adminCard(admin)
                                     .overlay(deleteButton(for: admin))
                                     .rotationEffect(.degrees(1.5))
@@ -52,12 +62,12 @@ struct SelectAdminView: View {
                         }
                     }
                 }
-                          .padding()
+                .padding()
             }
             .navigationTitle("Selecciona un perfil de administrador")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                
+
                 ToolbarItem(placement: .topBarLeading) {
                     Button(isEditing ? "OK" : "Edit") {
                         withAnimation {
@@ -65,7 +75,7 @@ struct SelectAdminView: View {
                         }
                     }
                 }
-                
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Admin", systemImage: "plus") {
                         self.isAddedPresented = true
@@ -74,13 +84,12 @@ struct SelectAdminView: View {
                     .tint(.brown)
                 }
             }
-            
+
             .sheet(isPresented: self.$isAddedPresented) {
                 AddAdminView()
                     .presentationDetents([.large])
             }
-            
-            // ALERT de confirmación
+
             .alert("¿Eliminar administrador?",
                    isPresented: $showDeleteAlert) {
                 Button("Eliminar", role: .destructive) {
@@ -94,6 +103,7 @@ struct SelectAdminView: View {
             }
         }
     }
+
     // MARK: - COMPONENTES
 
     private func adminCard(_ admin: Admin) -> some View {
@@ -119,13 +129,14 @@ struct SelectAdminView: View {
         .offset(x: -46, y: -46)
     }
 
-    // MARK: - DELETE LOGIC
-
+    // MARK: - SOFT DELETE
     private func deleteAdmin(_ admin: Admin) {
-        context.delete(admin)
+        admin.isDeleted = true
+        admin.updatedAt = Date()
         try? context.save()
     }
 }
+
 
 //Este es el select anterior, lo guardo por si acaso
 //

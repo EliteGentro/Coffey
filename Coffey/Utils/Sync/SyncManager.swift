@@ -4,10 +4,11 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 19/11/25.
 //
+// Edited by Augusto Orozco on 27/11/25.
+//
 
 import Foundation
 import SwiftData
-
 
 final class SyncManager {
     static let shared = SyncManager()
@@ -18,6 +19,7 @@ final class SyncManager {
     private func compare<T: Syncable>(_ local: T, _ remote: T) -> Direction {
         let l = local.updatedAt ?? .distantPast
         let r = remote.updatedAt ?? .distantPast
+
         if l > r { return .updateRemote }
         if r > l { return .updateLocal }
         return .none
@@ -28,72 +30,67 @@ final class SyncManager {
         api: API,
         using context: ModelContext
     ) async throws where API.Model == T {
-        let localArr = try context.fetch(FetchDescriptor<T>())
-        let remoteArr = try await api.fetchAll()
-        let remoteDeleted = try await api.fetchDeleted()
 
-        var synced = Set<T.IDType>()
-        let remoteByID = Dictionary(uniqueKeysWithValues: remoteArr.map { ($0.remoteID, $0) })
-        
-        // Step 1 — Create local-only items
-        for local in localArr where local.remoteID as? Int == 0 && local.deletedAt == nil {
+        // 1. Cargar todo lo local
+        let localArr = try context.fetch(FetchDescriptor<T>())
+        let localByID = Dictionary(uniqueKeysWithValues: localArr.map { ($0.remoteID, $0) })
+
+        for local in localArr where (local.remoteID == nil || local.remoteID as! Int == 0) && !local.isDeleted {
             let created = try await api.create(local)
-            local.remoteID = created.remoteID
-            local.updatedAt = created.updatedAt
-            synced.insert(local.remoteID)
+            local.remoteID = created.remoteID      // ← MUY IMPORTANTE
+            local.updatedAt = Date()
         }
 
-        let updatedLocalArr = try context.fetch(FetchDescriptor<T>())
-        let localByID = Dictionary(uniqueKeysWithValues: updatedLocalArr.map { ($0.remoteID, $0) })
+        try? context.save()
 
-        // Step 2 — Apply remote deletions
-        for deleted in remoteDeleted {
-            if let local = localByID[deleted.remoteID] {
-                context.delete(local)
+        // Reindexar después de creaciones
+        let updatedLocalArr = try context.fetch(FetchDescriptor<T>())
+        let updatedLocalByID = Dictionary(uniqueKeysWithValues: updatedLocalArr.map { ($0.remoteID, $0) })
+
+        for local in updatedLocalArr where local.isDeleted == true {
+            if let id = local.remoteID as? Int, id != 0 {
+                try await api.delete(local)
             }
         }
 
-        // Step 3 — Handle local records
-        for local in updatedLocalArr {
-            if let id = local.remoteID as? Int, id == 0 { continue }
+        let remoteArr = try await api.fetchAll()
+        var synced = Set<T.IDType>()
 
-            if local.deletedAt != nil {
-                if remoteByID[local.remoteID] != nil {
-                    try await api.delete(local)
-                }
-                context.delete(local)
+        for remote in remoteArr {
+
+            // Si local está eliminado → NO revivirlo
+            if let local = updatedLocalByID[remote.remoteID], local.isDeleted {
                 continue
             }
 
-            if let remote = remoteByID[local.remoteID] {
+            if let local = updatedLocalByID[remote.remoteID] {
+                // Synchronization
                 switch compare(local, remote) {
+                case .updateLocal:
+                    local.merge(from: remote)
                 case .updateRemote:
                     try await api.update(local)
-                case .updateLocal:
-                    let mutable = local
-                    mutable.merge(from: remote)
                 case .none:
                     break
                 }
-
-                synced.insert(local.remoteID)
-                continue
+            } else {
+                // Crear uno nuevo local
+                let newLocal = T.makeLocal(from: remote)
+                context.insert(newLocal)
             }
 
-            // Local exists but remote removed → recreate
-            let recreated = try await api.create(local)
-            local.remoteID = recreated.remoteID
-            local.updatedAt = recreated.updatedAt
-            synced.insert(local.remoteID)
+            synced.insert(remote.remoteID)
         }
 
-        // Step 4 — Add remote-only items
-        for remote in remoteArr where !synced.contains(remote.remoteID) {
-            let newLocal = T.makeLocal(from: remote)
-            context.insert(newLocal)
+        for local in updatedLocalArr {
+            // Ignorar los nuevos que todavía no tienen remoteID bien asignado
+            if local.remoteID == nil || local.remoteID as! Int == 0 { continue }
+
+            if !synced.contains(local.remoteID) {
+                context.delete(local)
+            }
         }
 
-        // Step 5 — Save
         try context.save()
     }
 }

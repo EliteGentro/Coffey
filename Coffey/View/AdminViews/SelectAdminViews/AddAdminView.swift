@@ -26,6 +26,7 @@ struct AddAdminView: View {
     @State private var showPasswordMismatchAlert: Bool = false
     @State private var showPinErrorAlert: Bool = false
     @State private var emailError: Bool = false
+    @State private var emailInUseError: Bool = false
 
     func isValidEmail(_ email: String) -> Bool {
         let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -42,11 +43,14 @@ struct AddAdminView: View {
         Form {
             TextField("Nombre", text: $name)
 
-            TextField(emailError ? "Ingresa un correo válido" : "Correo",
-                      text: $correo)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.emailAddress)
-                .autocorrectionDisabled(true)
+            TextField(emailInUseError ? "El correo ingresado pertenece a otro perfil" :
+                (emailError ? "Ingresa un correo válido" : "Correo"),
+                text: $correo
+            )
+            .textInputAutocapitalization(.never)
+            .keyboardType(.emailAddress)
+            .autocorrectionDisabled(true)
+
 
             // Password field (PIN)
             HStack {
@@ -54,11 +58,11 @@ struct AddAdminView: View {
                     if showPassword {
                         TextField(showPinErrorAlert ? "Ingresa un PIN numérico de 6 cifras" : "PIN",
                                   text: $password)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     } else {
                         SecureField(showPinErrorAlert ? "Ingresa un PIN numérico de 6 cifras" : "PIN",
                                     text: $password)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     }
                 }
                 Button { showPassword.toggle() } label: {
@@ -72,10 +76,10 @@ struct AddAdminView: View {
                 Group {
                     if showConfirmPassword {
                         TextField("Confirmar PIN", text: $confirmPassword)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     } else {
                         SecureField("Confirmar PIN", text: $confirmPassword)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.numbersAndPunctuation)
                     }
                 }
                 Button { showConfirmPassword.toggle() } label: {
@@ -95,6 +99,9 @@ struct AddAdminView: View {
             }
 
             Button("Guardar") {
+                
+                emailError = false
+                emailInUseError = false
 
                 // Validación email
                 guard isValidEmail(correo) else {
@@ -102,6 +109,26 @@ struct AddAdminView: View {
                     correo = ""
                     return
                 }
+                
+                do {
+                    let descriptor = FetchDescriptor<Admin>(
+                        predicate: #Predicate { $0.correo == correo && $0.isDeleted == false }
+                    )
+                    let matches = try context.fetch(descriptor)
+
+                    if !matches.isEmpty {
+                        // El correo está en uso
+                        emailInUseError = true
+                        emailError = false
+                        correo = ""
+                        return
+                    } else {
+                        emailInUseError = false
+                    }
+                } catch {
+                    print("Error verificando correo: \(error)")
+                }
+
 
                 // Validación PIN numérico
                 guard isValidNumericPin(password) else {
