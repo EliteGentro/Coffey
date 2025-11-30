@@ -96,7 +96,6 @@ struct FinanceDetailView: View {
             if(!createNew){
                 Button(action:{
                     finance!.deletedAt = Date()
-                    context.delete(finance!)
                     do{
                         try self.context.save()
                         dismiss()

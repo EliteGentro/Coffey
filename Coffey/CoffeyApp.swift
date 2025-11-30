@@ -19,6 +19,7 @@ struct CoffeyApp: App {
             User.self,
             Admin.self,
             Content.self,
+            Cooperativa.self,
             Preference.self,
             Finance.self,
             Progress.self

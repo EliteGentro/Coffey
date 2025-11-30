@@ -36,6 +36,7 @@ final class APIUtil: ObservableObject {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         request.httpBody = try encoder.encode(object)
+        print(object)
 
         let (_, response) = try await URLSession.shared.data(for: request)
 
@@ -60,6 +61,7 @@ final class APIUtil: ObservableObject {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         request.httpBody = try encoder.encode(object)
+        print(object)
 
         let (data, response) = try await URLSession.shared.data(for: request)
 

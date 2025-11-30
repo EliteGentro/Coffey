@@ -9,6 +9,7 @@ import Testing
 @testable import Coffey
 import Foundation
 import KeychainSwift
+import CryptoKit
 
 struct CoffeyTests {
 

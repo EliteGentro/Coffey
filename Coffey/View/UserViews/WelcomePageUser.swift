@@ -91,18 +91,7 @@ struct WelcomePageUser: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                HStack{
-                    Button(action: {
-                        
-                    }) {
-                        Image(systemName: "play")
-                    }
-                    Button(action: {
-                        
-                    }) {
-                        Image(systemName: "pause")
-                    }
-                }
+                SectionAudioControls(text: "Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio")
             }
         }
         // Alert confirmation for leaving

@@ -9,12 +9,12 @@ import SwiftUI
 
 struct SectionAudioControls: View {
     let text: String
-    let label: String
     @ObservedObject private var speech = SpeechManager.shared
 
     var body: some View {
-        HStack {
-            Button {
+
+        HStack{
+            Button(action: {
                 Task { @MainActor in
                     if speech.isSpeaking && speech.currentText == text {
                         speech.stop()
@@ -22,15 +22,9 @@ struct SectionAudioControls: View {
                         speech.speak(text)
                     }
                 }
-            } label: {
+            }) {
                 Image(systemName: speech.isSpeaking && speech.currentText == text ? "stop.fill" : "play.fill")
             }
-            Button {
-                Task { @MainActor in
-                    let summary = text.split(separator: ".").first.map { String($0) + "." } ?? text
-                    speech.speak(summary)
-                }
-            } label: { Text("Read summary") }
         }
     }
 }
