@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AdminUserRowView: View {
     // User data for the row
     let user: User
+    @Query private var progresses: [Progress]
+    @StateObject private var userVM = UserViewModel()
     
     var body: some View {
         HStack(spacing: 16) {
@@ -26,7 +29,7 @@ struct AdminUserRowView: View {
                     Text("Contenidos:")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                    Text("\(user.contenidos_terminados)")
+                    Text("\(userVM.getContenidosTerminados(for: user, progresses: progresses))")
                         .font(.subheadline)
                 }
             }
@@ -37,7 +40,7 @@ struct AdminUserRowView: View {
                 Text("Puntaje:")
                     .font(.subheadline)
                     .fontWeight(.bold)
-                Text("\(user.puntaje_aprendizaje)")
+                Text("\(userVM.getPuntajeAprendizaje(for: user, progresses: progresses))")
                     .font(.subheadline)
             }
         }

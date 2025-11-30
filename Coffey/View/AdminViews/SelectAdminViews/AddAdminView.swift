@@ -14,18 +14,21 @@ struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
+    @Query private var cooperativas: [Cooperativa]
+    
     @State private var name: String = ""
     @State private var correo: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @State private var showPassword: Bool = false
     @State private var showConfirmPassword: Bool = false
-    @State private var selectedCooperativa = "Cooperativa1"
-    @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
+    @State private var selectedCooperativa : Cooperativa?
     
     @State private var showPasswordMismatchAlert: Bool = false
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    
     
     var body: some View {
         ZStack{
@@ -42,10 +45,10 @@ struct AddAdminView: View {
                     Group {
                         if showPassword {
                             TextField("Contraseña", text: $password)
-                                .keyboardType(.numbersAndPunctuation)
+                                .keyboardType(.numberPad)
                         } else {
                             SecureField("Contraseña", text: $password)
-                                .keyboardType(.numbersAndPunctuation)
+                                .keyboardType(.numberPad)
                         }
                     }
                     Button(action: {
@@ -83,8 +86,8 @@ struct AddAdminView: View {
                 }
                 
                 Picker("Cooperativa", selection: $selectedCooperativa) {
-                    ForEach(cooperativa_options, id: \.self) { option in
-                        Text(option)
+                    ForEach(cooperativas, id: \.self) { option in
+                        Text(option.name).tag(Optional(option))
                     }
                 }
                 
@@ -94,7 +97,7 @@ struct AddAdminView: View {
                             admin_id: 0,
                             name : self.name,
                             correo : self.correo,
-                            cooperativa_id: 1, //missing logic to ingtegrate cooperativa objects
+                            cooperativa_id: selectedCooperativa!.cooperativa_id,
                             password: self.password,
                             updatedAt: Date()
                         )
@@ -136,6 +139,18 @@ struct AddAdminView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                }
+            }
+            .onAppear {
+                if cooperativas.count > 0 {
+                        if selectedCooperativa == nil {
+                            selectedCooperativa = cooperativas.first
+                        }
+
+                } else{
+                    showErrorAlert = true
+                    errorMessage = "No se encontraron cooperativas. Inténtalo más tarde."
+                    dismiss()
                 }
             }
         }

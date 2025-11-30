@@ -15,8 +15,6 @@ final class User: Identifiable, Hashable, Codable {
     var user_id: Int
     var name: String
     var cooperativa_id: Int
-    var puntaje_aprendizaje: Int
-    var contenidos_terminados: Int
     var updatedAt: Date?
     var deletedAt: Date? 
 
@@ -24,8 +22,6 @@ final class User: Identifiable, Hashable, Codable {
         case user_id
         case name
         case cooperativa_id
-        case puntaje_aprendizaje
-        case contenidos_terminados
         case updatedAt
         case deletedAt
     }
@@ -38,8 +34,6 @@ final class User: Identifiable, Hashable, Codable {
         self.user_id = try container.decode(Int.self, forKey: .user_id)
         self.name = try container.decode(String.self, forKey: .name)
         self.cooperativa_id = try container.decode(Int.self, forKey: .cooperativa_id)
-        self.puntaje_aprendizaje = try container.decode(Int.self, forKey: .puntaje_aprendizaje)
-        self.contenidos_terminados = try container.decode(Int.self, forKey: .contenidos_terminados)
 
         // Safe decoding of optional dates:
         self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
@@ -52,8 +46,6 @@ final class User: Identifiable, Hashable, Codable {
 
         try container.encode(name, forKey: .name)
         try container.encode(cooperativa_id, forKey: .cooperativa_id)
-        try container.encode(puntaje_aprendizaje, forKey: .puntaje_aprendizaje)
-        try container.encode(contenidos_terminados, forKey: .contenidos_terminados)
     }
 
     // MARK: - Main Initializer
@@ -62,8 +54,6 @@ final class User: Identifiable, Hashable, Codable {
         user_id: Int,
         name: String,
         cooperativa_id: Int,
-        puntaje_aprendizaje: Int,
-        contenidos_terminados: Int,
         updatedAt: Date? = nil,
         deletedAt: Date? = nil
     ) {
@@ -71,22 +61,15 @@ final class User: Identifiable, Hashable, Codable {
         self.user_id = user_id
         self.name = name
         self.cooperativa_id = cooperativa_id
-        self.puntaje_aprendizaje = puntaje_aprendizaje
-        self.contenidos_terminados = contenidos_terminados
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
     }
 
     // MARK: - Mock Data
     static let mockUsers: [User] = [
-        User(user_id: 1, name: "Ernesto", cooperativa_id: 234,
-             puntaje_aprendizaje: 100, contenidos_terminados: 10),
-        
-        User(user_id: 2, name: "Javier", cooperativa_id: 5243,
-             puntaje_aprendizaje: 150, contenidos_terminados: 13),
-        
-        User(user_id: 3, name: "Jaime", cooperativa_id: 234,
-             puntaje_aprendizaje: 30, contenidos_terminados: 6)
+        User(user_id: 1, name: "Ernesto", cooperativa_id: 234),
+        User(user_id: 2, name: "Javier", cooperativa_id: 5243),
+        User(user_id: 3, name: "Jaime", cooperativa_id: 234)
     ]
 
     static func isValidName(_ name: String ) -> Bool {

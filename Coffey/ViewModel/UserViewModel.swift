@@ -57,8 +57,6 @@ class UserViewModel: ObservableObject {
     func mergeRemote(into local: User, remote: User) {
         local.name = remote.name
         local.cooperativa_id = remote.cooperativa_id
-        local.puntaje_aprendizaje = remote.puntaje_aprendizaje
-        local.contenidos_terminados = remote.contenidos_terminados
         local.updatedAt = remote.updatedAt
     }
 
@@ -76,5 +74,27 @@ class UserViewModel: ObservableObject {
     func syncUsers(using context: ModelContext) async throws {
         try await SyncManager.shared.sync(model: User.self, api: api, using: context)
         loadLocalUsers(using: context)
+    }
+    
+    // MARK: - User Statistics
+    func getPuntajeAprendizaje(for user: User, progresses: [Progress]) -> Int {
+        let filtered = progresses.filter { progress in
+            if user.user_id == 0 {
+                return progress.local_user_reference == user.id
+            } else {
+                return progress.user_id == user.user_id
+            }
+        }
+        return filtered.reduce(0) { $0 + $1.grade }
+    }
+    
+    func getContenidosTerminados(for user: User, progresses: [Progress]) -> Int {
+        let filtered = progresses.filter { progress in
+            let matchesUser = (user.user_id == 0 ? 
+                progress.local_user_reference == user.id : 
+                progress.user_id == user.user_id)
+            return matchesUser && progress.status == .completed
+        }
+        return filtered.count
     }
 }

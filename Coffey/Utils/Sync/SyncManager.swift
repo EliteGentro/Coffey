@@ -57,6 +57,9 @@ final class SyncManager {
         for local in updatedLocalArr {
             if let id = local.remoteID as? Int, id == 0 { continue }
 
+            // Skip records that were just created in Step 1
+            if synced.contains(local.remoteID) { continue }
+
             if local.deletedAt != nil {
                 if remoteByID[local.remoteID] != nil {
                     try await api.delete(local)

@@ -5,10 +5,13 @@
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
 import SwiftUI
+import SwiftData
 
 struct UserDetailProfileView: View {
     // The user whose details will be displayed
     let user: User
+    @Query private var progresses: [Progress]
+    @StateObject private var userVM = UserViewModel()
     
     var body: some View {
         ZStack{
@@ -35,7 +38,7 @@ struct UserDetailProfileView: View {
                 HStack {
                     Text("Contenidos:")
                         .font(.title.bold())
-                    Text("\(user.contenidos_terminados)")
+                    Text("\(userVM.getContenidosTerminados(for: user, progresses: progresses))")
                         .font(.title)
                 }
                 
@@ -43,7 +46,7 @@ struct UserDetailProfileView: View {
                 HStack {
                     Text("Puntaje:")
                         .font(.title.bold())
-                    Text("\(user.puntaje_aprendizaje)")
+                    Text("\(userVM.getPuntajeAprendizaje(for: user, progresses: progresses))")
                         .font(.title)
                 }
             }
