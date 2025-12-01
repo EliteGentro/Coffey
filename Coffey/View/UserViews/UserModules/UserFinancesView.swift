@@ -118,9 +118,9 @@ struct UserFinancesView: View {
                     showAddFinance = true
                 } label: {
                     HStack {
-                        Image(systemName: "plus.app.fill").font(.title)
+                        Image(systemName: "plus.app.fill").scaledFont(.title)
                         Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
-                            .font(.title2).bold()
+                            .scaledFont(.title2).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -135,9 +135,9 @@ struct UserFinancesView: View {
                         showReceiptScanner = true
                     } label: {
                         HStack {
-                            Image(systemName: "plus.app.fill").font(.title)
+                            Image(systemName: "plus.app.fill").scaledFont(.title)
                             Text("Agregar Egreso por recibo")
-                                .font(.title2).bold()
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)

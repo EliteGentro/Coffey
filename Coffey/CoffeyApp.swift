@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct CoffeyApp: App {
-    @State private var fontSettings = FontSettings()
+    @StateObject private var fontSettings = FontSettings()
     let sharedModelContainer: ModelContainer
     let downloadManager: DownloadManager
 
@@ -45,6 +45,7 @@ struct CoffeyApp: App {
             ContentView()
                 .modelContainer(sharedModelContainer)
                 .environmentObject(fontSettings)
+                .applyGlobalFontScaling()
                 .environmentObject(downloadManager)
                 .preferredColorScheme(ColorScheme.light)
         }

@@ -35,9 +35,9 @@ struct SyncObjectsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                            .font(.title)
+                            .scaledFont(.title)
                         Text("Sincronizar")
-                            .font(.largeTitle)
+                            .scaledFont(.largeTitle)
                     }
                     .padding()
                     .background(Color.green)
@@ -46,7 +46,7 @@ struct SyncObjectsView: View {
                 }
             }
             Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
-                .font(Font.largeTitle.bold())
+                .scaledFont(Font.largeTitle.bold())
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

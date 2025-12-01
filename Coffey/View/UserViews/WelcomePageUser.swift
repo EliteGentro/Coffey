@@ -47,7 +47,7 @@ struct WelcomePageUser: View {
                 Text("Puntaje")
                 Text("\(self.gradeSum)")
             }
-            .font(.largeTitle.bold())
+            .scaledFont(.largeTitle.bold())
             .padding(40)
             .background(RoundedRectangle(cornerRadius: 12).fill(Color.brown.opacity(0.1)))
             

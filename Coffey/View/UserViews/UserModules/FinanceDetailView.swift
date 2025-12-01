@@ -106,9 +106,9 @@ struct FinanceDetailView: View {
                 }){
                     HStack {
                         Image(systemName: "trash.fill")
-                            .font(.title)
+                            .scaledFont(.title)
                         Text("Borrar")
-                            .font(.largeTitle)
+                            .scaledFont(.largeTitle)
                     }
                     .padding()
                     .background(Color.red)

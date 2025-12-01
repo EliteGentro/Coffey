@@ -28,16 +28,16 @@ struct ContentDetailAdminView: View {
             VStack(spacing:20){
                 // MARK: Title
                 Text(content.name)
-                    .font(.largeTitle.bold())
+                    .scaledFont(.largeTitle.bold())
                 
                 // MARK: Resource Details
                 VStack(alignment: .leading, spacing: 8) {
                     Text(content.resourceType.capitalized)
-                        .font(.headline)
+                        .scaledFont(.headline)
                     Link("Vista Previa", destination: URL(string: content.url)!)
-                        .font(.headline)
+                        .scaledFont(.headline)
                     Text(content.details)
-                        .font(.body)
+                        .scaledFont(.body)
                 }
                 .padding()
                 .background(Color(.secondarySystemBackground))
@@ -54,9 +54,9 @@ struct ContentDetailAdminView: View {
                         }){
                             HStack {
                                 Image(systemName: "arrow.down.circle.fill")
-                                    .font(.title)
+                                    .scaledFont(.title)
                                 Text("Descargar")
-                                    .font(.largeTitle)
+                                    .scaledFont(.largeTitle)
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -77,9 +77,9 @@ struct ContentDetailAdminView: View {
                     }){
                         HStack {
                             Image(systemName: "play.circle.fill")
-                                .font(.title2)
+                                .scaledFont(.title2)
                             Text("Ver")
-                                .font(.title3.bold())
+                                .scaledFont(.title3.bold())
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -93,9 +93,9 @@ struct ContentDetailAdminView: View {
                     }){
                         HStack {
                             Image(systemName: "trash.fill")
-                                .font(.title2)
+                                .scaledFont(.title2)
                             Text("Borrar")
-                                .font(.title3.bold())
+                                .scaledFont(.title3.bold())
                         }
                         .padding()
                         .frame(maxWidth: .infinity)

@@ -32,7 +32,7 @@ struct SelectUserView: View {
                         VStack(spacing: 8) {
                             InitialProfileCircleView(name: user.name)
                             Text(user.name)
-                                .font(.headline)
+                                .scaledFont(.headline)
                                 .foregroundColor(.primary)
                         }
                         .padding()

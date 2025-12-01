@@ -71,7 +71,7 @@ struct AdminLoginView: View {
                 .frame(width: 100, height: 100)
 
             Text("Hola, \(admin.name.capitalized)")
-                .font(.title2)
+                .scaledFont(.title2)
                 .fontWeight(.semibold)
 
             Text("Introduce tu PIN")
@@ -128,7 +128,7 @@ struct AdminLoginView: View {
                 ChangePinView(admin: admin)
             } label: {
                 Text("Cambiar PIN")
-                    .font(.subheadline)
+                    .scaledFont(.subheadline)
                     .foregroundColor(.blue)
                     .padding(.top, 8)
             }

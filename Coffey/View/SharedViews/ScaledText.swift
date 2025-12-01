@@ -19,7 +19,7 @@ struct ScaledText: View {
 
     var body: some View {
         Text(content)
-            .font(.system(size: styleToBaseSize(textStyle) * fontSettings.multiplier))
+            .scaledFont(.system(size: styleToBaseSize(textStyle) * fontSettings.multiplier))
     }
 
     private func styleToBaseSize(_ style: Font.TextStyle) -> CGFloat {

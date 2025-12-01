@@ -29,10 +29,10 @@ struct QuestionView: View {
                 
                 VStack(spacing: 24) {
                     Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
-                        .font(.headline)
+                        .scaledFont(.headline)
                     
                     Text(current.question)
-                        .font(.title3)
+                        .scaledFont(.title3)
                         .multilineTextAlignment(.center)
                         .padding()
                     

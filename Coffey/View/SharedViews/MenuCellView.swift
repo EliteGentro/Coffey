@@ -23,10 +23,10 @@ struct MenuCellView: View {
             Image(systemName: systemName)
                 .imageScale(.large)
                 .foregroundStyle(color)
-                .font(.system(size: 40))
+                .scaledFont(.system(size: 40))
 
             Text(title)
-                .font(.headline).foregroundColor(color)
+                .scaledFont(.headline).foregroundColor(color)
         }
         .frame(maxWidth: .infinity, minHeight: 120)
         .padding()

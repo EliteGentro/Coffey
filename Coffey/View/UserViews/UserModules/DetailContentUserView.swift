@@ -58,23 +58,23 @@ struct DetailContentUserView: View {
                 
                 // MARK: Title
                 Text(content.name)
-                    .font(.largeTitle.bold())
+                    .scaledFont(.largeTitle.bold())
                 
                 // MARK: Quiz Results
                 if quizVM.isQuizComplete {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Calificación: \(quizVM.correctCount * 20)")
-                            .font(.title2.bold())
+                            .scaledFont(.title2.bold())
                         
                         Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
-                            .font(.body)
+                            .scaledFont(.body)
                     }
                 }
                 
                 // MARK: Resource Details
                 VStack(alignment: .leading, spacing: 8) {
                     Text(content.resourceType.capitalized)
-                        .font(.headline)
+                        .scaledFont(.headline)
                     
                     ScaledText(content.details, style: .body)
                 }
@@ -93,9 +93,9 @@ struct DetailContentUserView: View {
                 }) {
                     HStack {
                         Image(systemName: "play.circle.fill")
-                            .font(.title2)
+                            .scaledFont(.title2)
                         Text("Ver")
-                            .font(.title3.bold())
+                            .scaledFont(.title3.bold())
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -177,10 +177,10 @@ struct DetailContentUserView: View {
                 }) {
                     HStack {
                         Image(systemName: progressStatusIcon)
-                            .font(.title2)
+                            .scaledFont(.title2)
                         
                         Text(progressStatus)
-                            .font(.title3.bold())
+                            .scaledFont(.title3.bold())
                     }
                     .padding()
                     .frame(maxWidth: .infinity)

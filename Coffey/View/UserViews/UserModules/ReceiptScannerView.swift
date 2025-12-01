@@ -67,7 +67,7 @@ struct ReceiptScannerView: View {
                 } else if !extractedText.isEmpty {
                     ScrollView {
                         Text(extractedText)
-                            .font(.system(.body, design: .monospaced))
+                            .scaledFont(.system(.body, design: .monospaced))
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }

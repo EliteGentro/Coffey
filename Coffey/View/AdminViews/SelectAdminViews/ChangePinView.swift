@@ -83,27 +83,27 @@ struct ChangePinView: View {
                 .padding(.top, 40)
             
             Text("Cambiar PIN")
-                .font(.title2)
+                .scaledFont(.title2)
                 .fontWeight(.semibold)
             
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading) {
                     Text("PIN actual")
-                        .font(.subheadline)
+                        .scaledFont(.subheadline)
                         .foregroundColor(.gray)
                     PinInputView(pin: $currentPin, fieldFocus: _focusCurrent, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Nuevo PIN")
-                        .font(.subheadline)
+                        .scaledFont(.subheadline)
                         .foregroundColor(.gray)
                     PinInputView(pin: $newPin, fieldFocus: _focusNew, numberOfDigits: numberOfDigits)
                 }
                 
                 VStack(alignment: .leading) {
                     Text("Confirmar nuevo PIN")
-                        .font(.subheadline)
+                        .scaledFont(.subheadline)
                         .foregroundColor(.gray)
                     PinInputView(pin: $confirmPin, fieldFocus: _focusConfirm, numberOfDigits: numberOfDigits)
                 }
