@@ -135,7 +135,7 @@ struct SelectAdminView: View {
         admin.isDeleted = true
         admin.updatedAt = Date()
         try? context.save()
-        try? api.delete(admin)
+        try? await api.delete(admin)
     }
 }
 
