@@ -40,18 +40,18 @@ struct AdminLoginView: View {
     }
 
     //Posiblemente cifrar el pin usando SHA256
-    private func hashPin(_ pin: String) -> String {
+    func hashPin(_ pin: String) -> String {
         let data = Data(pin.utf8)
         let hashed = SHA256.hash(data: data)
         return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 
-    private func saveHashedPIN(_ pin: String) {
+    func saveHashedPIN(_ pin: String) {
         let hashed = hashPin(pin)
         keychain.set(hashed, forKey: "admin_\(admin.id.uuidString)_pin") //Verificar lo del Admin.id
     }
 
-    private func validatePIN(_ pin: String) -> Bool {
+    func validatePIN(_ pin: String) -> Bool {
         let hashed = hashPin(pin)
         if let stored = keychain.get("admin_\(admin.id.uuidString)_pin") { //Verificar lo del Admin.id
             return stored == hashed
