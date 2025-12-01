@@ -15,6 +15,7 @@ struct SelectAdminView: View {
     @State private var isEditing = false
     @State private var adminToDelete: Admin?      // Para alert
     @State private var showDeleteAlert = false
+    private var api = CooperativaAPI()
 
     // 🔥 Filtro directo: Solo admins NO eliminados
     @Query(filter: #Predicate<Admin> { !$0.isDeleted },
@@ -130,10 +131,11 @@ struct SelectAdminView: View {
     }
 
     // MARK: - SOFT DELETE
-    private func deleteAdmin(_ admin: Admin) {
+    private func deleteAdmin(_ admin: Admin) async {
         admin.isDeleted = true
         admin.updatedAt = Date()
         try? context.save()
+        try? api.delete(admin)
     }
 }
 
