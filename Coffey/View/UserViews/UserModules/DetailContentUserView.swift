@@ -76,8 +76,7 @@ struct DetailContentUserView: View {
                     Text(content.resourceType.capitalized)
                         .font(.headline)
                     
-                    Text(content.details)
-                        .font(.body)
+                    ScaledText(content.details, style: .body)
                 }
                 .padding()
                 .background(Color(.secondarySystemBackground))
@@ -265,6 +264,11 @@ struct DetailContentUserView: View {
         }
     }
 }
+
 #Preview {
-    DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
+    let mockFontSettings = FontSettings()
+    mockFontSettings.multiplier = 1.0
+    
+    return DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
+    .environmentObject(mockFontSettings)
 }

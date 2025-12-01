@@ -16,7 +16,7 @@ struct ManageContentsView: View {
     private let filters = ["No Descargados", "Descargados"]
     @State private var showErrorAlert: Bool = false
     @State private var errorMessage: String = ""
-
+    
     init(selectedFilter: String = "No Descargados") {
         _contentVM = StateObject(wrappedValue: ContentViewModel())
         _selectedFilter = State(initialValue: selectedFilter)

@@ -53,10 +53,12 @@ final class SyncManager {
             }
         }
 
-        let remoteArr = try await api.fetchAll()
-        var synced = Set<T.IDType>()
+        // Step 3 — Handle local records
+        for local in updatedLocalArr {
+            if let id = local.remoteID as? Int, id == 0 { continue }
 
-        for remote in remoteArr {
+            // Skip records that were just created in Step 1
+            if synced.contains(local.remoteID) { continue }
 
             // Si local está eliminado → NO revivirlo
             if let local = updatedLocalByID[remote.remoteID], local.isDeleted {

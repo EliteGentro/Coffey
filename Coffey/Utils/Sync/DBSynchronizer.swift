@@ -39,25 +39,26 @@ final class DBSynchronizer: ObservableObject {
         let userVM = UserViewModel()
         
         // First sync (no references)
+        print("Admin")
         try await adminVM.syncAdmins(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("Content")
         try await contentVM.syncContents(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("Cooperativa")
         try await cooperativaVM.syncCooperativas(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("User")
         try await userVM.syncUsers(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("Finance")
         // Dependent objects
         try await financeVM.syncFinances(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("Preference")
         try await preferenceVM.syncPreferences(using: context)
         await MainActor.run { syncProgress += 14 }
-        
+        print("Progress")
         try await progressVM.syncProgresses(using: context)
         await MainActor.run { syncProgress = 100 }
         

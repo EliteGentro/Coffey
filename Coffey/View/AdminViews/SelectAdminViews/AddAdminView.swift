@@ -14,14 +14,16 @@ struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
 
+    @Query private var cooperativas: [Cooperativa]
+
+
     @State private var name: String = ""
     @State private var correo: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @State private var showPassword: Bool = false
     @State private var showConfirmPassword: Bool = false
-    @State private var selectedCooperativa = "Cooperativa1"
-    @State private var cooperativa_options: [String] = ["Cooperativa1", "Cooperativa2", "Cooperativa3", "Cooperativa4"]
+    @State private var selectedCooperativa : Cooperativa?
 
     @State private var showPasswordMismatchAlert: Bool = false
     @State private var showPinErrorAlert: Bool = false
@@ -38,6 +40,11 @@ struct AddAdminView: View {
     func isValidNumericPin(_ pin: String) -> Bool {
         return pin.count == 6 && pin.allSatisfy { $0.isNumber }
     }
+
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
+
+
 
     var body: some View {
         Form {
@@ -99,7 +106,7 @@ struct AddAdminView: View {
             }
 
             Button("Guardar") {
-                
+
                 emailError = false
                 emailInUseError = false
 
@@ -109,7 +116,7 @@ struct AddAdminView: View {
                     correo = ""
                     return
                 }
-                
+
                 do {
                     let descriptor = FetchDescriptor<Admin>(
                         predicate: #Predicate { $0.correo == correo && $0.isDeleted == false }
@@ -178,6 +185,23 @@ struct AddAdminView: View {
                     Image(systemName: "xmark")
                 }
             }
+            .onAppear {
+                if cooperativas.count > 0 {
+                        if selectedCooperativa == nil {
+                            selectedCooperativa = cooperativas.first
+                        }
+
+                } else{
+                    showErrorAlert = true
+                    errorMessage = "No se encontraron cooperativas. Inténtalo más tarde."
+                    dismiss()
+                }
+            }
         }
     }
+}
+
+
+#Preview {
+    AddAdminView()
 }

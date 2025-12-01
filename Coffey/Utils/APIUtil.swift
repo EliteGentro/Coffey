@@ -35,7 +35,12 @@ final class APIUtil: ObservableObject {
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(object)
+        let jsonData = try encoder.encode(object)
+        request.httpBody = jsonData
+        
+        if let jsonString = String(data: jsonData, encoding: .utf8) {
+            print(jsonString)
+        }
 
         let (_, response) = try await URLSession.shared.data(for: request)
 
@@ -59,7 +64,12 @@ final class APIUtil: ObservableObject {
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(object)
+        let jsonData = try encoder.encode(object)
+        request.httpBody = jsonData
+        
+        if let jsonString = String(data: jsonData, encoding: .utf8) {
+            print(jsonString)
+        }
 
         let (data, response) = try await URLSession.shared.data(for: request)
 

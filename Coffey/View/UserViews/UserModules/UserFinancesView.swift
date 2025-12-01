@@ -30,7 +30,7 @@ struct UserFinancesView: View {
     init(user: User) {
         self.user = user
         let userID = user.user_id
-        _finances = Query(filter: #Predicate<Finance> { $0.user_id == userID })
+        _finances = Query(filter: #Predicate<Finance> { $0.user_id == userID  && $0.deletedAt == nil})
     }
 
     private let columns: [GridItem] = [

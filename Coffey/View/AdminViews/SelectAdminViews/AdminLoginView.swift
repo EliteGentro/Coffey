@@ -27,7 +27,7 @@ struct AdminLoginView: View {
         self._path = path
         self.onReset = onReset
     }
-    
+
     // MARK: - PIN validation helpers
     private var isPinComplete: Bool {
         pin.allSatisfy { !$0.isEmpty }
@@ -40,7 +40,7 @@ struct AdminLoginView: View {
     // MARK: - Validation against BD
     private func validateCurrentPin(_ pin: String) -> Bool {
         let stored = admin.password
-        
+
         let parts = stored.split(separator: "|")
         guard parts.count == 2,
               let salt = CryptoHelper.decode(String(parts[0])),
@@ -49,7 +49,7 @@ struct AdminLoginView: View {
         else {
             return false
         }
-        
+
         return derived == storedKey
     }
 

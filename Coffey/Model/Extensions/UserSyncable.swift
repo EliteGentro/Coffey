@@ -19,8 +19,6 @@ extension User: Syncable {
             user_id: remote.user_id,
             name: remote.name,
             cooperativa_id: remote.cooperativa_id,
-            puntaje_aprendizaje: remote.puntaje_aprendizaje,
-            contenidos_terminados: remote.contenidos_terminados,
             updatedAt: remote.updatedAt,
             deletedAt: nil
         )
@@ -29,8 +27,6 @@ extension User: Syncable {
     func merge(from remote: User) {
         name = remote.name
         cooperativa_id = remote.cooperativa_id
-        puntaje_aprendizaje = remote.puntaje_aprendizaje
-        contenidos_terminados = remote.contenidos_terminados
         updatedAt = remote.updatedAt
     }
 }
