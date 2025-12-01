@@ -182,9 +182,12 @@ struct AddAdminView: View {
         .navigationTitle("Agregar Administrador")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark")
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
                 }
             }
             .onAppear {
@@ -199,7 +202,6 @@ struct AddAdminView: View {
                     dismiss()
                 }
             }
-        }
     }
 }
 
