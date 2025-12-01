@@ -15,7 +15,7 @@ struct SelectAdminView: View {
     @State private var isEditing = false
     @State private var adminToDelete: Admin?      // Para alert
     @State private var showDeleteAlert = false
-    private var api = UserAPI()
+    private var api = AdminAPI()
 
     // 🔥 Filtro directo: Solo admins NO eliminados
     @Query(filter: #Predicate<Admin> { !$0.isDeleted },
