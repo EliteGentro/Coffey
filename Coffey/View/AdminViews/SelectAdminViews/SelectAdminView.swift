@@ -131,11 +131,10 @@ struct SelectAdminView: View {
     }
 
     // MARK: - SOFT DELETE
-    private func deleteAdmin(_ admin: Admin) async {
+    private func deleteAdmin(_ admin: Admin) {
         admin.isDeleted = true
         admin.updatedAt = Date()
         try? context.save()
-        try? await api.delete(admin)
     }
 }
 
