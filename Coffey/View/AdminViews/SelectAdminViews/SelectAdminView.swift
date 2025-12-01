@@ -134,6 +134,7 @@ struct SelectAdminView: View {
     private func deleteAdmin(_ admin: Admin) {
         admin.isDeleted = true
         admin.updatedAt = Date()
+        admin.deletedAt = Date()
         try? context.save()
     }
 }
