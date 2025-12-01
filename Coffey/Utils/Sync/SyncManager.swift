@@ -32,6 +32,7 @@ final class SyncManager {
     ) async throws where API.Model == T {
 
         // 1. Cargar todo lo local
+        var synced = Set<T.IDType>()
         let localArr = try context.fetch(FetchDescriptor<T>())
         let localByID = Dictionary(uniqueKeysWithValues: localArr.map { ($0.remoteID, $0) })
 
