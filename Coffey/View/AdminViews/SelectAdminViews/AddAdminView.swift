@@ -102,7 +102,9 @@ struct AddAdminView: View {
             }
 
             Picker("Cooperativa", selection: $selectedCooperativa) {
-                ForEach(cooperativa_options, id: \.self) { Text($0) }
+                ForEach(cooperativas, id: \.self) { option in
+                    Text(option.name).tag(Optional(option))
+                }
             }
 
             Button("Guardar") {
