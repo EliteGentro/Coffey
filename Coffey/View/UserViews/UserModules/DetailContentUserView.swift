@@ -213,6 +213,11 @@ struct DetailContentUserView: View {
         } message: {
             Text(errorMessage)
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: "Toca el botón verde para ver el \(content.resourceType == "video" ? "video" : "PDF") de este curso. Toca el botón azulu para generar preguntas para probar tu conocimiento del tema una vez hayas terminado de aprender. No olvides actualizar tu progreso mientras avanzas en el botón de abajo.")
+            }
+        }
         }
     }
     

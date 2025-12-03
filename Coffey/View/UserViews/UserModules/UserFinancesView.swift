@@ -198,6 +198,11 @@ struct UserFinancesView: View {
                 }
             }
             .navigationTitle("Finanzas")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SectionAudioControls(text: "Este es el simulador de registro de finanzas. Aquí podrás practicar registrar tus finanzas personales y profesionales. Puedes usar este simulador para practicar la aplicación sin necesidad de tener acceso a una cuenta de finanzas real.")
+                }
+            }
         }
     }
 

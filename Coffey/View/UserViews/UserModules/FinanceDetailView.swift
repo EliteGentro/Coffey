@@ -148,6 +148,9 @@ struct FinanceDetailView: View {
                     Image(systemName: "xmark")
                 }
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: createNew ? "Registra un nuevo \(self.type), escribe el título, la categoría y el monto. Una vez llenos los campos, toca el botón café." : "Edita tu \(self.type) cambia el título, la categoría y, o el monto y guarda los cambios tocando el botón café. Si lo deseas, puedes borrarlo tocando el botón rojo.")
+            }
         }
         }
     }

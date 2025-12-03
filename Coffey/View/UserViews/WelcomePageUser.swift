@@ -107,7 +107,7 @@ struct WelcomePageUser: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    SectionAudioControls(text: "Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio")
+                    SectionAudioControls(text: "Aquí puedes ver tus puntos que se obtienen completando preguntas de los cursos. Actualmente, tienes \(self.gradeSum) puntos. También puedes ver que eres nivel \(completedProgresses/5 + 1) y te faltan  \(5 - completedProgresses % 5) para el nivel \(completedProgresses/5 + 2). De aquí puedes decidir si completar más cursos en el botón azul, practicar registrar tus finanzas en el botón verde, o ajustar la aplicación a tu medida en el botón gris.")
                 }
             }
             // Alert confirmation for leaving

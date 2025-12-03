@@ -77,7 +77,11 @@ struct UserSettingsView: View {
                 Text("Loading preferences...")
             }
         }
-        .padding(40)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: "Cambia tus preferencias personales para que la aplicación se adapte a tus necesidades. Puedes cambiar el tamaño de la letra con la barra horizontal, no olvides guardar los cambios.")
+            }
+        }
         .onAppear {
             // Initialize tempMultiplier from existing preference
             if let preference = preferences.first {

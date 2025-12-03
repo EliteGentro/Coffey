@@ -28,9 +28,13 @@ struct QuestionView: View {
                 let current = quiz.questions[vm.currentQuestionIndex]
                 
                 VStack(spacing: 24) {
-                    Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
-                        .font(.headline)
-                    
+                    HStack{
+                        Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
+                            .font(.headline)
+                        SectionAudioControls(text: """
+                            La pregunta es: \(current.question). Selecciona la respuesta correcta, el orden de las respuestas de arriba hacia abajo es el siguiente: \(current.answers.joined(separator: ", "))
+                        """)
+                    }
                     Text(current.question)
                         .font(.title3)
                         .multilineTextAlignment(.center)

@@ -81,6 +81,11 @@ struct UserLearningView: View {
         }
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: "Selecciona uno de los contenidos que los administradores han elegido para ti. Los libros son PDFs y las cámaras son videos. No olvides que según tu progreso deberás filtrar los contenidos utilizando la barra de arriba para cursos pendientes, en progreso y terminados.")
+            }
+        }
         }
     }
     
