@@ -10,6 +10,7 @@ import Testing
 import Foundation
 import KeychainSwift
 import CryptoKit
+import SwiftUI
 
 struct CoffeyTests {
 
@@ -75,8 +76,11 @@ struct CoffeyTests {
         let (data, _) = try await URLSession.shared.data(from: url)
 
         #expect(!data.isEmpty)
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
 
-        let contents = try JSONDecoder().decode([Content].self, from: data)
+        let contents = try decoder.decode([Content].self, from: data)
         if let first = contents.first {
             #expect(first.content_id > 0)
             #expect(!first.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -91,8 +95,8 @@ struct CoffeyTests {
 
     @Test("PIN hashing genera un valor SHA256 correcto")
     func testPinHashing() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
+        let admin = Admin(id: UUID(), admin_id: 1, name: "Augusto", correo: "mail@mail.com", cooperativa_id: 1, password: "123456")
+        let view = await AdminLoginView(admin: admin, path: .constant(.init()))
         let pin = "123456"
 
         let data = Data(pin.utf8)
@@ -103,8 +107,8 @@ struct CoffeyTests {
 
     @Test("Debe guardar y validar correctamente el PIN en Keychain")
     func testSaveAndValidatePin() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
+        let admin = Admin(id: UUID(), admin_id: 1, name: "Augusto", correo: "mail@mail.com", cooperativa_id: 1, password: "123456")
+        let view = await AdminLoginView(admin: admin, path: .constant(.init()))
         let keychain = KeychainSwift()
         let pin = "654321"
         
@@ -112,21 +116,20 @@ struct CoffeyTests {
         keychain.delete("admin_\(admin.id.uuidString)_pin")
         
         // Guarda y valida
-        view.saveHashedPIN(pin)
+        await view.saveHashedPIN(pin)
         #expect(view.validatePIN(pin))
     }
 
     @Test("Debe rechazar un PIN incorrecto")
     func testInvalidPin() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-        let keychain = KeychainSwift()
+        let admin = Admin(id: UUID(), admin_id: 1, name: "Augusto", correo: "mail@mail.com", cooperativa_id: 1, password: "123456")
+        let view = await AdminLoginView(admin: admin, path: .constant(.init()))
 
         let correctPin = "111111"
         let wrongPin = "222222"
         
         // Guarda el correcto
-        view.saveHashedPIN(correctPin)
+        await view.saveHashedPIN(correctPin)
         
         // Verifica que el incorrecto falle
         #expect(!view.validatePIN(wrongPin))
@@ -134,9 +137,7 @@ struct CoffeyTests {
 
     @Test("Botón Entrar solo se habilita si el PIN está completo y numérico")
     func testPinCompletionAndNumeric() async throws {
-        let admin = Admin(id: UUID(), name: "Augusto", email: "mail@mail.com", code: 123, password: "123456")
-        let view = AdminLoginView(admin: admin, path: .constant(.init()))
-
+        
         // Caso 1: PIN incompleto
         var partialPin = Array(repeating: "", count: 6)
         partialPin[0] = "1"
