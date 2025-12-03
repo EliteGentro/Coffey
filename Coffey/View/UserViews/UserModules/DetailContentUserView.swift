@@ -52,7 +52,7 @@ struct DetailContentUserView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             VStack(alignment: .center, spacing: 24) {
                 
@@ -69,6 +69,8 @@ struct DetailContentUserView: View {
                         Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
                             .font(.body)
                     }
+                    .padding()
+                    .glassCard()
                 }
                 
                 // MARK: Resource Details
@@ -79,8 +81,7 @@ struct DetailContentUserView: View {
                     ScaledText(content.details, style: .body)
                 }
                 .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
+                .glassCard()
                 
                 
                 // MARK: View Resource Button
@@ -99,7 +100,7 @@ struct DetailContentUserView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.green.gradient)
+                    .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
@@ -124,13 +125,13 @@ struct DetailContentUserView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.clockwise.circle.fill")
-                                
+                                    .font(.title2)
                                 Text(quizVM.isDone ? "Regenerar Quiz" : "Generar Quiz")
                                     .fontWeight(.bold)
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue.gradient)
+                            .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                         }
@@ -146,7 +147,7 @@ struct DetailContentUserView: View {
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(Color.blue.gradient)
+                                .background(Color.blue)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                             }

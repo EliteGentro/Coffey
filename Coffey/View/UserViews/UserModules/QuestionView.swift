@@ -22,7 +22,7 @@ struct QuestionView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack {
             if let quiz = vm.quiz, vm.currentQuestionIndex < quiz.questions.count {
                 let current = quiz.questions[vm.currentQuestionIndex]

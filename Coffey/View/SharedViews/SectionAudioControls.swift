@@ -15,12 +15,10 @@ struct SectionAudioControls: View {
 
         HStack{
             Button(action: {
-                Task { @MainActor in
-                    if speech.isSpeaking && speech.currentText == text {
-                        speech.stop()
-                    } else {
-                        speech.speak(text)
-                    }
+                if speech.isSpeaking && speech.currentText == text {
+                    speech.stop()
+                } else {
+                    speech.speak(text)
                 }
             }) {
                 Image(systemName: speech.isSpeaking && speech.currentText == text ? "stop.fill" : "play.fill")

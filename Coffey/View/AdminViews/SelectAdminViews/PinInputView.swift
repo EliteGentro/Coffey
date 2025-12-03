@@ -34,25 +34,32 @@ struct PinInputView: View {
                 .onChange(of: pin[index]) { oldValue,newValue in
                     // Ensure only a single character per field
                     if pin[index].count > 1 {
-                        let currentValue = Array(pin[index])
-                        if currentValue[0] == Character(oldValue) {
-                            pin[index] = String(pin[index].suffix(1))
+                        let chars = Array(pin[index])
+                        if chars[0] == Character(oldValue) {
+                            pin[index] = String(chars.suffix(1))
                         } else {
-                            pin[index] = String(pin[index].prefix(1))
+                            pin[index] = String(chars.prefix(1))
                         }
                     }
-                    
-                    // Move focus automatically
+
+                    // Move focus (async prevents UIKit keyboard conflicts)
                     if !newValue.isEmpty {
-                        if index == numberOfDigits - 1 {
-                            fieldFocus = nil
-                        } else {
-                            fieldFocus = (fieldFocus ?? 0) + 1
+                        DispatchQueue.main.async {
+                            if index < numberOfDigits - 1 {
+                                fieldFocus = index + 1
+                            } else {
+                                fieldFocus = nil
+                            }
                         }
                     } else {
-                        fieldFocus = (fieldFocus ?? 0) - 1
+                        DispatchQueue.main.async {
+                            if index > 0 {
+                                fieldFocus = index - 1
+                            }
+                        }
                     }
                 }
+
             }
         }
         .padding()

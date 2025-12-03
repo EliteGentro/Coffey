@@ -27,7 +27,7 @@ struct WelcomePageUser: View {
         filteredProgresses.filter({$0.status.rawValue == "completed"}).count
     }
     
-
+    
     // Optional closure to reset navigation when leaving
     var onReset: (() -> Void)? = nil
     
@@ -40,69 +40,85 @@ struct WelcomePageUser: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
-        VStack(spacing: 30) {
-            // Display user score
-            VStack {
-                Text("Puntaje")
-                Text("\(self.gradeSum)")
-            }
-            .font(.largeTitle.bold())
-            .padding(40)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.brown.opacity(0.1)))
+            BackgroundView()
             
-            // Display user level and course progress
-            HStack {
-                Text("Nivel: \(completedProgresses/5 + 1)")
-                ProgressView(value: Double(completedProgresses % 5) / 5.0)
-                    .frame(width: 200)
-                    .tint(.green)
+            VStack(spacing: 30) {
+                
+                // Score card
                 VStack {
-                    Text("\(completedProgresses % 5)/5")
-                    Text("Cursos")
+                    Text("Puntaje")
+                    Text("\(self.gradeSum)")
                 }
+                .font(.largeTitle.bold())
+                .padding(40)
+                .glassCard()
+                
+                // Progress card
+                HStack {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Progreso")
+                            .font(.headline.bold())
+                        
+                        ProgressView(value: Double(completedProgresses % 5) / 5.0)
+                            .tint(.green)
+                        
+                        HStack {
+                            Text("Nivel \(completedProgresses/5 + 1)")
+                            Spacer()
+                            Text("\(completedProgresses % 5)/5 cursos")
+                        }
+                        .font(.subheadline.bold())
+                    }
+                    .padding()
+                    .glassCard()
+                }
+                
+                .frame(maxWidth: .infinity)
+                
+                // Menu
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
+                    NavigationLink(destination: UserLearningView(user: user)) {
+                        MenuCellView(systemName: "book.closed.fill", title: "Aprendizaje", color: .blue)
+                    }
+                    NavigationLink(destination: UserFinancesView(user: user)) {
+                        MenuCellView(systemName: "wallet.bifold.fill", title: "Registro de Finanzas", color: .green)
+                    }
+                    NavigationLink(destination: UserSettingsView(user: user)) {
+                        MenuCellView(systemName: "gear", title: "Ajustes", color: .gray)
+                    }
+                }
+                .padding()
+                
             }
-            .fontWeight(.bold)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
             
-            // Menu options with navigation
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
-                NavigationLink(destination: UserLearningView(user: user)) {
-                    MenuCellView(systemName: "book.closed.fill", title: "Aprendizaje", color: .blue.opacity(0.8))
+            .padding(20)
+            .navigationTitle("Hola, \(user.name)")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            // Custom back button with alert
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        showLeaveAlert = true
+                    }) {
+                        Image(systemName: "chevron.left")
+                    }
                 }
-                NavigationLink(destination: UserFinancesView(user: user)) {
-                    MenuCellView(systemName: "wallet.bifold.fill", title: "Registro de Finanzas", color: .green.opacity(0.9))
-                }
-                NavigationLink(destination: UserSettingsView(user: user)) {
-                    MenuCellView(systemName: "gear", title: "Ajustes", color: .gray)
-                }
-            }
-        }
-        .padding(20)
-        .navigationTitle("Hola, \(user.name)")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        // Custom back button with alert
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    showLeaveAlert = true
-                }) {
-                    Image(systemName: "chevron.left")
+                ToolbarItem(placement: .topBarTrailing) {
+                    SectionAudioControls(text: "Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                SectionAudioControls(text: "Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio Test Audio")
+            // Alert confirmation for leaving
+            .alert("¿Seguro que quieres salir?", isPresented: $showLeaveAlert) {
+                Button("Cancelar", role: .cancel) {}
+                Button("Confirmar", role: .destructive) {
+                    onReset?()
+                }
+            } message: {
+                Text("Llama a un administrador para volver a entrar.")
             }
-        }
-        // Alert confirmation for leaving
-        .alert("¿Seguro que quieres salir?", isPresented: $showLeaveAlert) {
-            Button("Cancelar", role: .cancel) {}
-            Button("Confirmar", role: .destructive) {
-                onReset?()
-            }
-        } message: {
-            Text("Llama a un administrador para volver a entrar.")
-        }
         }
     }
 }

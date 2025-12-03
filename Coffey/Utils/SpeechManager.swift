@@ -23,10 +23,10 @@ final class SpeechManager: ObservableObject {
         bridge.owner = self
         synthesizer.delegate = bridge
         
-        Task { await activateAudioSession() }
+        Task.detached { await self.activateAudioSession() }
     }
     
-    private func activateAudioSession() async {
+    nonisolated private func activateAudioSession() async {
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
@@ -35,6 +35,7 @@ final class SpeechManager: ObservableObject {
             print("Failed to activate audio session:", error)
         }
     }
+
     
     // MARK: - Public API
     

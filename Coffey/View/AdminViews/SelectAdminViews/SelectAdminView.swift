@@ -25,7 +25,7 @@ struct SelectAdminView: View {
 
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             
                 

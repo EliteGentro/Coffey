@@ -16,7 +16,7 @@ struct FirstWelcomeView: View {
     @State private var errorMessage = ""
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
             VStack(spacing: 28) {
                 
                 // MARK: - Title + Instructions

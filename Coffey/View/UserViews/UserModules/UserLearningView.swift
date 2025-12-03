@@ -49,7 +49,7 @@ struct UserLearningView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             VStack {
                 // Segmented picker to filter content

@@ -44,9 +44,10 @@ struct UserSettingsView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack(spacing: 24) {
             if let preference = preferences.first {
+                VStack(spacing: 16) {
                 Slider(
                     value: $tempMultiplier,
                     in: 1.0...3.0,
@@ -69,6 +70,9 @@ struct UserSettingsView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                }
+                .padding()
+                .glassCard()
             } else {
                 Text("Loading preferences...")
             }

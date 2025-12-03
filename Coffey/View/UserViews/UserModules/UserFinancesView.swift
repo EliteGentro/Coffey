@@ -42,7 +42,7 @@ struct UserFinancesView: View {
 
     var body: some View {
         ZStack {
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
 
             VStack {
 
@@ -65,89 +65,100 @@ struct UserFinancesView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
-                // MARK: Scrollable Grid with Max Height
+                // MARK: Scrollable rows with full-row backgrounds
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 12) {
+                    LazyVStack(spacing: 6) {
                         ForEach(Array(filteredFinances.enumerated()), id: \.element.id) { index, finance in
-
+                            // alternating row color (system colors for light/dark compatibility)
                             let rowBackground = index.isMultiple(of: 2)
-                            ? Color.white.opacity(0.05)
-                            : Color.clear
+                            ? Color(Color.beige)
+                            : Color(Color.brown)
+                            
+                            let textColor = index.isMultiple(of: 2)
+                            ? Color(Color.black)
+                            : Color(Color.white)
 
-                            // Cell 1
-                            Text(finance.name)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 10)
-                                .background(rowBackground)
-                                .contentShape(Rectangle())
-                                .onTapGesture { rowTapped(finance) }
 
-                            // Cell 2
-                            Text(finance.category)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 10)
-                                .background(rowBackground)
-                                .contentShape(Rectangle())
-                                .onTapGesture { rowTapped(finance) }
+                            HStack(spacing: 12) {
+                                // Column 1
+                                Text(finance.name)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                            // Cell 3
-                            Text("$\(finance.amount, specifier: "%.2f")")
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .padding(.vertical, 10)
-                                .background(rowBackground)
-                                .contentShape(Rectangle())
-                                .onTapGesture { rowTapped(finance) }
+                                // Column 2
+                                Text(finance.category)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                            // Cell 4
-                            Text(finance.date, style: .date)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .padding(.vertical, 10)
-                                .background(rowBackground)
-                                .contentShape(Rectangle())
-                                .onTapGesture { rowTapped(finance) }
+                                // Column 3
+                                Text("\(finance.amount, specifier: "%.2f")")
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+
+                                // Column 4
+                                Text(finance.date, style: .date)
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            .font(.system(size: 13))                 // smaller font
+                            .padding(.vertical, 8)                   // row padding
+                            .padding(.horizontal, 12)
+                            .foregroundColor(textColor)
+                            .background(rowBackground)               // single background per row
+                            .cornerRadius(8)                         // rounded row for separation
+                            .contentShape(Rectangle())               // makes whole rounded area tappable
+                            .onTapGesture { rowTapped(finance) }     // row tap handler
+                            .padding(.horizontal, 8)                 // space between row edge and container
                         }
                     }
-                    .padding(.horizontal, 8)
+                    .padding(.vertical, 8)
                 }
-                .frame(maxHeight: 350) // max height -> scrollable
+                .frame(maxHeight: 350) // scrollable region
+                .background(Color(UIColor.systemGray6)) // container contrast from page
+                .cornerRadius(12)
+                .padding(.horizontal, 8)
 
                 Spacer().frame(height: 12)
 
-                // MARK: Buttons
-                Button {
-                    showAddFinance = true
-                } label: {
-                    HStack {
-                        Image(systemName: "plus.app.fill").font(.title)
-                        Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
-                            .font(.title2).bold()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.brown)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                }
 
-                if selectedFinanceType == "Egresos" {
+                // MARK: Buttons
+                VStack{
                     Button {
-                        showReceiptScanner = true
-                    } label: {
+                        showAddFinance = true
+                    }
+                    label:  {
                         HStack {
-                            Image(systemName: "plus.app.fill").font(.title)
-                            Text("Agregar Egreso por recibo")
+                            Image(systemName: "plus.app.fill")
+                                .font(.title)
+                            
+                            Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
                                 .font(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.brown)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .padding(.horizontal)
-                        .padding(.bottom)
+                        .cornerRadius(12)
+                    }
+                    
+                    
+                    if selectedFinanceType == "Egresos" {
+                        Button {
+                            showReceiptScanner = true
+                        } label:
+                        {
+                            HStack {
+                                Image(systemName: "receipt.fill")
+                                    .font(.title)
+                                
+                                Text("Agregar Egreso por recibo")
+                                    .font(.title2).bold()
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.brown)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                        }
                     }
                 }
+                .padding(.horizontal, 20)
             }
 
             // MARK: Sheet Logic (Unchanged)
