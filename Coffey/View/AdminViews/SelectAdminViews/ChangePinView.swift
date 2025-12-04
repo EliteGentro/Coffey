@@ -56,7 +56,8 @@ struct ChangePinView: View {
 
         if let derived = CryptoHelper.pbkdf2Hash(password: newPin, salt: salt) {
             let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
-            admin.password = combined   // ✔ se actualiza directamente en la BD
+            admin.password = combined
+            admin.updatedAt = Date()
 
             do { try context.save() }
             catch { print("Error al guardar nuevo PIN: \(error)") }
