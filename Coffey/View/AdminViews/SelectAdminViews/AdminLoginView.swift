@@ -27,7 +27,7 @@ struct AdminLoginView: View {
         self._path = path
         self.onReset = onReset
 
-        print("Current admin value is: \(admin.name), deletedAt: \(admin.deletedAt)")
+        print("Current admin value is: \(admin.name), deletedAt: \(String(describing: admin.deletedAt))")
     }
 
     // MARK: - PIN validation helpers
