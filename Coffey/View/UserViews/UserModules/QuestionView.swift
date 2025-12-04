@@ -30,13 +30,13 @@ struct QuestionView: View {
                 VStack(spacing: 24) {
                     HStack{
                         Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
-                            .font(.headline)
+                            .scaledFont(.headline)
                         SectionAudioControls(text: """
                             La pregunta es: \(current.question). Selecciona la respuesta correcta, el orden de las respuestas de arriba hacia abajo es el siguiente: \(current.answers.joined(separator: ", "))
                         """)
                     }
                     Text(current.question)
-                        .font(.title3)
+                        .scaledFont(.title3)
                         .multilineTextAlignment(.center)
                         .padding()
                     
@@ -128,4 +128,6 @@ struct QuestionView: View {
 
 #Preview {
     QuestionView(vm:QuizViewModel(), progress: Progress.mockProgresses[0])
+        .withPreviewSettings()
+
 }

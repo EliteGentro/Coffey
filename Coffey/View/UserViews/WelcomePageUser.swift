@@ -56,7 +56,7 @@ struct WelcomePageUser: View {
                     Text("Puntaje")
                     Text("\(puntaje)")
                 }
-                .font(.largeTitle.bold())
+                .scaledFont(.largeTitle).bold()
                 .padding(40)
                 .glassCard()
                 
@@ -64,7 +64,7 @@ struct WelcomePageUser: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Progreso")
-                            .font(.headline.bold())
+                            .scaledFont(.headline).bold()
                         let completedProgresses = userVM.getContenidosTerminados(for: user, progresses: progresses)
                         ProgressView(value: Double(completedProgresses % 5) / 5.0)
                             .tint(.green)
@@ -74,7 +74,7 @@ struct WelcomePageUser: View {
                             Spacer()
                             Text("\(completedProgresses % 5)/5 cursos")
                         }
-                        .font(.subheadline.bold())
+                        .scaledFont(.subheadline).bold()
                     }
                     .padding()
                     .glassCard()
@@ -135,6 +135,8 @@ struct WelcomePageUser: View {
     // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
         WelcomePageUser(user: User.mockUsers[1], path: $dummyPath)
+        .withPreviewSettings()
+
     }
 }
 

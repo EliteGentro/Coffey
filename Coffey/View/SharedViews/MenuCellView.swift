@@ -23,10 +23,10 @@ struct MenuCellView: View {
                 Image(systemName: systemName)
                     .imageScale(.large)
                     .foregroundStyle(color)
-                    .font(.system(size: 40))
+                    .scaledFont(.largeTitle)
 
                 Text(title)
-                    .font(.headline)
+                    .scaledFont(.headline)
                     .foregroundColor(color)
             }
             .frame(maxWidth: .infinity, minHeight: 120)
@@ -42,4 +42,6 @@ struct MenuCellView: View {
 
 #Preview {
     MenuCellView(systemName: "house.fill", title: "house")
+        .withPreviewSettings()
+
 }

@@ -22,7 +22,7 @@ struct SyncObjectsView: View {
             VStack(spacing: 16) {
                 
                 Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
-                    .font(.title3)
+                    .scaledFont(.title3)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
             }
@@ -32,7 +32,7 @@ struct SyncObjectsView: View {
                         .padding(.horizontal)
                     
                     Text("Sincronizando... \(dbSync.syncProgress)%")
-                        .font(.headline)
+                        .scaledFont(.headline)
                 }
             } else{
                 Button{
@@ -48,10 +48,10 @@ struct SyncObjectsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                            .font(.title2)
+                            .scaledFont(.title2)
                         
                         Text("Sincronizar")
-                            .font(.title2.bold())
+                            .scaledFont(.title2).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -99,4 +99,6 @@ struct SyncObjectsView: View {
 
 #Preview {
     SyncObjectsView()
+        .withPreviewSettings()
+
 }

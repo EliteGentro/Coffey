@@ -96,7 +96,7 @@ struct UserFinancesView: View {
                                 Text(finance.date, style: .date)
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                             }
-                            .font(.system(size: 13))                 // smaller font
+                            .scaledFont(.footnote)                 // smaller font
                             .padding(.vertical, 8)                   // row padding
                             .padding(.horizontal, 12)
                             .foregroundColor(textColor)
@@ -125,10 +125,10 @@ struct UserFinancesView: View {
                     label:  {
                         HStack {
                             Image(systemName: "plus.app.fill")
-                                .font(.title)
+                                .scaledFont(.title)
                             
                             Text("Agregar \(selectedFinanceType == "Egresos" ? "Egreso" : "Ingreso")")
-                                .font(.title2).bold()
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -145,10 +145,10 @@ struct UserFinancesView: View {
                         {
                             HStack {
                                 Image(systemName: "receipt.fill")
-                                    .font(.title)
+                                    .scaledFont(.title)
                                 
                                 Text("Agregar Egreso por recibo")
-                                    .font(.title2).bold()
+                                    .scaledFont(.title2).bold()
                             }
                             .padding()
                             .frame(maxWidth: .infinity)

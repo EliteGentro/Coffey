@@ -90,10 +90,10 @@ struct FinanceDetailView: View {
                     } label:  {
                         HStack {
                             Image(systemName: createNew ? "plus" : "square.and.arrow.down")
-                                .font(.title2)
+                                .scaledFont(.title2)
                             
                             Text(createNew ? "Agregar" : "Guardar")
-                                .font(.title2.bold())
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -118,10 +118,10 @@ struct FinanceDetailView: View {
                 {
                     HStack {
                         Image(systemName: "trash.fill")
-                            .font(.title2)
+                            .scaledFont(.title2)
                         
                         Text("Borrar")
-                            .font(.title2.bold())
+                            .scaledFont(.title2).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -159,4 +159,6 @@ struct FinanceDetailView: View {
 
 #Preview {
     FinanceDetailView(type: Finance.mockFinances[0].type, createNew: true, finance: nil)
+        .withPreviewSettings()
+
 }

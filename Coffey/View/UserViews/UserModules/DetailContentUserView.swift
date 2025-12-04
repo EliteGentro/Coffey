@@ -58,16 +58,16 @@ struct DetailContentUserView: View {
                 
                 // MARK: Title
                 Text(content.name)
-                    .font(.largeTitle.bold())
+                    .scaledFont(.largeTitle).bold()
                 
                 // MARK: Quiz Results
                 if quizVM.isQuizComplete {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Calificación: \(quizVM.correctCount * 20)")
-                            .font(.title2.bold())
+                            .scaledFont(.title2).bold()
                         
                         Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
-                            .font(.body)
+                            .scaledFont(.body)
                     }
                     .padding()
                     .glassCard()
@@ -76,9 +76,10 @@ struct DetailContentUserView: View {
                 // MARK: Resource Details
                 VStack(alignment: .leading, spacing: 8) {
                     Text(content.resourceType.capitalized)
-                        .font(.headline)
+                        .scaledFont(.headline)
                     
-                    ScaledText(content.details, style: .body)
+                    Text(content.details)
+                        .scaledFont(.body)
                 }
                 .padding()
                 .glassCard()
@@ -94,9 +95,9 @@ struct DetailContentUserView: View {
                 }) {
                     HStack {
                         Image(systemName: "play.circle.fill")
-                            .font(.title2)
+                            .scaledFont(.title2)
                         Text("Ver")
-                            .font(.title3.bold())
+                            .scaledFont(.title3).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -125,7 +126,7 @@ struct DetailContentUserView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.clockwise.circle.fill")
-                                    .font(.title2)
+                                    .scaledFont(.title2)
                                 Text(quizVM.isDone ? "Regenerar Quiz" : "Generar Quiz")
                                     .fontWeight(.bold)
                             }
@@ -179,10 +180,10 @@ struct DetailContentUserView: View {
                 }) {
                     HStack {
                         Image(systemName: progressStatusIcon)
-                            .font(.title2)
+                            .scaledFont(.title2)
                         
                         Text(progressStatus)
-                            .font(.title3.bold())
+                            .scaledFont(.title3).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -278,4 +279,6 @@ struct DetailContentUserView: View {
     
     return DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
     .environmentObject(mockFontSettings)
+        .withPreviewSettings()
+
 }

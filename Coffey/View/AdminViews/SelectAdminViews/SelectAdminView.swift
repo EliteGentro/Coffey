@@ -42,7 +42,7 @@ struct SelectAdminView: View {
                             VStack(spacing: 8) {
                                 InitialProfileCircleView(name: admin.name)
                                 Text(admin.name)
-                                    .font(.headline)
+                                    .scaledFont(.headline)
                                     .foregroundColor(.primary)
                             }
                             .padding()
@@ -82,5 +82,6 @@ struct SelectAdminView: View {
     @Previewable @State var dummyPath = NavigationPath()
     NavigationStack {
         SelectAdminView(path: $dummyPath)
+        .withPreviewSettings()
     }
 }

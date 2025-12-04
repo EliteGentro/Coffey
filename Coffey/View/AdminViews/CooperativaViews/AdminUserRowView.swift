@@ -22,15 +22,15 @@ struct AdminUserRowView: View {
             // User info section (name and completed content count)
             VStack(alignment: .leading, spacing: 8) {
                 Text(user.name)
-                    .font(.title3)
+                    .scaledFont(.title3)
                     .fontWeight(.bold)
                 
                 HStack {
                     Text("Contenidos:")
-                        .font(.subheadline)
+                        .scaledFont(.subheadline)
                         .fontWeight(.bold)
                     Text("\(userVM.getContenidosTerminados(for: user, progresses: progresses))")
-                        .font(.subheadline)
+                        .scaledFont(.subheadline)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -38,10 +38,10 @@ struct AdminUserRowView: View {
             // User score section aligned to the right
             VStack(alignment: .trailing) {
                 Text("Puntaje:")
-                    .font(.subheadline)
+                    .scaledFont(.subheadline)
                     .fontWeight(.bold)
                 Text("\(userVM.getPuntajeAprendizaje(for: user, progresses: progresses))")
-                    .font(.subheadline)
+                    .scaledFont(.subheadline)
             }
         }
         .padding(.vertical, 8)
@@ -51,4 +51,6 @@ struct AdminUserRowView: View {
 #Preview {
     // No NavigationStack needed (no NavigationLinks in this view)
     AdminUserRowView(user: User.mockUsers[0])
+        .withPreviewSettings()
+
 }

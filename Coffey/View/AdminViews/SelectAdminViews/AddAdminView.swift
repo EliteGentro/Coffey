@@ -80,7 +80,7 @@ struct AddAdminView: View {
                 if !confirmPassword.isEmpty && password != confirmPassword {
                     Text("⚠️ Las contraseñas no coinciden")
                         .foregroundColor(.red)
-                        .font(.footnote)
+                        .scaledFont(.footnote)
                 }
                 
                 Picker("Cooperativa", selection: $selectedCooperativa) {
@@ -142,4 +142,5 @@ struct AddAdminView: View {
 
 #Preview {
     AddAdminView(cooperativas: Cooperativa.mockCooperativas)
+        .withPreviewSettings()
 }

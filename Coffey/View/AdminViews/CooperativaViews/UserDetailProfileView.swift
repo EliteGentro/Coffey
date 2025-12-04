@@ -25,9 +25,8 @@ struct UserDetailProfileView: View {
             
             // User's full name displayed prominently
             Text(user.name)
-                .font(Font.largeTitle.bold())
+                .scaledFont(.largeTitle).bold()
 
-            
             // MARK: - Progress Gauges
             VStack(spacing: 24) {
                 // Average Grade Gauge
@@ -36,7 +35,7 @@ struct UserDetailProfileView: View {
                         Image(systemName: "chart.bar.fill")
                             .foregroundColor(.blue)
                         Text("Promedio de Calificaciones")
-                            .font(.headline)
+                            .scaledFont(.headline)
                     }
                     
                     let avgGrade = userVM.getAverageGrade(for: user, progresses: progresses)
@@ -44,13 +43,13 @@ struct UserDetailProfileView: View {
                         Text("Promedio")
                     } currentValueLabel: {
                         Text("\(Int(avgGrade))")
-                            .font(.title2.bold())
+                            .scaledFont(.title2).bold()
                     }
                     .gaugeStyle(.accessoryCircularCapacity)
                     .tint(avgGrade >= 70 ? .green : avgGrade >= 50 ? .yellow : .red)
                     
                     Text("Promedio de los Cursos Completados")
-                        .font(.caption)
+                        .scaledFont(.caption)
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -63,7 +62,7 @@ struct UserDetailProfileView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
                         Text("Tasa de Finalización")
-                            .font(.headline)
+                            .scaledFont(.headline)
                     }
                     
                     let completionRate = userVM.getCompletionRate(for: user, progresses: progresses)
@@ -78,13 +77,13 @@ struct UserDetailProfileView: View {
                         Text("Progreso")
                     } currentValueLabel: {
                         Text("\(Int(completionRate * 100))%")
-                            .font(.title2.bold())
+                            .scaledFont(.title2).bold()
                     }
                     .gaugeStyle(.accessoryCircularCapacity)
                     .tint(.blue)
                     
                     Text("\(completedCount) de \(totalCount) cursos completados")
-                        .font(.caption)
+                        .scaledFont(.caption)
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -97,7 +96,7 @@ struct UserDetailProfileView: View {
                         Image(systemName: "dollarsign.circle.fill")
                             .foregroundColor(.purple)
                         Text("Balance Financiero")
-                            .font(.headline)
+                            .scaledFont(.headline)
                     }
                     
                     let financialBalance = userVM.getFinancialBalance(for: user, finances: finances)
@@ -112,18 +111,18 @@ struct UserDetailProfileView: View {
                             Image(systemName: financialBalance >= 0.5 ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
                                 .foregroundColor(financialBalance >= 0.5 ? .green : .red)
                             Text("\(Int(financialBalance * 100))%")
-                                .font(.title3.bold())
+                                .scaledFont(.title3).bold()
                         }
                     }
                     .gaugeStyle(.accessoryCircularCapacity)
                     .tint(financialBalance >= 0.5 ? .green : .red)
                     
                     Text(financialBalance >= 0.5 ? "Más ingresos que egresos" : "Más egresos que ingresos")
-                        .font(.caption)
+                        .scaledFont(.caption)
                         .foregroundColor(.secondary)
                     } else{
                         Text("No se han registrado Finanzas")
-                            .font(.caption)
+                            .scaledFont(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
@@ -138,10 +137,10 @@ struct UserDetailProfileView: View {
                     Image(systemName: "building.2.fill")
                         .foregroundColor(.brown)
                     Text("Cooperativa:")
-                        .font(.headline)
+                        .scaledFont(.headline)
                     Spacer()
                     Text(userVM.getCooperativa(for: user, cooperativas: cooperativas)?.name ?? "Sin Cooperativa")
-                        .font(.title3)
+                        .scaledFont(.title3)
                 }
                 
                 Divider()
@@ -150,10 +149,10 @@ struct UserDetailProfileView: View {
                     Image(systemName: "book.fill")
                         .foregroundColor(.blue)
                     Text("Contenidos Totales:")
-                        .font(.headline)
+                        .scaledFont(.headline)
                     Spacer()
                     Text("\(userVM.getContenidosTerminados(for: user, progresses: progresses))")
-                        .font(.title3)
+                        .scaledFont(.title3)
                 }
                 
                 Divider()
@@ -162,10 +161,10 @@ struct UserDetailProfileView: View {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
                     Text("Puntaje Total:")
-                        .font(.headline)
+                        .scaledFont(.headline)
                     Spacer()
                     Text("\(userVM.getPuntajeAprendizaje(for: user, progresses: progresses))")
-                        .font(.title3)
+                        .scaledFont(.title3)
                 }
             }
             .padding()
@@ -180,4 +179,6 @@ struct UserDetailProfileView: View {
 #Preview {
     // No NavigationStack needed — this view has no NavigationLinks
     UserDetailProfileView(user: User.mockUsers[1])
+        .withPreviewSettings()
+
 }

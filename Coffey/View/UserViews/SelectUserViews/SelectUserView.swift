@@ -35,7 +35,7 @@ struct SelectUserView: View {
                             VStack(spacing: 8) {
                                 InitialProfileCircleView(name: user.name)
                                 Text(user.name)
-                                    .font(.headline)
+                                    .scaledFont(.headline)
                                     .foregroundColor(.primary)
                             }
                             .padding()
@@ -75,5 +75,7 @@ struct SelectUserView: View {
     // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
         SelectUserView(path: $dummyPath)
+        .withPreviewSettings()
+
     }
 }
