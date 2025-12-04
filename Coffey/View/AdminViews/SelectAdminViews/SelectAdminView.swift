@@ -12,9 +12,13 @@ struct SelectAdminView: View {
     @Binding private var path: NavigationPath
     var onReset: () -> Void
     @State private var isAddedPresented = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     // Fetch admins from SwiftData
     @Query private var admins: [Admin]
+    @Query private var cooperativas: [Cooperativa]
+
 
     init(path: Binding<NavigationPath>, onReset: @escaping () -> Void = {}) {
         self._path = path
@@ -25,7 +29,7 @@ struct SelectAdminView: View {
 
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             
                 
@@ -38,7 +42,7 @@ struct SelectAdminView: View {
                             VStack(spacing: 8) {
                                 InitialProfileCircleView(name: admin.name)
                                 Text(admin.name)
-                                    .font(.headline)
+                                    .scaledFont(.headline)
                                     .foregroundColor(.primary)
                             }
                             .padding()
@@ -49,12 +53,22 @@ struct SelectAdminView: View {
                 .toolbar {
                     ToolbarItem {
                         Button("Add Admin", systemImage: "plus") {
-                            self.isAddedPresented = true
+                            if cooperativas.isEmpty {
+                                alertMessage = "No se encontraron cooperativas. Inténtalo más tarde."
+                                showAlert = true
+                            } else {
+                                isAddedPresented = true
+                            }
                         }.buttonStyle(.borderedProminent).tint(.brown)
                     }
                 }
+                .alert("Error", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(alertMessage)
+                }
                 .sheet(isPresented: self.$isAddedPresented) {
-                    AddAdminView()
+                    AddAdminView(cooperativas: cooperativas)
                         .presentationDetents([.large])
                 }
             }
@@ -68,5 +82,6 @@ struct SelectAdminView: View {
     @Previewable @State var dummyPath = NavigationPath()
     NavigationStack {
         SelectAdminView(path: $dummyPath)
+        .withPreviewSettings()
     }
 }

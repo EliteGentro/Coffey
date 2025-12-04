@@ -16,16 +16,16 @@ struct FirstWelcomeView: View {
     @State private var errorMessage = ""
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
             VStack(spacing: 28) {
                 
                 // MARK: - Title + Instructions
                 VStack(spacing: 16) {
                     Text("Bienvenido")
-                        .font(.largeTitle.bold())
+                        .scaledFont(.largeTitle).bold()
                     
                     Text("Es la primera vez que se abre la aplicación. Para comenzar, sincronice los datos con una conexión a Internet.")
-                        .font(.body)
+                        .scaledFont(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
@@ -38,7 +38,7 @@ struct FirstWelcomeView: View {
                             .padding(.horizontal)
                         
                         Text("Sincronizando... \(dbSync.syncProgress)%")
-                            .font(.headline)
+                            .scaledFont(.headline)
                     }
                     
                 } else {
@@ -55,10 +55,10 @@ struct FirstWelcomeView: View {
                     } label: {
                         HStack {
                             Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                                .font(.title2)
+                                .scaledFont(.title2)
                             
                             Text("Sincronizar")
-                                .font(.title2.bold())
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -79,10 +79,10 @@ struct FirstWelcomeView: View {
                     } label: {
                         HStack {
                             Image(systemName: "play.fill")
-                                .font(.title2)
+                                .scaledFont(.title2)
                             
                             Text("Ir a Inicio")
-                                .font(.title2.bold())
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -107,4 +107,6 @@ struct FirstWelcomeView: View {
 
 #Preview {
     FirstWelcomeView()
+        .withPreviewSettings()
+
 }

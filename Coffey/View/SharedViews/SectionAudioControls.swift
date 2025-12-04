@@ -11,19 +11,21 @@ struct SectionAudioControls: View {
     let text: String
     @ObservedObject private var speech = SpeechManager.shared
 
-    var body: some View {
+    private var isPlayingThisText: Bool {
+        speech.isSpeaking && speech.currentText.hashValue == text.hashValue
+    }
 
-        HStack{
-            Button(action: {
-                Task { @MainActor in
-                    if speech.isSpeaking && speech.currentText == text {
-                        speech.stop()
-                    } else {
-                        speech.speak(text)
-                    }
+    var body: some View {
+        HStack {
+            Button {
+                HapticManager.lightTap()
+                if isPlayingThisText {
+                    speech.stop()
+                } else {
+                    speech.speak(text)
                 }
-            }) {
-                Image(systemName: speech.isSpeaking && speech.currentText == text ? "stop.fill" : "play.fill")
+            } label: {
+                Image(systemName: isPlayingThisText ? "stop.fill" : "play.fill")
             }
         }
     }

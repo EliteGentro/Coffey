@@ -58,7 +58,7 @@ struct FinanceDetailView: View {
                 // Save button (functionality to be implemented)
                 HStack{
                     Spacer()
-                    Button(createNew ? "Agregar":"Guardar") {
+                    Button() {
                         if(createNew){
                             let finance = Finance(
                                 finance_id: 0,
@@ -87,9 +87,20 @@ struct FinanceDetailView: View {
                             errorMessage = "Error al guardar: \(error.localizedDescription)"
                             showErrorAlert = true
                         }
+                    } label:  {
+                        HStack {
+                            Image(systemName: createNew ? "plus" : "square.and.arrow.down")
+                                .scaledFont(.title2)
+                            
+                            Text(createNew ? "Agregar" : "Guardar")
+                                .scaledFont(.title2).bold()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.brown)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(Color.brown)
                     Spacer()
                 }
             }
@@ -103,17 +114,20 @@ struct FinanceDetailView: View {
                         errorMessage = "Error al borrar: \(error.localizedDescription)"
                         showErrorAlert = true
                     }
-                }){
+                })
+                {
                     HStack {
                         Image(systemName: "trash.fill")
-                            .font(.title)
+                            .scaledFont(.title2)
+                        
                         Text("Borrar")
-                            .font(.largeTitle)
+                            .scaledFont(.title2).bold()
                     }
                     .padding()
+                    .frame(maxWidth: .infinity)
                     .background(Color.red)
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
                 }
             }
         }
@@ -134,6 +148,9 @@ struct FinanceDetailView: View {
                     Image(systemName: "xmark")
                 }
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: createNew ? "Registra un nuevo \(self.type), escribe el título, la categoría y el monto. Una vez llenos los campos, toca el botón café." : "Edita tu \(self.type) cambia el título, la categoría y, o el monto y guarda los cambios tocando el botón café. Si lo deseas, puedes borrarlo tocando el botón rojo.")
+            }
         }
         }
     }
@@ -142,4 +159,6 @@ struct FinanceDetailView: View {
 
 #Preview {
     FinanceDetailView(type: Finance.mockFinances[0].type, createNew: true, finance: nil)
+        .withPreviewSettings()
+
 }

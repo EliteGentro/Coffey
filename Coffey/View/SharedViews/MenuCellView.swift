@@ -19,25 +19,29 @@ struct MenuCellView: View {
     }
 
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: systemName)
-                .imageScale(.large)
-                .foregroundStyle(color)
-                .font(.system(size: 40))
+            VStack(spacing: 12) {
+                Image(systemName: systemName)
+                    .imageScale(.large)
+                    .foregroundStyle(color)
+                    .scaledFont(.largeTitle)
 
-            Text(title)
-                .font(.headline).foregroundColor(color)
+                Text(title)
+                    .scaledFont(.headline)
+                    .foregroundColor(color)
+            }
+            .frame(maxWidth: .infinity, minHeight: 120)
+            .padding()
+            .glassCard()
+            .colorMultiply(color.opacity(0.6))
+            .contentShape(RoundedRectangle(cornerRadius: 12))
+            .accessibilityElement()
+            .accessibilityLabel(title)
+            .accessibilityAddTraits(.isButton)
         }
-        .frame(maxWidth: .infinity, minHeight: 120)
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(color.opacity(0.1)))
-        .contentShape(Rectangle())
-        .accessibilityElement()
-        .accessibilityLabel(title)
-        .accessibilityAddTraits(.isButton)
-    }
 }
 
 #Preview {
     MenuCellView(systemName: "house.fill", title: "house")
+        .withPreviewSettings()
+
 }

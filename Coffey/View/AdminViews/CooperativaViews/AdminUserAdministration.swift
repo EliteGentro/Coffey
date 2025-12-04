@@ -19,7 +19,7 @@ struct AdminUserAdministration: View {
 
     var body: some View {
         ZStack {
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
 
             List {
                 ForEach(users) { user in

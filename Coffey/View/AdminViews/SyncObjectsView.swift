@@ -17,10 +17,23 @@ struct SyncObjectsView: View {
     @State private var errorMessage = ""
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack{
+            VStack(spacing: 16) {
+                
+                Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
+                    .scaledFont(.title3)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
             if(dbSync.isSynchronizing){
-                ProgressView()
+                VStack(spacing: 12) {
+                    ProgressView(value: Double(dbSync.syncProgress), total: 100)
+                        .padding(.horizontal)
+                    
+                    Text("Sincronizando... \(dbSync.syncProgress)%")
+                        .scaledFont(.headline)
+                }
             } else{
                 Button{
                     Task {
@@ -35,18 +48,18 @@ struct SyncObjectsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
-                            .font(.title)
+                            .scaledFont(.title2)
+                        
                         Text("Sincronizar")
-                            .font(.largeTitle)
+                            .scaledFont(.title2).bold()
                     }
                     .padding()
+                    .frame(maxWidth: .infinity)
                     .background(Color.green)
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
                 }
             }
-            Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
-                .font(Font.largeTitle.bold())
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -86,4 +99,6 @@ struct SyncObjectsView: View {
 
 #Preview {
     SyncObjectsView()
+        .withPreviewSettings()
+
 }
