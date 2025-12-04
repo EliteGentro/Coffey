@@ -42,6 +42,7 @@ struct QuestionView: View {
                     
                     ForEach(current.answers.indices, id: \.self) { idx in
                         Button {
+                            HapticManager.lightTap()
                             handleAnswerSelection(idx, correctIndex: current.correctIndex)
                         } label: {
                             Text(current.answers[idx])
@@ -59,6 +60,12 @@ struct QuestionView: View {
                 .animation(.easeInOut, value: selectedIndex)
             }
         }
+        .onAppear {
+            HapticManager.impact(.light)
+        }
+        .onChange(of: vm.currentQuestionIndex) { _,_ in
+            HapticManager.impact(.medium)
+        }
         .alert("Error", isPresented: $showErrorAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -75,7 +82,10 @@ struct QuestionView: View {
         isAnswering = true
         
         if index == correctIndex {
+            HapticManager.success()
             vm.correctCount += 1
+        } else {
+            HapticManager.error()
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

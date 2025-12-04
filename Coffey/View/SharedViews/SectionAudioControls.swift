@@ -18,6 +18,7 @@ struct SectionAudioControls: View {
     var body: some View {
         HStack {
             Button {
+                HapticManager.lightTap()
                 if isPlayingThisText {
                     speech.stop()
                 } else {

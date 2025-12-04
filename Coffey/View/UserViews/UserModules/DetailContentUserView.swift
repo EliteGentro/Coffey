@@ -135,6 +135,7 @@ struct DetailContentUserView: View {
                             .foregroundColor(.white)
                             .cornerRadius(12)
                         }
+                        .disabled(quizVM.isLoading)
                         
                         if quizVM.isDone {
                             Button {
