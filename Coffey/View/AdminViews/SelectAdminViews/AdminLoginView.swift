@@ -150,5 +150,6 @@ struct AdminLoginView: View {
     @Previewable @State var dummyPath = NavigationPath()
     NavigationStack {
         AdminLoginView(admin: Admin.mockAdmins[0], path: $dummyPath)
+            .withPreviewSettings()
     }
 }

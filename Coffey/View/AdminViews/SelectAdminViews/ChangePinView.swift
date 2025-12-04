@@ -186,4 +186,5 @@ struct ChangePinView: View {
 
 #Preview {
     ChangePinView(admin: Admin.mockAdmins[0])
+        .withPreviewSettings()
 }

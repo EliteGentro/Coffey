@@ -142,4 +142,6 @@ struct FinanceDetailView: View {
 
 #Preview {
     FinanceDetailView(type: Finance.mockFinances[0].type, createNew: true, finance: nil)
+        .withPreviewSettings()
+
 }

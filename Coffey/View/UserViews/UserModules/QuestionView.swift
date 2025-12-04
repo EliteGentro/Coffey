@@ -114,4 +114,6 @@ struct QuestionView: View {
 
 #Preview {
     QuestionView(vm:QuizViewModel(), progress: Progress.mockProgresses[0])
+        .withPreviewSettings()
+
 }

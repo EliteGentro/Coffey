@@ -107,4 +107,6 @@ struct FirstWelcomeView: View {
 
 #Preview {
     FirstWelcomeView()
+        .withPreviewSettings()
+
 }

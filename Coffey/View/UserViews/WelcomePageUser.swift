@@ -112,6 +112,8 @@ struct WelcomePageUser: View {
     // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
         WelcomePageUser(user: User.mockUsers[1], path: $dummyPath)
+        .withPreviewSettings()
+
     }
 }
 

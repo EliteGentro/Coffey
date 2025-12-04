@@ -51,4 +51,6 @@ struct AdminUserRowView: View {
 #Preview {
     // No NavigationStack needed (no NavigationLinks in this view)
     AdminUserRowView(user: User.mockUsers[0])
+        .withPreviewSettings()
+
 }

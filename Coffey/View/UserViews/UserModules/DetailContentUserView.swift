@@ -272,4 +272,6 @@ struct DetailContentUserView: View {
     
     return DetailContentUserView(content: Content.mockContents[0], user: User.mockUsers[0])
     .environmentObject(mockFontSettings)
+        .withPreviewSettings()
+
 }

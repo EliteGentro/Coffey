@@ -24,4 +24,6 @@ struct InitialProfileCircleView: View {
 
 #Preview {
     InitialProfileCircleView(name: "Humberto")
+        .withPreviewSettings()
+
 }

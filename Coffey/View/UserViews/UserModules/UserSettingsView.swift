@@ -94,5 +94,5 @@ struct UserSettingsView: View {
 
 #Preview {
     UserSettingsView(user : User.mockUsers[0])
-
+        .withPreviewSettings()
 }

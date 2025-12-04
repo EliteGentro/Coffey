@@ -58,4 +58,6 @@ struct UserDetailProfileView: View {
 #Preview {
     // No NavigationStack needed — this view has no NavigationLinks
     UserDetailProfileView(user: User.mockUsers[1])
+        .withPreviewSettings()
+
 }

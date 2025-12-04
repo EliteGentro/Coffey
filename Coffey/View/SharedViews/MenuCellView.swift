@@ -40,4 +40,6 @@ struct MenuCellView: View {
 
 #Preview {
     MenuCellView(systemName: "house.fill", title: "house")
+        .withPreviewSettings()
+
 }

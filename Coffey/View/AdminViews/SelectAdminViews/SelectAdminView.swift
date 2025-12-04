@@ -68,5 +68,6 @@ struct SelectAdminView: View {
     @Previewable @State var dummyPath = NavigationPath()
     NavigationStack {
         SelectAdminView(path: $dummyPath)
+        .withPreviewSettings()
     }
 }

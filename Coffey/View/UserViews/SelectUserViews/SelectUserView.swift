@@ -63,5 +63,7 @@ struct SelectUserView: View {
     // Wrap in NavigationStack because view contains NavigationLinks
     NavigationStack {
         SelectUserView(path: $dummyPath)
+        .withPreviewSettings()
+
     }
 }

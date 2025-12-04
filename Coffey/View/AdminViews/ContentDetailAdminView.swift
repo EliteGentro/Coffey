@@ -124,5 +124,7 @@ struct ContentDetailAdminView: View {
     
     ContentDetailAdminView(content: Content.mockContents.first!)
         .environmentObject(mockManager)
+        .withPreviewSettings()
+
         
 }

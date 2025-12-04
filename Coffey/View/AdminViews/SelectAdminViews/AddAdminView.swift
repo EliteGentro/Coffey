@@ -161,4 +161,6 @@ struct AddAdminView: View {
 
 #Preview {
     AddAdminView()
+        .withPreviewSettings()
+
 }

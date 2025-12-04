@@ -86,4 +86,6 @@ struct SyncObjectsView: View {
 
 #Preview {
     SyncObjectsView()
+        .withPreviewSettings()
+
 }
