@@ -4,7 +4,7 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
-
+//  Edited by José Augusto Orozco Blas and Diego Hernandez on 1/12/25
 import SwiftUI
 import SwiftData
 
@@ -17,7 +17,6 @@ struct SelectAdminView: View {
     @State private var showDeleteAlert = false
     private var api = AdminAPI()
 
-    // 🔥 Filtro directo: Solo admins NO eliminados
     @Query(filter: #Predicate<Admin> { !$0.isDeleted },
            sort: \.name,
            order: .forward)

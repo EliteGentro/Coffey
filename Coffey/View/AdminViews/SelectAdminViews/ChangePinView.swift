@@ -37,8 +37,7 @@ struct ChangePinView: View {
     
     // MARK: - VALIDAR PIN CONTRA BD
     private func validateCurrentPin(_ pin: String) -> Bool {
-        let stored = admin.password  // ❗ ahora el PIN está en la BD, no en Keychain
-
+        let stored = admin.password
         let parts = stored.split(separator: "|")
         guard parts.count == 2,
               let salt = CryptoHelper.decode(String(parts[0])),

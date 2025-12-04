@@ -153,7 +153,7 @@ struct AddAdminView: View {
                     return
                 }
 
-                // 🔐 CIFRAR PIN
+                // CIFRAR PIN
                 let salt = CryptoHelper.randomSalt()
                 guard let derived = CryptoHelper.pbkdf2Hash(password: password, salt: salt) else {
                     print("Error hashing PIN")
