@@ -63,7 +63,7 @@ struct AdminLoginView: View {
 
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack(spacing: 24) {
             Image("coffee-cup")
                 .resizable()

@@ -97,4 +97,52 @@ class UserViewModel: ObservableObject {
         }
         return filtered.count
     }
+    
+    // MARK: - User Insights
+    func getAverageGrade(for user: User, progresses: [Progress]) -> Double {
+        let completedProgresses = progresses.filter { progress in
+            let matchesUser = (user.user_id == 0 ?
+                progress.local_user_reference == user.id :
+                progress.user_id == user.user_id)
+            return matchesUser && progress.status == .completed
+        }
+        
+        guard !completedProgresses.isEmpty else { return 0.0 }
+        
+        let totalGrade = completedProgresses.reduce(0) { $0 + $1.grade }
+        return Double(totalGrade) / Double(completedProgresses.count)
+    }
+    
+    func getCompletionRate(for user: User, progresses: [Progress]) -> Double {
+        let userProgresses = progresses.filter { progress in
+            user.user_id == 0 ?
+                progress.local_user_reference == user.id :
+                progress.user_id == user.user_id
+        }
+        
+        guard !userProgresses.isEmpty else { return 0.0 }
+        
+        let completedCount = userProgresses.filter { $0.status == .completed }.count
+        return Double(completedCount) / Double(userProgresses.count)
+    }
+    
+    func getFinancialBalance(for user: User, finances: [Finance]) -> Double {
+        let userFinances = finances.filter { finance in
+            user.user_id == 0 ?
+                finance.local_user_reference == user.id :
+                finance.user_id == user.user_id
+        }
+        
+        let ingresos = userFinances.filter { $0.type == "Ingresos" }.reduce(0.0) { $0 + $1.amount }
+        let egresos = userFinances.filter { $0.type == "Egresos" }.reduce(0.0) { $0 + $1.amount }
+        
+        guard (ingresos + egresos) > 0 else { return 0 }
+        
+        // Return ratio: closer to 1.0 means more income, closer to 0.0 means more expenses
+        return ingresos / (ingresos + egresos)
+    }
+    
+    func getCooperativa(for user: User, cooperativas: [Cooperativa]) -> Cooperativa? {
+        cooperativas.first { $0.cooperativa_id == user.cooperativa_id }
+    }
 }

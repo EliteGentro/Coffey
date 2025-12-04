@@ -22,15 +22,19 @@ struct QuestionView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack {
             if let quiz = vm.quiz, vm.currentQuestionIndex < quiz.questions.count {
                 let current = quiz.questions[vm.currentQuestionIndex]
                 
                 VStack(spacing: 24) {
-                    Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
-                        .scaledFont(.headline)
-                    
+                    HStack{
+                        Text("Question \(vm.currentQuestionIndex + 1) of \(quiz.questions.count)")
+                            .scaledFont(.headline)
+                        SectionAudioControls(text: """
+                            La pregunta es: \(current.question). Selecciona la respuesta correcta, el orden de las respuestas de arriba hacia abajo es el siguiente: \(current.answers.joined(separator: ", "))
+                        """)
+                    }
                     Text(current.question)
                         .scaledFont(.title3)
                         .multilineTextAlignment(.center)
@@ -38,6 +42,7 @@ struct QuestionView: View {
                     
                     ForEach(current.answers.indices, id: \.self) { idx in
                         Button {
+                            HapticManager.lightTap()
                             handleAnswerSelection(idx, correctIndex: current.correctIndex)
                         } label: {
                             Text(current.answers[idx])
@@ -55,6 +60,12 @@ struct QuestionView: View {
                 .animation(.easeInOut, value: selectedIndex)
             }
         }
+        .onAppear {
+            HapticManager.impact(.light)
+        }
+        .onChange(of: vm.currentQuestionIndex) { _,_ in
+            HapticManager.impact(.medium)
+        }
         .alert("Error", isPresented: $showErrorAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -71,7 +82,10 @@ struct QuestionView: View {
         isAnswering = true
         
         if index == correctIndex {
+            HapticManager.success()
             vm.correctCount += 1
+        } else {
+            HapticManager.error()
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

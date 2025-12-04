@@ -52,7 +52,7 @@ struct DetailContentUserView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             VStack(alignment: .center, spacing: 24) {
                 
@@ -69,6 +69,8 @@ struct DetailContentUserView: View {
                         Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
                             .scaledFont(.body)
                     }
+                    .padding()
+                    .glassCard()
                 }
                 
                 // MARK: Resource Details
@@ -80,8 +82,7 @@ struct DetailContentUserView: View {
                         .scaledFont(.body)
                 }
                 .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
+                .glassCard()
                 
                 
                 // MARK: View Resource Button
@@ -100,7 +101,7 @@ struct DetailContentUserView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.green.gradient)
+                    .background(Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
@@ -125,16 +126,17 @@ struct DetailContentUserView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.clockwise.circle.fill")
-                                
+                                    .scaledFont(.title2)
                                 Text(quizVM.isDone ? "Regenerar Quiz" : "Generar Quiz")
                                     .fontWeight(.bold)
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue.gradient)
+                            .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                         }
+                        .disabled(quizVM.isLoading)
                         
                         if quizVM.isDone {
                             Button {
@@ -147,7 +149,7 @@ struct DetailContentUserView: View {
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(Color.blue.gradient)
+                                .background(Color.blue)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                             }
@@ -212,6 +214,11 @@ struct DetailContentUserView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(errorMessage)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: "Toca el botón verde para ver el \(content.resourceType == "video" ? "video" : "PDF") de este curso. Toca el botón azulu para generar preguntas para probar tu conocimiento del tema una vez hayas terminado de aprender. No olvides actualizar tu progreso mientras avanzas en el botón de abajo.")
+            }
         }
         }
     }

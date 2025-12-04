@@ -19,7 +19,7 @@ struct MLXAITest: View {
 
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         VStack(spacing: 20) {
             TextField("Enter prompt", text: $prompt)
                 .textFieldStyle(.roundedBorder)

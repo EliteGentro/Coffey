@@ -14,7 +14,7 @@ struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
-    @Query private var cooperativas: [Cooperativa]
+    let cooperativas: [Cooperativa]
     
     @State private var name: String = ""
     @State private var correo: String = ""
@@ -25,8 +25,6 @@ struct AddAdminView: View {
     @State private var selectedCooperativa : Cooperativa?
     
     @State private var showPasswordMismatchAlert: Bool = false
-    @State private var showErrorAlert: Bool = false
-    @State private var errorMessage: String = ""
     
     
     
@@ -111,8 +109,8 @@ struct AddAdminView: View {
                             keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
                             dismiss()
                         } catch {
-                            errorMessage = "Error al guardar: \(error.localizedDescription)"
-                            showErrorAlert = true
+                            print("Error saving:", error)
+                            dismiss()
                         }
                     } else {
                         showPasswordMismatchAlert = true
@@ -123,11 +121,6 @@ struct AddAdminView: View {
                     Button("OK", role: .cancel) { }
                 } message: {
                     Text("Las contraseñas no coinciden. Inténtalo de nuevo.")
-                }
-                .alert("Error", isPresented: $showErrorAlert) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text(errorMessage)
                 }
             }
             .navigationTitle("Agregar Administrador")
@@ -141,18 +134,6 @@ struct AddAdminView: View {
                     }
                 }
             }
-            .onAppear {
-                if cooperativas.count > 0 {
-                        if selectedCooperativa == nil {
-                            selectedCooperativa = cooperativas.first
-                        }
-
-                } else{
-                    showErrorAlert = true
-                    errorMessage = "No se encontraron cooperativas. Inténtalo más tarde."
-                    dismiss()
-                }
-            }
         }
         
     }
@@ -160,7 +141,6 @@ struct AddAdminView: View {
 
 
 #Preview {
-    AddAdminView()
+    AddAdminView(cooperativas: Cooperativa.mockCooperativas)
         .withPreviewSettings()
-
 }

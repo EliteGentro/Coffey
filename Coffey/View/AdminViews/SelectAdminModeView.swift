@@ -19,7 +19,7 @@ struct SelectAdminModeView: View {
 
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView{
             // Single-column grid for admin mode options
             LazyVGrid(columns: [GridItem(.flexible())], spacing: 50) {
@@ -29,7 +29,7 @@ struct SelectAdminModeView: View {
                 }
                 // Navigation to user administration
                 NavigationLink(destination: AdminUserAdministration()) {
-                    MenuCellView(systemName: "person.2.badge.gearshape.fill", title: "Administrar Prestamos", color: .green)
+                    MenuCellView(systemName: "person.2.badge.gearshape.fill", title: "Administrar Usuario", color: .green)
                 }
                 // Navigation to content management
                 NavigationLink(destination: ManageContentsView()) {
@@ -39,9 +39,9 @@ struct SelectAdminModeView: View {
                 NavigationLink(destination: SyncObjectsView()) {
                     MenuCellView(systemName: "arrow.trianglehead.2.clockwise.rotate.90", title: "Sincronizar Contenido", color: .indigo)
                 }
-                NavigationLink(destination: MLXAITest()) {
-                    MenuCellView(systemName: "play", title: "AI", color: .indigo)
-                }
+//                NavigationLink(destination: MLXAITest()) {
+//                    MenuCellView(systemName: "play", title: "AI", color: .indigo)
+//                }
             }
             .padding(50)
             .navigationTitle("Seleccionar Modo de Administrador")
