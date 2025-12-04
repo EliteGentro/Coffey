@@ -55,7 +55,7 @@ struct UserSettingsView: View {
                 .padding()
 
                 Text("Font multiplier: \(tempMultiplier, specifier: "%.2f")")
-                    .scaledFont(.system(size: 18 * fontSettings.multiplier))
+                    .font(.system(size: 18 * fontSettings.multiplier))
 
                 Button("Apply") {
                     preference.font_multiplier = tempMultiplier

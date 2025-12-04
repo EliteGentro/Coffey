@@ -23,7 +23,7 @@ struct MenuCellView: View {
             Image(systemName: systemName)
                 .imageScale(.large)
                 .foregroundStyle(color)
-                .scaledFont(.system(size: 40))
+                .scaledFont(.largeTitle)
 
             Text(title)
                 .scaledFont(.headline).foregroundColor(color)

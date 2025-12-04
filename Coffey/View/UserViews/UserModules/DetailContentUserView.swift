@@ -58,13 +58,13 @@ struct DetailContentUserView: View {
                 
                 // MARK: Title
                 Text(content.name)
-                    .scaledFont(.largeTitle.bold())
+                    .scaledFont(.largeTitle).bold()
                 
                 // MARK: Quiz Results
                 if quizVM.isQuizComplete {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Calificación: \(quizVM.correctCount * 20)")
-                            .scaledFont(.title2.bold())
+                            .scaledFont(.title2).bold()
                         
                         Text("Respondiste correctamente a \(quizVM.correctCount) de \(quizVM.quiz?.questions.count ?? 0) preguntas 🎉")
                             .scaledFont(.body)
@@ -76,7 +76,8 @@ struct DetailContentUserView: View {
                     Text(content.resourceType.capitalized)
                         .scaledFont(.headline)
                     
-                    ScaledText(content.details, style: .body)
+                    Text(content.details)
+                        .scaledFont(.body)
                 }
                 .padding()
                 .background(Color(.secondarySystemBackground))
@@ -95,7 +96,7 @@ struct DetailContentUserView: View {
                         Image(systemName: "play.circle.fill")
                             .scaledFont(.title2)
                         Text("Ver")
-                            .scaledFont(.title3.bold())
+                            .scaledFont(.title3).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -180,7 +181,7 @@ struct DetailContentUserView: View {
                             .scaledFont(.title2)
                         
                         Text(progressStatus)
-                            .scaledFont(.title3.bold())
+                            .scaledFont(.title3).bold()
                     }
                     .padding()
                     .frame(maxWidth: .infinity)

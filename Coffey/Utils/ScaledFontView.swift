@@ -1,9 +1,17 @@
-struct ScaledFontModifier: ViewModifier {
+import SwiftUI
+
+struct ScaledFontView<Inner: View>: View {
     @EnvironmentObject var fontSettings: FontSettings
     let style: Font.TextStyle
+    let inner: Inner
+    
+    init(style: Font.TextStyle, @ViewBuilder content: () -> Inner){
+        self.style = style
+        self.inner = content()
+    }
 
-    func body(content: Content) -> some View {
-        content.scaledFont(font(for: style))
+    var body: some View {
+        inner.font(font(for:style))
     }
 
     private func font(for style: Font.TextStyle) -> Font {
@@ -24,12 +32,14 @@ struct ScaledFontModifier: ViewModifier {
         @unknown default:   baseSize = 17
         }
 
-        return .system(size: baseSize * fontSettings.multiplier)
+        return Font.system(size: baseSize * fontSettings.multiplier)
     }
 }
 
 extension View {
     func scaledFont(_ style: Font.TextStyle) -> some View {
-        self.modifier(ScaledFontModifier(style: style))
+        ScaledFontView(style:style) {
+            self
+        }
     }
 }

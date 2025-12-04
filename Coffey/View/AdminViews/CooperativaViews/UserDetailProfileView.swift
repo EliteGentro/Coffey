@@ -22,14 +22,14 @@ struct UserDetailProfileView: View {
             
             // User's full name displayed prominently
             Text(user.name)
-                .scaledFont(Font.largeTitle.bold())
+                .scaledFont(.largeTitle).bold()
             
             // Section for user details
             VStack(alignment: .leading, spacing: 20) {
                 // Cooperative info
                 HStack {
                     Text("Cooperativa:")
-                        .scaledFont(.title.bold())
+                        .scaledFont(.title).bold()
                     Text("\(user.cooperativa_id)")
                         .scaledFont(.title)
                 }
@@ -37,7 +37,7 @@ struct UserDetailProfileView: View {
                 // Completed content count
                 HStack {
                     Text("Contenidos:")
-                        .scaledFont(.title.bold())
+                        .scaledFont(.title).bold()
                     Text("\(userVM.getContenidosTerminados(for: user, progresses: progresses))")
                         .scaledFont(.title)
                 }
@@ -45,7 +45,7 @@ struct UserDetailProfileView: View {
                 // Learning score
                 HStack {
                     Text("Puntaje:")
-                        .scaledFont(.title.bold())
+                        .scaledFont(.title).bold()
                     Text("\(userVM.getPuntajeAprendizaje(for: user, progresses: progresses))")
                         .scaledFont(.title)
                 }

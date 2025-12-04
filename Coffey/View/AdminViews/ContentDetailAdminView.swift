@@ -28,7 +28,7 @@ struct ContentDetailAdminView: View {
             VStack(spacing:20){
                 // MARK: Title
                 Text(content.name)
-                    .scaledFont(.largeTitle.bold())
+                    .scaledFont(.largeTitle).bold()
                 
                 // MARK: Resource Details
                 VStack(alignment: .leading, spacing: 8) {
@@ -79,7 +79,7 @@ struct ContentDetailAdminView: View {
                             Image(systemName: "play.circle.fill")
                                 .scaledFont(.title2)
                             Text("Ver")
-                                .scaledFont(.title3.bold())
+                                .scaledFont(.title3).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -95,7 +95,7 @@ struct ContentDetailAdminView: View {
                             Image(systemName: "trash.fill")
                                 .scaledFont(.title2)
                             Text("Borrar")
-                                .scaledFont(.title3.bold())
+                                .scaledFont(.title3).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)

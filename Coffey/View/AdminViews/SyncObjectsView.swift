@@ -46,7 +46,7 @@ struct SyncObjectsView: View {
                 }
             }
             Text("Es necesario tener una conexión a internet para poder sincronizar los contenidos. No podrás salir de la aplicación hasta que esta finalice.")
-                .scaledFont(Font.largeTitle.bold())
+                .scaledFont(.largeTitle).bold()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

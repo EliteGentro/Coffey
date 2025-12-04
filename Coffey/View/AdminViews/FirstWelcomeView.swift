@@ -22,7 +22,7 @@ struct FirstWelcomeView: View {
                 // MARK: - Title + Instructions
                 VStack(spacing: 16) {
                     Text("Bienvenido")
-                        .scaledFont(.largeTitle.bold())
+                        .scaledFont(.largeTitle).bold()
                     
                     Text("Es la primera vez que se abre la aplicación. Para comenzar, sincronice los datos con una conexión a Internet.")
                         .scaledFont(.body)
@@ -58,7 +58,7 @@ struct FirstWelcomeView: View {
                                 .scaledFont(.title2)
                             
                             Text("Sincronizar")
-                                .scaledFont(.title2.bold())
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -82,7 +82,7 @@ struct FirstWelcomeView: View {
                                 .scaledFont(.title2)
                             
                             Text("Ir a Inicio")
-                                .scaledFont(.title2.bold())
+                                .scaledFont(.title2).bold()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)

@@ -22,7 +22,7 @@ struct PDFViewerContainer: View {
                 dismiss()
             }) {
                 Image(systemName: "xmark.circle.fill")
-                    .scaledFont(.system(size: 32))
+                    .scaledFont(.largeTitle)
                     .foregroundColor(.white)
                     .shadow(radius: 4)
                     .padding()
