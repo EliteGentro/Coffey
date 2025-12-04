@@ -116,9 +116,9 @@ struct AddAdminView: View {
                             }
                         }
                     }
-                    Button(action: {
+                    Button {
                         showConfirmPassword.toggle()
-                    }) {
+                    } label: {
                         Image(systemName: showConfirmPassword ? "eye.slash.fill" : "eye.fill")
                             .foregroundColor(.gray)
                     }
@@ -126,7 +126,7 @@ struct AddAdminView: View {
 
                 // Validation text
                 if !confirmPassword.isEmpty && password != confirmPassword {
-                    Text("⚠️ Las contraseñas no coinciden")
+                    Text("Las contraseñas no coinciden")
                         .foregroundColor(.red)
                         .scaledFont(.footnote)
                 }
