@@ -16,7 +16,6 @@ struct AddAdminView: View {
 
     @Query private var cooperativas: [Cooperativa]
 
-
     @State private var name: String = ""
     @State private var correo: String = ""
     @State private var password: String = ""
@@ -115,7 +114,6 @@ struct AddAdminView: View {
                 // Validación email
                 guard isValidEmail(correo) else {
                     emailError = true
-                    correo = ""
                     return
                 }
 
@@ -129,7 +127,6 @@ struct AddAdminView: View {
                         // El correo está en uso
                         emailInUseError = true
                         emailError = false
-                        correo = ""
                         return
                     } else {
                         emailInUseError = false
