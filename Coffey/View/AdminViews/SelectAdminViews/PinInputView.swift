@@ -6,6 +6,73 @@
 //  Edited by Augusto Orozco on 21/11/25
 //
 
+import SwiftUI
+
+// MARK: - UITextField con detección de deleteBackward
+class PinTextField: UITextField {
+    var onDelete: (() -> Void)?
+    
+    override func deleteBackward() {
+        onDelete?()
+        super.deleteBackward()
+    }
+}
+
+// MARK: - Wrapper para usar PinTextField en SwiftUI
+struct PinDigitField: UIViewRepresentable {
+    
+    @Binding var text: String
+    var onDelete: (() -> Void)
+    
+    func makeUIView(context: Context) -> PinTextField {
+        let view = PinTextField()
+        view.keyboardType = .numbersAndPunctuation
+        view.textAlignment = .center
+        view.onDelete = {
+            if view.text?.isEmpty == true {
+                onDelete()
+            }
+        }
+        view.delegate = context.coordinator
+        return view
+    }
+    
+    func updateUIView(_ uiView: PinTextField, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: PinDigitField
+        
+        init(_ parent: PinDigitField) {
+            self.parent = parent
+        }
+        
+        func textField(_ textField: UITextField,
+                       shouldChangeCharactersIn range: NSRange,
+                       replacementString string: String) -> Bool {
+            
+            if string.isEmpty { // borrar
+                parent.text = ""
+                return false
+            }
+            
+            // aceptar solo 1 carácter
+            if parent.text.isEmpty {
+                parent.text = string
+            }
+            
+            return false
+        }
+    }
+}
+
 struct PinInputView: View {
 
     @Binding var pin: [String]
