@@ -25,7 +25,7 @@ struct UserDetailProfileView: View {
             
             // User's full name displayed prominently
             Text(user.name)
-                .scaledFont(largeTitle).bold()
+                .scaledFont(.largeTitle).bold()
 
             // MARK: - Progress Gauges
             VStack(spacing: 24) {
