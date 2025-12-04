@@ -26,6 +26,8 @@ struct AdminLoginView: View {
         _pin = State(initialValue: Array(repeating: "", count: numberOfDigits))
         self._path = path
         self.onReset = onReset
+
+        print("Current admin value is: \(admin.name), deletedAt: \(admin.deletedAt)")
     }
 
     // MARK: - PIN validation helpers
