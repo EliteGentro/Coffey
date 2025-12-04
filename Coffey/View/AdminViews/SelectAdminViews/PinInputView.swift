@@ -93,7 +93,7 @@ struct PinInputView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(6)
                 .focused($focusIndex, equals: index)
-                .onChange(of: pin[index]) { newValue in
+                .onChange(of: pin[index]) { _, newValue in
                     // Mantener solo 1 carácter
                     if newValue.count > 1 {
                         pin[index] = String(newValue.prefix(1))
@@ -104,6 +104,7 @@ struct PinInputView: View {
                         focusIndex = index + 1
                     }
                 }
+
             }
         }
         .padding()
