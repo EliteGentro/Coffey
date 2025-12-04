@@ -12,6 +12,8 @@ struct SelectAdminView: View {
     @Binding private var path: NavigationPath
     var onReset: () -> Void
     @State private var isAddedPresented = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     @State private var isEditing = false
     @State private var adminToDelete: Admin?      // Para alert
     @State private var showDeleteAlert = false
@@ -21,6 +23,8 @@ struct SelectAdminView: View {
            sort: \.name,
            order: .forward)
     private var admins: [Admin]
+    @Query private var cooperativas: [Cooperativa]
+
 
     @Environment(\.modelContext) private var context
 
@@ -31,15 +35,13 @@ struct SelectAdminView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.beige.ignoresSafeArea()
+        ZStack{
+            BackgroundView()
+        ScrollView {
 
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 32) {
 
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
                     ForEach(admins) { admin in
                         ZStack(alignment: .topTrailing) {
 
@@ -78,15 +80,25 @@ struct SelectAdminView: View {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Admin", systemImage: "plus") {
-                        self.isAddedPresented = true
+                        if cooperativas.isEmpty {
+                            alertMessage = "No se encontraron cooperativas. Inténtalo más tarde."
+                            showAlert = true
+                        } else {
+                            isAddedPresented = true
+                        }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.brown)
                 }
+                .alert("Error", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(alertMessage)
+                }
             }
 
             .sheet(isPresented: self.$isAddedPresented) {
-                AddAdminView()
+                AddAdminView(cooperativas: cooperativas)
                     .presentationDetents([.large])
             }
 

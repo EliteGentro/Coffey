@@ -49,7 +49,7 @@ struct UserLearningView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView {
             VStack {
                 // Segmented picker to filter content
@@ -81,6 +81,11 @@ struct UserLearningView: View {
         }
         .navigationTitle("Contenidos de Aprendizaje")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SectionAudioControls(text: "Selecciona uno de los contenidos que los administradores han elegido para ti. Los libros son PDFs y las cámaras son videos. No olvides que según tu progreso deberás filtrar los contenidos utilizando la barra de arriba para cursos pendientes, en progreso y terminados.")
+            }
+        }
         }
     }
     

@@ -54,14 +54,13 @@ struct AdminLoginView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.beige.ignoresSafeArea()
-
-            VStack(spacing: 24) {
-                Image("coffee-cup")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
+        ZStack{
+            BackgroundView()
+        VStack(spacing: 24) {
+            Image("coffee-cup")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 100)
 
                 Text("Hola, \(admin.name.capitalized)")
                     .font(.title2)

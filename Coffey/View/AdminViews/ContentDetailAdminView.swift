@@ -23,7 +23,7 @@ struct ContentDetailAdminView: View {
     
     var body: some View {
         ZStack{
-            Color.beige.ignoresSafeArea()
+            BackgroundView()
         ScrollView{
             VStack(spacing:20){
                 // MARK: Title
@@ -40,8 +40,7 @@ struct ContentDetailAdminView: View {
                         .font(.body)
                 }
                 .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
+                .glassCard()
 
                 
                 if(!content.isDownloaded){

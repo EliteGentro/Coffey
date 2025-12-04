@@ -14,7 +14,7 @@ struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
 
-    @Query private var cooperativas: [Cooperativa]
+    let cooperativas: [Cooperativa]
 
     @State private var name: String = ""
     @State private var correo: String = ""
@@ -204,5 +204,5 @@ struct AddAdminView: View {
 
 
 #Preview {
-    AddAdminView()
+    AddAdminView(cooperativas: Cooperativa.mockCooperativas)
 }

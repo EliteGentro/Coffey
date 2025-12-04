@@ -58,7 +58,7 @@ struct PinDigitField: UIViewRepresentable {
         func textField(_ textField: UITextField,
                        shouldChangeCharactersIn range: NSRange,
                        replacementString string: String) -> Bool {
-            
+
             if string.isEmpty { // borrar
                 parent.text = ""
                 return false
@@ -85,35 +85,53 @@ struct PinInputView: View {
     var body: some View {
         HStack(spacing: 12) {
             ForEach(0..<numberOfDigits, id: \.self) { index in
+                TextField("", text: $pin[index], onEditingChanged: { editing in
+                    if editing {
+                        oldValue = pin[index]
+                    }
+                })
+                .keyboardType(.numbersAndPunctuation)
+                .frame(width: 40, height: 50)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(6)
+                .multilineTextAlignment(.center)
+                .focused($fieldFocus, equals: index)
+                .tag(index)
+                .onChange(of: pin[index]) { oldValue,newValue in
+                    // Ensure only a single character per field
+                    if pin[index].count > 1 {
+                        let chars = Array(pin[index])
+                        if chars[0] == Character(oldValue) {
+                            pin[index] = String(chars.suffix(1))
+                        } else {
+                            pin[index] = String(chars.prefix(1))
+                        }
+                    }
 
-                PinDigitField(text: $pin[index]) {
-
-                    // DELETE detectado aunque el campo no tenga foco
-                    if pin[index].isEmpty && index > 0 {
-                        pin[index - 1] = ""
-                        focusIndex = index - 1
+                    // Move focus (async prevents UIKit keyboard conflicts)
+                    if !newValue.isEmpty {
+                        DispatchQueue.main.async {
+                            if index < numberOfDigits - 1 {
+                                fieldFocus = index + 1
+                            } else {
+                                fieldFocus = nil
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            if index > 0 {
+                                fieldFocus = index - 1
+                            }
+                        }
                     }
                 }
-                .frame(width: 48, height: 55)
-                .background(Color.gray.opacity(0.15))
-                .cornerRadius(8)
-                .focused($focusIndex, equals: index)
-                .onChange(of: pin[index]) { old, new in
 
-                    // Avanzar automáticamente
-                    if !new.isEmpty && index < numberOfDigits - 1 {
-                        focusIndex = index + 1
-                    }
-                }
             }
         }
-        .onAppear {
-            focusIndex = 0123
-        }
+        .padding()
     }
 }
 
-// MARK: - Preview
 #Preview {
     @Previewable @State var pinArray = Array(repeating: "", count: 6)
     PinInputView(pin: $pinArray, numberOfDigits: 6)
