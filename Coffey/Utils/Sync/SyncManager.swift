@@ -50,6 +50,7 @@ final class SyncManager {
         for deleted in remoteDeleted {
             if let local = localByID[deleted.remoteID] {
                 context.delete(local)
+                synced.insert(local.remoteID)
             }
         }
 
@@ -64,6 +65,7 @@ final class SyncManager {
                 if remoteByID[local.remoteID] != nil {
                     try await api.delete(local)
                 }
+                synced.insert(local.remoteID)
                 context.delete(local)
                 continue
             }
