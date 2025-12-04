@@ -16,17 +16,24 @@ struct WelcomePageUser: View {
     @Binding private var path: NavigationPath
     // State for showing leave alert
     @State private var showLeaveAlert = false
+    @StateObject private var userVM = UserViewModel()
     @Query private var progresses: [Progress]
-    var filteredProgresses: [Progress] {
-        progresses.filter { $0.user_id == user.user_id }
+    private var puntaje: Int {
+        userVM.getPuntajeAprendizaje(for: user, progresses: progresses)
     }
-    private var gradeSum: Int {
-        filteredProgresses.reduce(0) { $0 + $1.grade }
-    }
+
     private var completedProgresses: Int {
-        filteredProgresses.filter({$0.status.rawValue == "completed"}).count
+        userVM.getContenidosTerminados(for: user, progresses: progresses)
     }
     
+    private var infoText: String {
+        """
+        Aquí puedes ver tus puntos que se obtienen completando preguntas.
+        Actualmente tienes \(puntaje) puntos.
+        Eres nivel \(completedProgresses / 5 + 1) y te faltan \(5 - (completedProgresses % 5))
+        para subir al nivel \(completedProgresses / 5 + 2).
+        """
+    }
     
     // Optional closure to reset navigation when leaving
     var onReset: (() -> Void)? = nil
@@ -47,7 +54,7 @@ struct WelcomePageUser: View {
                 // Score card
                 VStack {
                     Text("Puntaje")
-                    Text("\(self.gradeSum)")
+                    Text("\(puntaje)")
                 }
                 .font(.largeTitle.bold())
                 .padding(40)
@@ -58,7 +65,7 @@ struct WelcomePageUser: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Progreso")
                             .font(.headline.bold())
-                        
+                        let completedProgresses = userVM.getContenidosTerminados(for: user, progresses: progresses)
                         ProgressView(value: Double(completedProgresses % 5) / 5.0)
                             .tint(.green)
                         
@@ -107,7 +114,7 @@ struct WelcomePageUser: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    SectionAudioControls(text: "Aquí puedes ver tus puntos que se obtienen completando preguntas de los cursos. Actualmente, tienes \(self.gradeSum) puntos. También puedes ver que eres nivel \(completedProgresses/5 + 1) y te faltan  \(5 - completedProgresses % 5) para el nivel \(completedProgresses/5 + 2). De aquí puedes decidir si completar más cursos en el botón azul, practicar registrar tus finanzas en el botón verde, o ajustar la aplicación a tu medida en el botón gris.")
+                    SectionAudioControls(text: infoText)
                 }
             }
             // Alert confirmation for leaving
