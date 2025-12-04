@@ -80,6 +80,12 @@ struct ReceiptScannerView: View {
             }
             .padding()
             .navigationTitle("Escáner de Recibos")
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing){
+                    SectionAudioControls(text: "Esta es la herramienta para escanear recibos. Puedes seleccionar una foto desde la galería o tomar una con la cámara. Después de elegir la imagen, la aplicación leerá el texto del recibo automáticamente. Si se detecta el servicio y el monto, se generará un registro de egreso para el usuario. Una vez finalizado el proceso, regresarás a la pantalla anterior. Selecciona una imagen o toma una foto para comenzar.")
+                }
+            }
+            
             
             .onChange(of: selectedItem) { oldValue, newValue in
                 Task { await loadImage(from: newValue) }
