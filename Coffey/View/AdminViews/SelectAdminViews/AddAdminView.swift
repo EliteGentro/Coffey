@@ -3,19 +3,19 @@
 //  Coffey
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
+//  Edited by Augusto Orozco on 21/11/25
 //
 
 import SwiftUI
 import SwiftData
-import CryptoKit // Para cifrado
-import KeychainSwift //Para guardar el pin
+import CommonCrypto
 
 struct AddAdminView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
-    
+
     let cooperativas: [Cooperativa]
-    
+
     @State private var name: String = ""
     @State private var correo: String = ""
     @State private var password: String = ""
@@ -23,49 +23,97 @@ struct AddAdminView: View {
     @State private var showPassword: Bool = false
     @State private var showConfirmPassword: Bool = false
     @State private var selectedCooperativa : Cooperativa?
-    
+
     @State private var showPasswordMismatchAlert: Bool = false
-    
-    
-    
+    @State private var showPinErrorAlert: Bool = false
+    @State private var emailError: Bool = false
+    @State private var emailInUseError: Bool = false
+    @State private var nameError: Bool = false
+    @State private var cooperativaError: Bool = false
+
+    func isValidEmail(_ email: String) -> Bool {
+        let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let range = NSRange(email.startIndex..<email.endIndex, in: email)
+        let matches = detector?.matches(in: email, options: [], range: range)
+        return matches?.first?.url?.scheme == "mailto" && matches?.first?.range == range
+    }
+
+    func isValidNumericPin(_ pin: String) -> Bool {
+        return pin.count == 6 && pin.allSatisfy { $0.isNumber }
+    }
+
+    @State private var showErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
+
+
+
     var body: some View {
-        ZStack{
-            Color.beige.ignoresSafeArea()
-            Form {
-                TextField("Nombre", text: $name)
-                TextField("Correo", text: $correo)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .keyboardType(.emailAddress)
-                
-                // Password field
-                HStack {
-                    Group {
-                        if showPassword {
-                            TextField("Contraseña", text: $password)
-                                .keyboardType(.numberPad)
-                        } else {
-                            SecureField("Contraseña", text: $password)
-                                .keyboardType(.numberPad)
-                        }
-                    }
-                    Button(action: {
-                        showPassword.toggle()
-                    }) {
-                        Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
-                            .foregroundColor(.gray)
+        Form {
+            Section(header: Text("Información Personal")) {
+                VStack(alignment: .leading) {
+                    TextField("Nombre", text: $name)
+                    if nameError {
+                        Text("El nombre es obligatorio")
+                            .foregroundStyle(.red)
+                            .font(.caption)
                     }
                 }
-                
-                // Confirm password field
-                HStack {
-                    Group {
-                        if showConfirmPassword {
-                            TextField("Confirmar contraseña", text: $confirmPassword)
-                                .keyboardType(.numberPad)
-                        } else {
-                            SecureField("Confirmar contraseña", text: $confirmPassword)
-                                .keyboardType(.numberPad)
+
+                VStack(alignment: .leading) {
+                    TextField("Correo", text: $correo)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled(true)
+
+                    if emailInUseError {
+                        Text("El correo ingresado pertenece a otro perfil")
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+
+                    if emailError {
+                        Text("Ingresa un correo válido")
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+                }
+            }
+
+            Section(header: Text("Seguridad")) {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Group {
+                            if showPassword {
+                                TextField("PIN", text: $password)
+                                    .keyboardType(.numbersAndPunctuation)
+                            } else {
+                                SecureField("PIN", text: $password)
+                                    .keyboardType(.numbersAndPunctuation)
+                            }
+                        }
+                        Button { showPassword.toggle() } label: {
+                            Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
+                                .foregroundColor(.gray)
+                        }
+                    }
+
+                    if showPinErrorAlert {
+                        Text("Ingresa un PIN numérico de 6 cifras")
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+                }
+
+                VStack(alignment: .leading) {
+                    HStack {
+                        Group {
+                            if showConfirmPassword {
+                                TextField("Confirmar PIN", text: $confirmPassword)
+                                    .keyboardType(.numbersAndPunctuation)
+                            } else {
+                                SecureField("Confirmar PIN", text: $confirmPassword)
+                                    .keyboardType(.numbersAndPunctuation)
+                            }
                         }
                     }
                     Button(action: {
@@ -75,57 +123,113 @@ struct AddAdminView: View {
                             .foregroundColor(.gray)
                     }
                 }
-                
+
                 // Validation text
                 if !confirmPassword.isEmpty && password != confirmPassword {
                     Text("⚠️ Las contraseñas no coinciden")
                         .foregroundColor(.red)
                         .scaledFont(.footnote)
                 }
-                
+
                 Picker("Cooperativa", selection: $selectedCooperativa) {
                     ForEach(cooperativas, id: \.self) { option in
                         Text(option.name).tag(Optional(option))
                     }
                 }
-                
-                Button("Guardar") {
-                    if password == confirmPassword {
-                        let admin = Admin(
-                            admin_id: 0,
-                            name : self.name,
-                            correo : self.correo,
-                            cooperativa_id: selectedCooperativa!.cooperativa_id,
-                            password: self.password,
-                            updatedAt: Date()
-                        )
-                        
-                        self.context.insert(admin)
-                        do{
-                            try self.context.save()
-                            let keychain = KeychainSwift()
-                            let data = Data(password.utf8)
-                            let hashedPassword = SHA256.hash(data: data).compactMap { String(format: "%02x", $0) }.joined()
-                            keychain.set(hashedPassword, forKey: "admin_\(admin.id.uuidString)_pin")
-                            dismiss()
-                        } catch {
-                            print("Error saving:", error)
-                            dismiss()
-                        }
-                    } else {
-                        showPasswordMismatchAlert = true
-                    }
-                }
-                .buttonStyle(.borderedProminent).tint(.brown)
-                .alert("Error", isPresented: $showPasswordMismatchAlert) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text("Las contraseñas no coinciden. Inténtalo de nuevo.")
-                }
             }
-            .navigationTitle("Agregar Administrador")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
+
+            Section {
+                Button("Guardar") {
+                    // Reset all errors
+                    nameError = false
+                    emailError = false
+                    emailInUseError = false
+                    showPinErrorAlert = false
+                    showPasswordMismatchAlert = false
+                    cooperativaError = false
+
+                    var hasError = false
+
+                    // Validate Name
+                    if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        nameError = true
+                        hasError = true
+                    }
+
+                    // Validate Email
+                    if !isValidEmail(correo) {
+                        emailError = true
+                        hasError = true
+                    } else {
+                        // Check for existing email only if format is valid
+                        do {
+                            let descriptor = FetchDescriptor<Admin>(
+                                predicate: #Predicate { $0.correo == correo && $0.isDeleted == false }
+                            )
+                            let matches = try context.fetch(descriptor)
+
+                            if !matches.isEmpty {
+                                emailInUseError = true
+                                hasError = true
+                            }
+                        } catch {
+                            print("Error verificando correo: \(error)")
+                        }
+                    }
+
+                    // Validate PIN
+                    if !isValidNumericPin(password) {
+                        showPinErrorAlert = true
+                        hasError = true
+                    }
+
+                    // Validate Confirm PIN
+                    if password != confirmPassword {
+                        showPasswordMismatchAlert = true
+                        hasError = true
+                    }
+
+                    // Validate Cooperativa
+                    if selectedCooperativa == nil {
+                        cooperativaError = true
+                        hasError = true
+                    }
+
+                    if hasError {
+                        return
+                    }
+
+                    // CIFRAR PIN
+                    let salt = CryptoHelper.randomSalt()
+                    guard let derived = CryptoHelper.pbkdf2Hash(password: password, salt: salt) else {
+                        print("Error hashing PIN")
+                        return
+                    }
+
+                    let combined = "\(CryptoHelper.encode(salt))|\(CryptoHelper.encode(derived))"
+
+                    // Crear admin con PIN cifrado
+                    let admin = Admin(
+                        admin_id: 0,
+                        name: name,
+                        correo: correo,
+                        cooperativa_id: selectedCooperativa!.cooperativa_id,
+                        password: combined,
+                        updatedAt: Date()
+                    )
+
+                    context.insert(admin)
+                    try? context.save()
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.brown)
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .navigationTitle("Agregar Administrador")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         dismiss()
@@ -134,8 +238,6 @@ struct AddAdminView: View {
                     }
                 }
             }
-        }
-        
     }
 }
 

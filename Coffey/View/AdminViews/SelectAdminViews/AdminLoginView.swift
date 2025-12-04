@@ -7,8 +7,7 @@
 //
 
 import SwiftUI
-import CryptoKit // Para cifrado
-import KeychainSwift //Para guardar el pin
+import CommonCrypto
 
 struct AdminLoginView: View {
     let admin: Admin
@@ -21,44 +20,39 @@ struct AdminLoginView: View {
     @State private var success: Bool = false
     var onReset: () -> Void
 
-    private let keychain = KeychainSwift() //Verificar aca
-
     init(admin: Admin, numberOfDigits: Int = 6, path: Binding<NavigationPath>, onReset: @escaping () -> Void = {}) {
         self.admin = admin
         self.numberOfDigits = numberOfDigits
         _pin = State(initialValue: Array(repeating: "", count: numberOfDigits))
         self._path = path
         self.onReset = onReset
+
+        print("Current admin value is: \(admin.name), deletedAt: \(String(describing: admin.deletedAt))")
     }
-    
-    private var isPinComplete: Bool { //Segun yo este funciona
+
+    // MARK: - PIN validation helpers
+    private var isPinComplete: Bool {
         pin.allSatisfy { !$0.isEmpty }
     }
 
-    private var isPinNumeric: Bool { //Segun yo este tmb funciona
+    private var isPinNumeric: Bool {
         pin.joined().allSatisfy { $0.isNumber }
     }
 
-    //Posiblemente cifrar el pin usando SHA256
-    func hashPin(_ pin: String) -> String {
-        let data = Data(pin.utf8)
-        let hashed = SHA256.hash(data: data)
-        return hashed.compactMap { String(format: "%02x", $0) }.joined()
-    }
+    // MARK: - Validation against BD
+    private func validateCurrentPin(_ pin: String) -> Bool {
+        let stored = admin.password
 
-    func saveHashedPIN(_ pin: String) {
-        let hashed = hashPin(pin)
-        keychain.set(hashed, forKey: "admin_\(admin.id.uuidString)_pin") //Verificar lo del Admin.id
-    }
-
-    func validatePIN(_ pin: String) -> Bool {
-        let hashed = hashPin(pin)
-        if let stored = keychain.get("admin_\(admin.id.uuidString)_pin") { //Verificar lo del Admin.id
-            return stored == hashed
-        } else {
-            saveHashedPIN(pin)
-            return true // Primer inicio, se guarda el PIN
+        let parts = stored.split(separator: "|")
+        guard parts.count == 2,
+              let salt = CryptoHelper.decode(String(parts[0])),
+              let storedKey = CryptoHelper.decode(String(parts[1])),
+              let derived = CryptoHelper.pbkdf2Hash(password: pin, salt: salt)
+        else {
+            return false
         }
+
+        return derived == storedKey
     }
 
     var body: some View {
@@ -70,78 +64,73 @@ struct AdminLoginView: View {
                 .scaledToFit()
                 .frame(width: 100, height: 100)
 
-            Text("Hola, \(admin.name.capitalized)")
-                .scaledFont(.title2)
-                .fontWeight(.semibold)
-
-            Text("Introduce tu PIN")
-
-            //Me acabo de dar cuenta que no valida un pin, solo asume que ya hay uno, hay que corregir eso.
-
-            //Explicar aca como funciona el proceso de guardado y validacion del pin, creo que se guarda al primer inicio, luego se valida cada vez que se ingresa
-            //Si es asi, esta todo bien, y funciona. (Aprovado: Funciona)
-
-            // Reusable PIN input field
-            PinInputView(pin: $pin, fieldFocus: _fieldFocus, numberOfDigits: numberOfDigits)
-            
-            Button(action: { //Todo lo de aca es para verificar si el pin es numerico, sean 6 digitos y si el pin es correcto
-                let enteredPin = pin.joined()
-                print("Submitted PIN: \(enteredPin)")
-
-                guard isPinNumeric else {
-                    message = "El PIN debe ser numérico."
-                    success = false
-                    return
-                }
-
-                //Este por el es inutil por ahora, posiblemente lo quite.
-                
-                guard isPinComplete else {
-                    message = "El Pin esta incompleto"
-                    success = false
-                    return
-                }
-                
-                guard validatePIN(enteredPin) else {
-                    message = "PIN incorrecto."
-                    success = false
-                    return
-                }
-                message = ""
-                success = true
-                navigateToUserSelect = true
-            }) {
-                Text("Entrar")
+                Text("Hola, \(admin.name.capitalized)")
+                    .scaledFont(.title2)
                     .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(isPinComplete ? Color.brown : Color.gray.opacity(0.4))
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            .disabled(!isPinComplete)
-            .padding(.horizontal, 40)
-            .padding(.top, 10)
 
-            // Aca iria el cambio de PIN, falta crear la otra vista del cambio de pin, y validar si funciona, esto podria ser otro test (Creada y funcionando)
-            NavigationLink {
-                ChangePinView(admin: admin)
-            } label: {
-                Text("Cambiar PIN")
-                    .scaledFont(.subheadline)
-                    .foregroundColor(.blue)
-                    .padding(.top, 8)
+                Text("Introduce tu PIN")
+
+                // PIN input view
+                PinInputView(pin: $pin, numberOfDigits: numberOfDigits)
+
+                // MARK: - Login button
+                Button {
+                    let enteredPin = pin.joined()
+
+                    guard isPinNumeric else {
+                        message = "El PIN debe ser numérico."
+                        success = false
+                        return
+                    }
+
+                    guard isPinComplete else {
+                        message = "El PIN está incompleto."
+                        success = false
+                        return
+                    }
+
+                    guard validateCurrentPin(enteredPin) else {
+                        message = "PIN incorrecto."
+                        success = false
+                        return
+                    }
+
+                    message = ""
+                    success = true
+                    navigateToUserSelect = true
+
+                } label: {
+                    Text("Entrar")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(isPinComplete ? Color.brown : Color.gray.opacity(0.4))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .disabled(!isPinComplete)
+                .padding(.horizontal, 40)
+                .padding(.top, 10)
+
+                NavigationLink {
+                    ChangePinView(admin: admin)
+                } label: {
+                    Text("Cambiar PIN")
+                        .scaledFont(.subheadline)
+                        .foregroundColor(.blue)
+                        .padding(.top, 8)
+                }
+
+                if !message.isEmpty {
+                    Text(message)
+                        .foregroundColor(success ? .green : .red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                }
             }
-            if !message.isEmpty {
-                Text(message)
-                    .foregroundColor(success ? .green : .red)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
+            .navigationDestination(isPresented: $navigateToUserSelect) {
+                SelectAdminModeView(path: $path, onReset: onReset)
             }
-        }
-        .navigationDestination(isPresented: $navigateToUserSelect) {
-            SelectAdminModeView(path: $path, onReset: onReset)
-        }
         }
     }
 }

@@ -51,14 +51,24 @@ struct ReceiptScannerView: View {
                     PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
                         Label("Galería", systemImage: "photo")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .padding()
+                    .frame(maxWidth: 200)
+                    .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    
                     
                     Button {
                         showCamera.toggle()
                     } label: {
                         Label("Cámara", systemImage: "camera")
                     }
-                    .buttonStyle(.borderedProminent)
+                    .padding()
+                    .frame(maxWidth: 200)
+                    .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    
                 }
                 
                 if isProcessing {
@@ -155,6 +165,10 @@ struct ReceiptScannerView: View {
             try? requestHandler.perform([request])
         }
     }
+}
+
+#Preview {
+    ReceiptScannerView(user: User.mockUsers.first!, onFinish:  { _ in Finance.mockFinances.first!})
 }
 
 

@@ -19,6 +19,7 @@ final class Admin: Identifiable, Hashable, Codable {
     var password: String
     var updatedAt: Date?
     var deletedAt: Date?
+    var isDeleted: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case admin_id, name, correo, cooperativa_id, password, updatedAt, deletedAt
