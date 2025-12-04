@@ -45,7 +45,10 @@ struct CoffeyApp: App {
             ContentView()
                 .modelContainer(sharedModelContainer)
                 .environmentObject(fontSettings)
-                .applyGlobalFontScaling()
+                .environment(
+                    \.font,
+                    Font.system(size: 17 * fontSettings.multiplier)
+                )
                 .environmentObject(downloadManager)
                 .preferredColorScheme(ColorScheme.light)
         }
