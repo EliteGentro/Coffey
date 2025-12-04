@@ -28,6 +28,8 @@ struct AddAdminView: View {
     @State private var showPinErrorAlert: Bool = false
     @State private var emailError: Bool = false
     @State private var emailInUseError: Bool = false
+    @State private var nameError: Bool = false
+    @State private var cooperativaError: Bool = false
 
     func isValidEmail(_ email: String) -> Bool {
         let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -48,7 +50,14 @@ struct AddAdminView: View {
     var body: some View {
         Form {
             Section(header: Text("Información Personal")) {
-                TextField("Nombre", text: $name)
+                VStack(alignment: .leading) {
+                    TextField("Nombre", text: $name)
+                    if nameError {
+                        Text("El nombre es obligatorio")
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+                }
                 
                 VStack(alignment: .leading) {
                     TextField("Correo", text: $correo)
@@ -112,7 +121,7 @@ struct AddAdminView: View {
                         }
                     }
                     
-                    if !confirmPassword.isEmpty && password != confirmPassword {
+                    if showPasswordMismatchAlert {
                         Text("Los PIN no coinciden")
                             .foregroundStyle(.red)
                             .font(.caption)
@@ -121,56 +130,78 @@ struct AddAdminView: View {
             }
 
             Section {
-                Picker("Cooperativa", selection: $selectedCooperativa) {
-                    ForEach(cooperativas, id: \.self) { option in
-                        Text(option.name).tag(Optional(option))
+                VStack(alignment: .leading) {
+                    Picker("Cooperativa", selection: $selectedCooperativa) {
+                        ForEach(cooperativas, id: \.self) { option in
+                            Text(option.name).tag(Optional(option))
+                        }
+                    }
+                    if cooperativaError {
+                        Text("Debes seleccionar una cooperativa")
+                            .foregroundStyle(.red)
+                            .font(.caption)
                     }
                 }
             }
 
             Section {
                 Button("Guardar") {
+                    // Reset all errors
+                    nameError = false
                     emailError = false
                     emailInUseError = false
                     showPinErrorAlert = false
                     showPasswordMismatchAlert = false
+                    cooperativaError = false
+                    
+                    var hasError = false
 
-                    // Validación email
-                    guard isValidEmail(correo) else {
+                    // Validate Name
+                    if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        nameError = true
+                        hasError = true
+                    }
+
+                    // Validate Email
+                    if !isValidEmail(correo) {
                         emailError = true
-                        return
-                    }
+                        hasError = true
+                    } else {
+                        // Check for existing email only if format is valid
+                        do {
+                            let descriptor = FetchDescriptor<Admin>(
+                                predicate: #Predicate { $0.correo == correo && $0.isDeleted == false }
+                            )
+                            let matches = try context.fetch(descriptor)
 
-                    do {
-                        let descriptor = FetchDescriptor<Admin>(
-                            predicate: #Predicate { $0.correo == correo && $0.isDeleted == false }
-                        )
-                        let matches = try context.fetch(descriptor)
-
-                        if !matches.isEmpty {
-                            // El correo está en uso
-                            emailInUseError = true
-                            emailError = false
-                            return
-                        } else {
-                            emailInUseError = false
+                            if !matches.isEmpty {
+                                emailInUseError = true
+                                hasError = true
+                            }
+                        } catch {
+                            print("Error verificando correo: \(error)")
                         }
-                    } catch {
-                        print("Error verificando correo: \(error)")
                     }
 
-
-                    // Validación PIN numérico
-                    guard isValidNumericPin(password) else {
-                        password = ""
-                        confirmPassword = ""
+                    // Validate PIN
+                    if !isValidNumericPin(password) {
                         showPinErrorAlert = true
-                        return
+                        hasError = true
                     }
 
-                    // Validación confirmación
-                    guard password == confirmPassword else {
+                    // Validate Confirm PIN
+                    if password != confirmPassword {
                         showPasswordMismatchAlert = true
+                        hasError = true
+                    }
+                    
+                    // Validate Cooperativa
+                    if selectedCooperativa == nil {
+                        cooperativaError = true
+                        hasError = true
+                    }
+
+                    if hasError {
                         return
                     }
 
