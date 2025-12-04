@@ -31,7 +31,6 @@ struct SelectAdminView: View {
     init(path: Binding<NavigationPath>, onReset: @escaping () -> Void = {}) {
         self._path = path
         self.onReset = onReset
-        // El filtro ya está arriba, no lo repetimos aquí
     }
 
     var body: some View {
@@ -90,11 +89,6 @@ struct SelectAdminView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(.brown)
                 }
-                .alert("Error", isPresented: $showAlert) {
-                    Button("OK", role: .cancel) {}
-                } message: {
-                    Text(alertMessage)
-                }
             }
 
             .sheet(isPresented: self.$isAddedPresented) {
@@ -144,7 +138,6 @@ struct SelectAdminView: View {
     // MARK: - SOFT DELETE
     private func deleteAdmin(_ admin: Admin) {
         admin.isDeleted = true
-        admin.updatedAt = Date()
         admin.deletedAt = Date()
         try? context.save()
     }

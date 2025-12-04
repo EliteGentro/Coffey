@@ -79,6 +79,8 @@ struct PinInputView: View {
 
     @Binding var pin: [String]
     @FocusState private var focusIndex: Int?
+    @State private var oldValue: String = ""
+    @State private var fieldFocus: Int?
 
     let numberOfDigits: Int
 
@@ -95,7 +97,7 @@ struct PinInputView: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(6)
                 .multilineTextAlignment(.center)
-                .focused($fieldFocus, equals: index)
+                //.focused($fieldFocus, equals: index)
                 .tag(index)
                 .onChange(of: pin[index]) { oldValue,newValue in
                     // Ensure only a single character per field

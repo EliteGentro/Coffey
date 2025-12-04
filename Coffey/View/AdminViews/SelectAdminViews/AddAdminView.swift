@@ -164,7 +164,7 @@ struct AddAdminView: View {
                     admin_id: 0,
                     name: name,
                     correo: correo,
-                    cooperativa_id: 1,
+                    cooperativa_id: selectedCooperativa!.cooperativa_id,
                     password: combined,
                     updatedAt: Date()
                 )
@@ -185,18 +185,6 @@ struct AddAdminView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
-                }
-            }
-            .onAppear {
-                if cooperativas.count > 0 {
-                        if selectedCooperativa == nil {
-                            selectedCooperativa = cooperativas.first
-                        }
-
-                } else{
-                    showErrorAlert = true
-                    errorMessage = "No se encontraron cooperativas. Inténtalo más tarde."
-                    dismiss()
                 }
             }
     }
