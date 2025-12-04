@@ -139,7 +139,12 @@ struct SelectAdminView: View {
     private func deleteAdmin(_ admin: Admin) {
         admin.isDeleted = true
         admin.deletedAt = Date()
-        try? context.save()
+        do {
+            try context.save()
+            print("Admin \(admin.name) marcado como eliminado, con valor de deletedAt: \(String(describing: admin.deletedAt))")
+        } catch {
+            print("Error al guardar cambios al eliminar admin: \(error)")
+        }
     }
 }
 
