@@ -19,7 +19,7 @@ struct SelectAdminView: View {
     @State private var showDeleteAlert = false
     private var api = AdminAPI()
 
-    @Query(filter: #Predicate<Admin> { !$0.isDeleted },
+    @Query(filter: #Predicate<Admin> { $0.deletedAt == nil },
            sort: \.name,
            order: .forward)
     private var admins: [Admin]
