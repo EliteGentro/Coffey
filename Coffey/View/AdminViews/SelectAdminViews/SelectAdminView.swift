@@ -4,7 +4,7 @@
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
 //
-//  Edited by José Augusto Orozco Blas and Diego Hernandez on 1/12/25
+//  Edited by José Augusto Orozco Blas, Diego Hernandez on 4/12/25
 import SwiftUI
 import SwiftData
 
@@ -37,9 +37,6 @@ struct SelectAdminView: View {
         ZStack{
             BackgroundView()
         ScrollView {
-
-
-
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 32) {
                     ForEach(admins) { admin in
                         ZStack(alignment: .topTrailing) {

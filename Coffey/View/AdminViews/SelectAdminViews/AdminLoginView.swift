@@ -3,7 +3,7 @@
 //  Coffey
 //
 //  Created by Humberto Genaro Cisneros Salinas on 17/10/25.
-//  Edited By Augusto Orozco on 07/11/25.
+//  Edited By Augusto Orozco on 07/11/25, Diego Hernández on 4/12/25.
 //
 
 import SwiftUI
